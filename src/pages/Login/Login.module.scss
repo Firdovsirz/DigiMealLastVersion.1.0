@@ -1,0 +1,174 @@
+@import "../../styles/mixins";
+@import "../../styles/variables";
+
+.login-main {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(45deg, blue 40%, white);
+
+    .login-section {
+        border: 1px solid #fff;
+        border-radius: $primary-border-radius;
+        // box-shadow: 2px 2px 20px rgb(218, 218, 218);
+        width: 60%;
+        height: 600px;
+        display: flex;
+        background: #fff;
+        align-items: center;
+
+        .login-page-txt {
+            background: url(../../assets/LoginPage/login-page-bg.png);
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            width: 50%;
+            height: 100%;
+            border-radius: $primary-border-radius 0 0 $primary-border-radius;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+
+            .login-page-txt-logos {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding-inline: 30px;
+
+                img {
+                    width: 120px;
+
+                    &:first-child {
+                        margin-right: 20px;
+                    }
+                }
+            }
+
+            .login-info-txt {
+                width: 300px;
+                text-align: center;
+                color: #fff;
+                font-size: 20px;
+            }
+        }
+
+        .login-form-container {
+            width: 50%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            .login-form-txt {
+                display: flex;
+                align-items: center;
+                margin-bottom: 50px;
+
+                h1 {
+                    font-size: 40px;
+                    color: $primary-color;
+                }
+            }
+
+            form {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+                .login-form-fin-label {
+                    position: relative;
+
+                    input {
+                        height: 47px;
+                        width: 350px;
+                        border-radius: $primary-border-radius;
+                        border: 1px solid $primary-color;
+                        padding-inline: 15px;
+                        font-size: 18px;
+                        color: $primary-color;
+                        outline: none;
+                        margin-bottom: 20px;
+
+                        &:focus,
+                        &:valid {
+                            color: $primary-color;
+                        }
+
+                        &:focus+.fin-code-placeholder,
+                        &:valid+.fin-code-placeholder {
+                            color: #fff;
+                            padding: 2px 10px;
+                            transform: translate(10px, -28px);
+                            font-size: 16px;
+                            background: $primary-color;
+                            border-radius: 5px;
+                            backdrop-filter: blur(20px);
+                        }
+                    }
+
+                    .fin-code-placeholder {
+                        color: $primary-color;
+                        position: absolute;
+                        top: 14px;
+                        left: 15px;
+                        transition: all 400ms;
+                    }
+                }
+
+                .login-form-pass-label {
+                    position: relative;
+
+                    input {
+                        height: 47px;
+                        width: 350px;
+                        border-radius: $primary-border-radius;
+                        border: 1px solid $primary-color;
+                        padding-inline: 15px;
+                        font-size: 18px;
+                        color: $primary-color;
+                        outline: none;
+                        margin-bottom: 50px;
+
+                        &:focus,
+                        &:valid {
+                            color: $primary-color;
+                        }
+
+                        &:focus+.password-placeholder,
+                        &:valid+.password-placeholder {
+                            color: #fff;
+                            padding: 2px 10px;
+                            transform: translate(10px, -28px);
+                            font-size: 16px;
+                            background: $primary-color;
+                            border-radius: 5px;
+                        }
+                    }
+
+                    .password-placeholder {
+                        color: $primary-color;
+                        position: absolute;
+                        top: 14px;
+                        left: 15px;
+                        transition: all 400ms;
+                    }
+                }
+
+                button {
+                    @include button();
+                }
+            }
+            p{
+                text-decoration: underline;
+                font-size: 14px;
+                cursor: pointer;
+            }
+        }
+    }
+}
