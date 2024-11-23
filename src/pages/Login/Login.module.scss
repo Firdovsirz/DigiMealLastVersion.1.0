@@ -79,7 +79,8 @@
                     overflow: hidden;
                     border-right: 5px solid;
                     letter-spacing: 5px;
-                    animation: typing 2s linear infinite, blink 0.7s step-end infinite;
+                    animation: typing 2s linear infinite,
+                        blink 0.7s step-end infinite;
                 }
             }
 
@@ -94,8 +95,8 @@
                     align-items: center;
                     margin-bottom: 20px;
                     border-radius: $primary-border-radius;
-                        border: 1px solid $primary-color;
-                        padding-inline: 15px;
+                    border: 1px solid $primary-color;
+                    padding-inline: 15px;
 
                     input {
                         height: 47px;
@@ -129,13 +130,14 @@
                         left: 15px;
                         transition: all 400ms;
                     }
-                    img{
+
+                    img {
                         width: 250px;
                         // height: 150px;
                         position: absolute;
                         top: 47px;
                         right: -20px;
-                        z-index: 100;
+                        z-index: 10000;
                         transition: all 400ms;
                     }
                 }
@@ -198,18 +200,21 @@
 
 @keyframes typing {
     from {
-      width: 0;
+        width: 0;
     }
+
     to {
-      width: 250px; /* Matches the 8-character word */
+        width: 250px;
+        /* Matches the 8-character word */
     }
-  }
-  
-  @keyframes blink {
+}
+
+@keyframes blink {
     from {
-      border-color: black;
+        border-color: black;
     }
+
     to {
-      border-color: transparent;
+        border-color: transparent;
     }
-  }
+}
