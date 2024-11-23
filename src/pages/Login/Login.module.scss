@@ -71,8 +71,15 @@
                 margin-bottom: 50px;
 
                 h1 {
+                    width: 260px;
                     font-size: 40px;
+                    font-family: monospace;
                     color: $primary-color;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    border-right: 5px solid;
+                    letter-spacing: 5px;
+                    animation: typing 2s linear infinite, blink 0.7s step-end infinite;
                 }
             }
 
@@ -83,17 +90,20 @@
 
                 .login-form-fin-label {
                     position: relative;
+                    display: flex;
+                    align-items: center;
+                    margin-bottom: 20px;
+                    border-radius: $primary-border-radius;
+                        border: 1px solid $primary-color;
+                        padding-inline: 15px;
 
                     input {
                         height: 47px;
-                        width: 350px;
-                        border-radius: $primary-border-radius;
-                        border: 1px solid $primary-color;
-                        padding-inline: 15px;
+                        width: 320px;
                         font-size: 18px;
                         color: $primary-color;
                         outline: none;
-                        margin-bottom: 20px;
+                        border: none;
 
                         &:focus,
                         &:valid {
@@ -119,21 +129,33 @@
                         left: 15px;
                         transition: all 400ms;
                     }
+                    img{
+                        width: 250px;
+                        // height: 150px;
+                        position: absolute;
+                        top: 47px;
+                        right: -20px;
+                        z-index: 100;
+                        transition: all 400ms;
+                    }
                 }
 
                 .login-form-pass-label {
                     position: relative;
+                    display: flex;
+                    align-items: center;
+                    margin-bottom: 50px;
+                    border-radius: $primary-border-radius;
+                    border: 1px solid $primary-color;
+                    padding-inline: 15px;
 
                     input {
                         height: 47px;
-                        width: 350px;
-                        border-radius: $primary-border-radius;
-                        border: 1px solid $primary-color;
-                        padding-inline: 15px;
+                        width: 320px;
+                        border: none;
                         font-size: 18px;
                         color: $primary-color;
                         outline: none;
-                        margin-bottom: 50px;
 
                         &:focus,
                         &:valid {
@@ -164,7 +186,8 @@
                     @include button();
                 }
             }
-            p{
+
+            p {
                 text-decoration: underline;
                 font-size: 14px;
                 cursor: pointer;
@@ -172,3 +195,21 @@
         }
     }
 }
+
+@keyframes typing {
+    from {
+      width: 0;
+    }
+    to {
+      width: 250px; /* Matches the 8-character word */
+    }
+  }
+  
+  @keyframes blink {
+    from {
+      border-color: black;
+    }
+    to {
+      border-color: transparent;
+    }
+  }
