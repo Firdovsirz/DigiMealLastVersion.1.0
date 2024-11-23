@@ -1,5 +1,6 @@
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import { useTranslation } from 'react-i18next';
 import styles from "../Login/Login.module.scss";
 import React, { useState, useEffect } from 'react';
 import SchoolIcon from '@mui/icons-material/School';
@@ -11,8 +12,10 @@ import FinCodeHelp from "../../assets/LoginPage/card-id-fin.png";
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import AztuLogoLight from "../../assets/LoginPage/aztu-logo-light.png";
 import ThikLogoLight from "../../assets/LoginPage/thik-logo-light.png";
+import LanguageChanger from '../../components/LanguageChanger/LanguageChanger';
 
 export default function Login() {
+    const { t } = useTranslation();
     const [value, setValue] = useState("");
     const [finHelp, setFinHelp] = useState(false);
     const [visibility, setVisibility] = useState(false);
@@ -47,55 +50,63 @@ export default function Login() {
         setValue(e.target.value.toUpperCase());
     }
     return (
-        <main className={styles['login-main']}>
-            <section className={styles['login-section']}>
-                <div className={styles['login-page-txt']}>
-                    <div className={styles['login-page-txt-logos']}>
-                        <img data-aos="fade-right" src={AztuLogoLight} alt="aztu-logo" />
-                        <img data-aos="fade-left" src={ThikLogoLight} alt="thik-logo" />
+        <>
+            <LanguageChanger />
+            <main className={styles['login-main']}>
+                <section className={styles['login-section']}>
+                    <div className={styles['login-page-txt']}>
+                        <div className={styles['login-page-txt-logos']}>
+                            <img data-aos="fade-right" src={AztuLogoLight} alt="aztu-logo" />
+                            <img data-aos="fade-left" src={ThikLogoLight} alt="thik-logo" />
+                        </div>
+                        <p
+                            data-aos="fade-down"
+                            className={styles['login-info-txt']}>
+                            {t("login-info-text", { ns: "login" })}
+                        </p>
+                        <CopyRight />
                     </div>
-                    <p
-                        data-aos="fade-down"
-                        className={styles['login-info-txt']}>
-                        DigiMeal vasitəsilə QR-kod yaradaraq pulsuz
-                        yemək əldə etmək şansından istifadə edə bilərsiz!
-                    </p>
-                    <CopyRight />
-                </div>
-                <div className={styles['login-form-container']}>
-                    <div data-aos="fade-down" className={styles['login-form-txt']}>
-                        <SchoolIcon style={{ marginRight: 20, fontSize: 40, color: "rgb(24, 38, 98)" }} />
-                        <h1 >DigiMeal</h1>
+                    <div className={styles['login-form-container']}>
+                        <div data-aos="fade-down" className={styles['login-form-txt']}>
+                            <SchoolIcon style={{ marginRight: 20, fontSize: 40, color: "rgb(24, 38, 98)" }} />
+                            <h1 >DigiMeal</h1>
+                        </div>
+                        <form action="" data-aos="fade-up">
+                            <label htmlFor="fin-code" className={styles['login-form-fin-label']}>
+                                <input
+                                    type="text"
+                                    value={value}
+                                    required
+                                    onChange={handleUpperCase} />
+                                <div className={styles['fin-code-placeholder']}>
+                                    {t("login-fin-input-placeholder", { ns: "login" })}
+                                </div>
+                                <HelpOutlineIcon style={{ cursor: "pointer" }} onClick={handleFinHelpToggle} />
+                                {finHelp ? <img src={FinCodeHelp} alt="fin-code-help" /> : null}
+                            </label>
+                            <label htmlFor="password" className={styles['login-form-pass-label']}>
+                                <input
+                                    type={visibility ? "text" : "password"}
+                                    required />
+                                <div className={styles['password-placeholder']}>
+                                    {t("login-pass-input-placeholder", { ns: "login" })}
+                                </div>
+                                {visibility ?
+                                    <VisibilityIcon
+                                        style={{ color: "rgb(24, 38, 98)", cursor: "pointer" }}
+                                        onClick={handleVisibility} /> :
+                                    <VisibilityOffIcon
+                                        style={{ color: "rgb(24, 38, 98)", cursor: "pointer" }}
+                                        onClick={handleVisibility} />}
+                            </label>
+                            <button>
+                                {t("login-btn-text", { ns: "login" })}
+                            </button>
+                        </form>
+                        <p data-aos="zoom-in">Sifreni unutdun?</p>
                     </div>
-                    <form action="" data-aos="fade-up">
-                        <label htmlFor="fin-code" className={styles['login-form-fin-label']}>
-                            <input
-                                type="text"
-                                value={value}
-                                required
-                                onChange={handleUpperCase} />
-                            <div className={styles['fin-code-placeholder']}>Fin code</div>
-                            <HelpOutlineIcon style={{ cursor: "pointer" }} onClick={handleFinHelpToggle} />
-                            {finHelp ? <img src={FinCodeHelp} alt="fin-code-help" /> : null}
-                        </label>
-                        <label htmlFor="password" className={styles['login-form-pass-label']}>
-                            <input
-                                type={visibility ? "text" : "password"}
-                                required />
-                            <div className={styles['password-placeholder']}>Password</div>
-                            {visibility ?
-                                <VisibilityIcon
-                                    style={{ color: "rgb(24, 38, 98)", cursor: "pointer" }}
-                                    onClick={handleVisibility} /> :
-                                <VisibilityOffIcon
-                                    style={{ color: "rgb(24, 38, 98)", cursor: "pointer" }}
-                                    onClick={handleVisibility} />}
-                        </label>
-                        <button>Log In</button>
-                    </form>
-                    <p data-aos="zoom-in">Sifreni unutdun?</p>
-                </div>
-            </section>
-        </main>
+                </section>
+            </main>
+        </>
     )
 }

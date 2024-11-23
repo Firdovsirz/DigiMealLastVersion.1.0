@@ -1,0 +1,65 @@
+@import "../../styles/variables";
+
+.lang-changer-main {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+
+    .lang-changer-container {
+        position: relative;
+        width: 150px;
+
+        .current-lang {
+            width: 120px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid rgb(218, 218, 218);
+            border-radius: $primary-border-radius;
+            background: #fff;
+            cursor: pointer;
+
+            .current-lang-info {
+                display: flex;
+                align-items: center;
+
+                img {
+                    width: 35px;
+                    height: 35px;
+                    margin-right: 10px;
+                }
+            }
+        }
+
+        .available-languages {
+            position: absolute;
+            right: 20px;
+            top: 70px;
+
+            .lang-dropdown-container {
+                border: 1px solid rgb(218, 218, 218);
+                border-radius: $primary-border-radius;
+                width: 120px;
+                background: #fff;
+
+                .available-lang-container {
+                    display: flex;
+                    align-items: center;
+                    cursor: pointer;
+                    padding: 10px;
+
+                    &:first-child {
+                        border-bottom: 1px solid rgb(218, 218, 218);
+                    }
+
+                    img {
+                        width: 35px;
+                        height: 35px;
+                        margin-right: 10px;
+                    }
+                }
+            }
+        }
+    }
+}

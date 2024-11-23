@@ -1,10 +1,12 @@
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import styles from "../CopyRight/CopyRight.module.scss";
 import CopyrightIcon from '@mui/icons-material/Copyright';
 
 export default function CopyRight() {
+    const { t } = useTranslation();
     useEffect(() => {
         AOS.init({
             duration: 1000,
@@ -15,7 +17,7 @@ export default function CopyRight() {
     return (
         <p data-aos="fade-up" className={styles['copyright-txt']}>
             <CopyrightIcon style={{ color: "#fff", marginRight: 10 }} />
-            Bütün hüquqlar qorunur. AzTu | THİK
+            {t('login-copyright', { ns: 'login' })}. AzTu | THİK
         </p>
     )
 }
