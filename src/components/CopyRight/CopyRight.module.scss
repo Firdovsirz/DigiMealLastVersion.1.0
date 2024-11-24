@@ -1,6 +1,12 @@
 .copyright-txt {
     display: flex;
     align-items: center;
+    text-align: center;
+    justify-content: center;
     color: #fff;
     font-size: 14px;
+    width: fit-content;
+    @media (max-width: 600px) {
+        display: none;
+    }
 }
