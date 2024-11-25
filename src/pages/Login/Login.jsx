@@ -19,7 +19,6 @@ export default function Login() {
     const [value, setValue] = useState("");
     const [finHelp, setFinHelp] = useState(false);
     const [visibility, setVisibility] = useState(false);
-    const [isMobile, setIsMobile] = useState(false);
     const handleFinHelpToggle = (e) => {
         e.stopPropagation();
         setFinHelp((prev) => !prev);
@@ -104,7 +103,7 @@ export default function Login() {
                                 {t("login-btn-text", { ns: "login" })}
                             </button>
                         </form>
-                        <p className={styles['forget-pass-txt']} data-aos="zoom-in">Sifreni unutdun?</p>
+                        <p className={styles['forget-pass-txt']} data-aos="zoom-in">Şifrəni unutdun?</p>
                         <CopyRight
                             color={'black'}
                             marginTop={0}

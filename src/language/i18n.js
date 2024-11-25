@@ -3,16 +3,16 @@ import { fabClasses } from '@mui/material';
 import { initReactI18next } from 'react-i18next';
 
 // EN
-import translationEnLogin from "./locales/en/login.json";
 import translationEnUser from "./locales/en/user.json";
+import translationEnLogin from "./locales/en/login.json";
 
 // RU
-import translationRuLogin from "./locales/ru/login.json";
 import translationRuUser from "./locales/ru/user.json";
+import translationRuLogin from "./locales/ru/login.json";
 
 // AZ
-import translationAzLogin from "./locales/az/login.json";
 import translationAzUser from "./locales/az/user.json";
+import translationAzLogin from "./locales/az/login.json";
 
 const resources = {
     en: {
@@ -38,7 +38,7 @@ i18n
         interpolation: {
             escapeValue: fabClasses
         },
-        ns: ['main', 'login', 'user'],
+        ns: ['login', 'user'],
         defaultNS: 'login'
     });
 

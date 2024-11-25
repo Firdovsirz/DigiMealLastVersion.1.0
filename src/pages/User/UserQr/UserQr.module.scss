@@ -1,0 +1,86 @@
+@import "../../../styles/mixins";
+@import "../../../styles/variables";
+
+.user-page-main {
+    height: calc(100vh - 100px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .user-page-qr-section {
+        width: fit-content;
+        height: fit-content;
+
+        .user-page-qr-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            .user-page-qr-img-container {
+                margin-bottom: 40px;
+
+                img {
+                    width: 250px;
+                }
+            }
+
+            .countdown-container {
+                font-size: 20px;
+                margin-bottom: 20px;
+            }
+
+            .user-download-qr-btn {
+                @include button();
+            }
+        }
+    }
+
+    .user-page-response-bottom-nav-section {
+        position: fixed;
+        bottom: 2px;
+        left: 0;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .user-page-bottom-nav-container {
+            width: 95%;
+            height: 50px;
+            background: $primary-color;
+            border-radius: $primary-border-radius;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .user-bottom-nav-qr-gen-btn-container {
+                width: calc(100% / 3);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: red;
+                height: 100%;
+
+                .user-bottom-nav-qr-container {
+                    width: fit-content;
+                    height: fit-content;
+                    background: #fff;
+                    padding: 8px;
+                    border-radius: 50%;
+                    margin-bottom: 50px;
+                    .user-bottom-nav-qr-gen-icon-container {
+                        background: yellow;
+                        width: fit-content;
+                        height: fit-content;
+                        padding: 10px;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                }
+            }
+        }
+    }
+}
