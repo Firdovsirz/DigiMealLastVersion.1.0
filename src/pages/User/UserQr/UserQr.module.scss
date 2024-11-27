@@ -47,20 +47,43 @@
 
         .user-page-bottom-nav-container {
             width: 95%;
-            height: 50px;
+            height: 80px;
             background: $primary-color;
-            border-radius: $primary-border-radius;
+            border-radius: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
 
             .user-bottom-nav-qr-gen-btn-container {
-                width: calc(100% / 3);
+                width: 250px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                background: red;
+                background: $primary-color;
                 height: 100%;
+                position: relative;
+
+                .bottom-nav-curve-first {
+                    position: absolute;
+                    top: 0;
+                    left: 77px;
+                    background: $primary-color;
+                    width: 15px;
+                    height: 15px;
+                    border-radius: 0 15px 0 0;
+                    box-shadow: 3px -6px #fff;
+                }
+
+                .bottom-nav-curve-second {
+                    position: absolute;
+                    top: 0;
+                    right: 77px;
+                    background: $primary-color;
+                    width: 15px;
+                    height: 15px;
+                    border-radius: 15px 0 0 0;
+                    box-shadow: -3px -6px #fff;
+                }
 
                 .user-bottom-nav-qr-container {
                     width: fit-content;
@@ -68,7 +91,8 @@
                     background: #fff;
                     padding: 8px;
                     border-radius: 50%;
-                    margin-bottom: 50px;
+                    margin-bottom: 80px;
+
                     .user-bottom-nav-qr-gen-icon-container {
                         background: yellow;
                         width: fit-content;
@@ -78,6 +102,7 @@
                         display: flex;
                         align-items: center;
                         justify-content: center;
+                        cursor: pointer;
                     }
                 }
             }

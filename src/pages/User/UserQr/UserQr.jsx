@@ -73,6 +73,8 @@ export default function UserQr() {
         <section className={styles['user-page-response-bottom-nav-section']}>
           <div className={styles['user-page-bottom-nav-container']}>
             <div className={styles['user-bottom-nav-qr-gen-btn-container']}>
+              <div className={styles['bottom-nav-curve-first']} />
+              <div className={styles['bottom-nav-curve-second']} />
               <div className={styles['user-bottom-nav-qr-container']}>
                 <div className={styles['user-bottom-nav-qr-gen-icon-container']}>
                   <QrCode2Icon style={{ color: '#blue', fontSize: 35 }} />
