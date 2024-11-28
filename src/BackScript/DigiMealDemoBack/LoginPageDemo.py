@@ -1,17 +1,17 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-from apscheduler.schedulers.background import BackgroundScheduler
-import sqlite3
-import qrcode
-from io import BytesIO
-import base64
-import uuid
-from datetime import date
 import os
+import uuid
+import qrcode
+import base64
 import atexit
+import sqlite3
+from io import BytesIO
+from datetime import date
+from flask_cors import CORS
+from flask import Flask, request, jsonify
+from apscheduler.schedulers.background import BackgroundScheduler
 
 app = Flask(__name__)
-CORS(app, resources={r"*": {"origins": "*"}})
+CORS(app, resources={r"*": {"origins": "http://localhost:5173"}})
 
 LOCAL_DB_PATH = "/Users/firdovsirzaev/Desktop/DigiMeal/src/BackScript/DigiMealDemoBack/LoginDemo.db"
 
@@ -144,7 +144,30 @@ def get_qrs(username):
     qr_data = [{"id": row[0], "image": row[1], "date": row[2], "status": row[3]} for row in rows]
     return jsonify(qr_data), 200
 
+@app.route('/get_username', methods=['POST'])
+def get_username():
+    data = request.json
+    username = data.get('username')
 
+    if not username:
+        return jsonify({"success": False, "message": "Username is required"}), 400
+
+    conn = sqlite3.connect(LOCAL_DB_PATH)
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute('SELECT istifadeci_adi FROM user_page WHERE username = ?', (username, ))
+        result = cursor.fetchone()
+
+        if result:
+            istifadeci_adi = result[0]
+            return jsonify({"success": True, "istifadeci_adi": istifadeci_adi}), 200
+        else:
+            return jsonify({"success": False, "message": "Username not found"}), 404
+    except sqlite3.Error as e:
+        return jsonify({"success": False, "message": f"Database error: {str(e)}"}), 500
+    finally:
+        conn.close()
 @app.route('/update_status/<qr_id>', methods=['PATCH'])
 def update_status(qr_id):
     conn = sqlite3.connect(LOCAL_DB_PATH)

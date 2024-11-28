@@ -6,6 +6,7 @@ import styles from "../Login/Login.module.scss";
 import LoginError from './LoginError/LoginError';
 import React, { useState, useEffect } from 'react';
 import SchoolIcon from '@mui/icons-material/School';
+import Header from '../../components/Header/Header';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CopyRight from '../../components/CopyRight/CopyRight';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
@@ -18,9 +19,10 @@ import LanguageChanger from '../../components/LanguageChanger/LanguageChanger';
 export default function Login() {
     const navigate = useNavigate();
     const { t } = useTranslation();
-    const [finHelp, setFinHelp] = useState(false)
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [finHelp, setFinHelp] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [visibility, setVisibility] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
@@ -66,7 +68,7 @@ export default function Login() {
             const result = await response.json();
 
             if (response.ok) {
-                navigate('user-page');
+                navigate('user-page', { state: { username } });
             } else {
                 console.log(result.message);
                 toggleErrorContainer();
@@ -75,6 +77,12 @@ export default function Login() {
             console.log(error);
         }
     };
+    useEffect(() => {
+        if (isLoggedIn && username) {
+            console.log("User Logged In:", username);
+            navigate('user-page');
+        }
+    }, [isLoggedIn, username, navigate]);
 
     return (
         <>
@@ -151,6 +159,9 @@ export default function Login() {
             <LoginError
                 errorContainer={errorContainer}
                 toggleErrorContainer={toggleErrorContainer} />
+            {isLoggedIn && username && (
+                <Header username={username} />
+            )}
         </>
     );
 }
