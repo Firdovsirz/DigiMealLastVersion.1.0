@@ -1,0 +1,93 @@
+@import "../../../../styles/variables";
+
+.faculty-admin-aside {
+    width: 300px;
+    background: red;
+    transition: all 600ms;
+
+    .faculty-admin-aside-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px;
+
+        .faculty-admin-aside-burger-menu-icon-container {
+            cursor: pointer;
+
+            .fac-adm-burger-menu-first-line {
+                min-width: 30px;
+                height: 4px;
+                background: $primary-color;
+                margin-bottom: 5px;
+                border-radius: 20px;
+                transition: all 400ms;
+                rotate: 45deg;
+                transform: translate(8px, 4px);
+            }
+
+            //when the burgerMenu is closed
+            .fac-adm-burger-menu-first-line-closed {
+                min-width: 30px;
+                height: 4px;
+                background: $primary-color;
+                margin-bottom: 5px;
+                border-radius: 20px;
+                transition: all 400ms;
+            }
+
+            .fac-adm-burger-menu-second-line {
+                min-width: 0;
+                height: 4px;
+                background: $primary-color;
+                margin-bottom: 5px;
+                border-radius: 20px;
+                transition: all 400ms;
+                opacity: 0;
+                visibility: hidden;
+            }
+
+            //when the burgerMenu is closed
+            .fac-adm-burger-menu-second-line-closed {
+                min-width: 30px;
+                height: 4px;
+                background: $primary-color;
+                margin-bottom: 5px;
+                border-radius: 20px;
+                transition: all 400ms;
+            }
+
+            .fac-adm-burger-menu-third-line {
+                min-width: 30px;
+                height: 4px;
+                background: $primary-color;
+                margin-bottom: 5px;
+                border-radius: 20px;
+                transition: all 400ms;
+                rotate: -45deg;
+                transform: translate(9px, -5px);
+            }
+
+            //when the burgerMenu is closed
+            .fac-adm-burger-menu-third-line-closed {
+                min-width: 30px;
+                height: 4px;
+                background: $primary-color;
+                margin-bottom: 5px;
+                border-radius: 20px;
+                transform: all 400ms;
+            }
+        }
+    }
+
+    .fac-adm-pages {
+        ul {
+            li {
+                width: 250px;
+                display: flex;
+                align-items: center;
+                list-style-type: none;
+                padding: 20px;
+            }
+        }
+    }
+}

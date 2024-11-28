@@ -1,8 +1,9 @@
 import './App.css';
-import Header from './components/Header/Header';
-import LanguageChanger from './components/LanguageChanger/LanguageChanger';
 import Login from './pages/Login/Login';
+import Header from './components/Header/Header';
 import UserQr from './pages/User/UserQr/UserQr';
+import LanguageChanger from './components/LanguageChanger/LanguageChanger';
+import FacultyAdminAside from './pages/Admin/FacultyAdmin/FacultyAdminAside/FacultyAdminAside';
 
 function App() {
 
@@ -11,7 +12,8 @@ function App() {
       {/* <LanguageChanger /> */}
       {/* <Login /> */}
       {/* <Header /> */}
-      <UserQr />
+      {/* <UserQr /> */}
+      <FacultyAdminAside />
     </>
   )
 }
