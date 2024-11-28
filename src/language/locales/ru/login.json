@@ -3,5 +3,9 @@
     "login-fin-input-placeholder": "Фин код",
     "login-pass-input-placeholder": "Пароль",
     "login-btn-text": "Авторизоваться",
-    "login-copyright": "Все права защищены"
+    "login-forget-password": "Забыли пароль?",
+    "login-copyright": "Все права защищены",
+    "login-error-head-txt": "Фин код или пароль неверен.",
+    "login-error-desc-txt": "Попробуйте еще раз или свяжитесь с THİK",
+    "login-error-btn-txt": "Попробуйте еще раз"
 }

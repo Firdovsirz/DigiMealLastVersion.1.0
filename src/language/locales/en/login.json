@@ -3,5 +3,9 @@
     "login-fin-input-placeholder": "Fin code",
     "login-pass-input-placeholder": "Password",
     "login-btn-text": "Log In",
-    "login-copyright": "All rights reserved"
+    "login-forget-password": "Forgot Password?",
+    "login-copyright": "All rights reserved",
+    "login-error-head-txt": "The Fin code or password is incorrect.",
+    "login-error-desc-txt": "Try again or contact with THİK",
+    "login-error-btn-txt": "Try Again"
 }

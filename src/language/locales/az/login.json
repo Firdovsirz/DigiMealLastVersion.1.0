@@ -3,5 +3,9 @@
     "login-fin-input-placeholder": "Fin kod",
     "login-pass-input-placeholder": "Şifrə",
     "login-btn-text": "Daxil Ol",
-    "login-copyright": "Bütün hüquqlar qorunur"
+    "login-forget-password": "Şifrəni unutmusunuz?",
+    "login-copyright": "Bütün hüquqlar qorunur",
+    "login-error-head-txt": "Fin kod və ya şifrə yalnışdır.",
+    "login-error-desc-txt": "Yenidən cəhd edin və ya THİK ilə əlaqə saxlayın",
+    "login-error-btn-txt": "Yenidən cəhd edin"
 }

@@ -1,10 +1,11 @@
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import styles from "../Login/Login.module.scss";
+import LoginError from './LoginError/LoginError';
 import React, { useState, useEffect } from 'react';
 import SchoolIcon from '@mui/icons-material/School';
-import AztuLogo from "../../assets/LoginPage/aztu-logo.png";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CopyRight from '../../components/CopyRight/CopyRight';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
@@ -15,14 +16,21 @@ import ThikLogoLight from "../../assets/LoginPage/thik-logo-light.png";
 import LanguageChanger from '../../components/LanguageChanger/LanguageChanger';
 
 export default function Login() {
+    const navigate = useNavigate();
     const { t } = useTranslation();
-    const [value, setValue] = useState("");
-    const [finHelp, setFinHelp] = useState(false);
+    const [finHelp, setFinHelp] = useState(false)
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
     const [visibility, setVisibility] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
+    const [errorContainer, setErrorContainer] = useState(false);
+
     const handleFinHelpToggle = (e) => {
         e.stopPropagation();
         setFinHelp((prev) => !prev);
     };
+
     useEffect(() => {
         AOS.init({
             duration: 1000,
@@ -30,25 +38,44 @@ export default function Login() {
             once: true,
         });
     }, []);
-    useEffect(() => {
-        const closeFinHelp = (e) => {
-            if (finHelp && !e.target.closest(`.${styles['login-form-fin-label']}`)) {
-                setFinHelp(false);
-            }
-        };
-
-        document.addEventListener("mousedown", closeFinHelp);
-
-        return () => {
-            document.removeEventListener("mousedown", closeFinHelp);
-        };
-    }, [finHelp]);
+    const toggleErrorContainer = () => {
+        setErrorContainer(!errorContainer);
+    }
     const handleVisibility = () => {
         setVisibility(!visibility);
-    }
-    const handleUpperCase = (e) => {
-        setValue(e.target.value.toUpperCase());
-    }
+    };
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        setErrorMessage("");
+        setSuccessMessage("");
+
+        if (!username || !password) {
+            return;
+        }
+
+        try {
+            const response = await fetch("http://127.0.0.1:5000/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ username, password }),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                navigate('user-page');
+            } else {
+                console.log(result.message);
+                toggleErrorContainer();
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     return (
         <>
             <LanguageChanger />
@@ -59,9 +86,7 @@ export default function Login() {
                             <img data-aos="fade-right" src={AztuLogoLight} alt="aztu-logo" />
                             <img data-aos="fade-left" src={ThikLogoLight} alt="thik-logo" />
                         </div>
-                        <p
-                            data-aos="fade-down"
-                            className={styles['login-info-txt']}>
+                        <p data-aos="fade-down" className={styles['login-info-txt']}>
                             {t("login-info-text", { ns: "login" })}
                         </p>
                         <CopyRight />
@@ -69,15 +94,16 @@ export default function Login() {
                     <div className={styles['login-form-container']}>
                         <div data-aos="fade-down" className={styles['login-form-txt']}>
                             <SchoolIcon style={{ marginRight: 20, fontSize: 40, color: "rgb(24, 38, 98)" }} />
-                            <h1 >DigiMeal</h1>
+                            <h1>DigiMeal</h1>
                         </div>
-                        <form action="" data-aos="fade-up">
-                            <label htmlFor="fin-code" className={styles['login-form-fin-label']}>
+                        <form onSubmit={handleLogin} data-aos="fade-up">
+                            <label htmlFor="username" className={styles['login-form-fin-label']}>
                                 <input
                                     type="text"
-                                    value={value}
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
                                     required
-                                    onChange={handleUpperCase} />
+                                />
                                 <div className={styles['fin-code-placeholder']}>
                                     {t("login-fin-input-placeholder", { ns: "login" })}
                                 </div>
@@ -87,31 +113,44 @@ export default function Login() {
                             <label htmlFor="password" className={styles['login-form-pass-label']}>
                                 <input
                                     type={visibility ? "text" : "password"}
-                                    required />
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                />
                                 <div className={styles['password-placeholder']}>
                                     {t("login-pass-input-placeholder", { ns: "login" })}
                                 </div>
-                                {visibility ?
+                                {visibility ? (
                                     <VisibilityIcon
                                         style={{ color: "rgb(24, 38, 98)", cursor: "pointer" }}
-                                        onClick={handleVisibility} /> :
+                                        onClick={handleVisibility}
+                                    />
+                                ) : (
                                     <VisibilityOffIcon
                                         style={{ color: "rgb(24, 38, 98)", cursor: "pointer" }}
-                                        onClick={handleVisibility} />}
+                                        onClick={handleVisibility}
+                                    />
+                                )}
                             </label>
-                            <button>
+                            <button type="submit">
                                 {t("login-btn-text", { ns: "login" })}
                             </button>
                         </form>
-                        <p className={styles['forget-pass-txt']} data-aos="zoom-in">Şifrəni unutdun?</p>
+                        <p className={styles['forget-pass-txt']} data-aos="zoom-in">
+                            {t("login-forget-password", { ns: "login" })}
+                        </p>
                         <CopyRight
                             color={'black'}
                             marginTop={0}
                             display={window.innerWidth < 600 ? 'flex' : 'none'}
-                            width={'100%'} />
+                            width={'100%'}
+                        />
                     </div>
                 </section>
             </main>
+            <LoginError
+                errorContainer={errorContainer}
+                toggleErrorContainer={toggleErrorContainer} />
         </>
-    )
+    );
 }

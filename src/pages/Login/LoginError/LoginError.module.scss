@@ -1,0 +1,46 @@
+@import "../../../styles/mixins";
+@import "../../../styles/variables";
+
+.login-error-main {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    .login-error-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border: 2px solid $primary-color;
+        padding: 20px;
+        border-radius: 20px;
+        background: #fff;
+
+        .login-error-icon {
+            color: rgb(211, 53, 45);
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: $primary-color;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: $primary-color;
+            margin-bottom: 20px;
+        }
+
+        button {
+            @include button($width: 'fit-content');
+        }
+    }
+}
