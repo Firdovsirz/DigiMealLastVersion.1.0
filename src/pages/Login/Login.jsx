@@ -15,6 +15,7 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import AztuLogoLight from "../../assets/LoginPage/aztu-logo-light.png";
 import ThikLogoLight from "../../assets/LoginPage/thik-logo-light.png";
 import LanguageChanger from '../../components/LanguageChanger/LanguageChanger';
+import UserQr from '../User/UserQr/UserQr';
 
 export default function Login() {
     const navigate = useNavigate();
@@ -40,9 +41,11 @@ export default function Login() {
             once: true,
         });
     }, []);
+
     const toggleErrorContainer = () => {
         setErrorContainer(!errorContainer);
-    }
+    };
+
     const handleVisibility = () => {
         setVisibility(!visibility);
     };
@@ -68,7 +71,8 @@ export default function Login() {
             const result = await response.json();
 
             if (response.ok) {
-                navigate('user-page', { state: { username } });
+                setIsLoggedIn(true);
+                navigate('user-page', { state: { username: result.username || username } });
             } else {
                 console.log(result.message);
                 toggleErrorContainer();
@@ -77,12 +81,6 @@ export default function Login() {
             console.log(error);
         }
     };
-    useEffect(() => {
-        if (isLoggedIn && username) {
-            console.log("User Logged In:", username);
-            navigate('user-page');
-        }
-    }, [isLoggedIn, username, navigate]);
 
     return (
         <>
@@ -105,11 +103,12 @@ export default function Login() {
                             <h1>DigiMeal</h1>
                         </div>
                         <form onSubmit={handleLogin} data-aos="fade-up">
-                            <label htmlFor="username" className={styles['login-form-fin-label']}>
+                            <div htmlFor="username" className={styles['login-form-fin-label']} id='usernam'>
                                 <input
                                     type="text"
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
+                                    id='username'
                                     required
                                 />
                                 <div className={styles['fin-code-placeholder']}>
@@ -117,12 +116,13 @@ export default function Login() {
                                 </div>
                                 <HelpOutlineIcon style={{ cursor: "pointer" }} onClick={handleFinHelpToggle} />
                                 {finHelp ? <img src={FinCodeHelp} alt="fin-code-help" /> : null}
-                            </label>
-                            <label htmlFor="password" className={styles['login-form-pass-label']}>
+                            </div>
+                            <div htmlFor="password" className={styles['login-form-pass-label']} id='password'>
                                 <input
                                     type={visibility ? "text" : "password"}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
+                                    id='password'
                                     required
                                 />
                                 <div className={styles['password-placeholder']}>
@@ -139,7 +139,7 @@ export default function Login() {
                                         onClick={handleVisibility}
                                     />
                                 )}
-                            </label>
+                            </div>
                             <button type="submit">
                                 {t("login-btn-text", { ns: "login" })}
                             </button>
@@ -160,7 +160,10 @@ export default function Login() {
                 errorContainer={errorContainer}
                 toggleErrorContainer={toggleErrorContainer} />
             {isLoggedIn && username && (
-                <Header username={username} />
+                <>
+                    <Header username={username} />
+                    <UserQr username={username} />
+                </>
             )}
         </>
     );

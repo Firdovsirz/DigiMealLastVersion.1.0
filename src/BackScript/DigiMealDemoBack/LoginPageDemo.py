@@ -2,6 +2,7 @@ import os
 import uuid
 import qrcode
 import base64
+from PIL import Image
 import atexit
 import sqlite3
 from io import BytesIO
@@ -111,26 +112,30 @@ def generate_qr_code(data):
 def generate_qr():
     data = request.json
     username = data.get('username')
-    today = str(date.today())
 
     if not username:
-        return jsonify({"success": False, "message": "Username is required"}), 400
+        return jsonify({"success": False, "message": "Username is required."}), 400
 
-    conn = sqlite3.connect(LOCAL_DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM qr_codes WHERE username = ? AND date = ?', (username, today))
-    if cursor.fetchone():
-        conn.close()
-        return jsonify({"success": False, "message": "QR code already generated for today"}), 400
+    # Generate the QR code
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(username)
+    qr.make(fit=True)
 
-    unique_id = str(uuid.uuid4())
-    qr_image = generate_qr_code(unique_id)
-    cursor.execute('INSERT INTO qr_codes (id, username, image, date, status) VALUES (?, ?, ?, ?, ?)',
-                   (unique_id, username, qr_image, today, 1))
-    conn.commit()
-    conn.close()
+    img = qr.make_image(fill_color="black", back_color="white")
+    buffered = BytesIO()
+    img.save(buffered, format="PNG")
+    img_str = base64.b64encode(buffered.getvalue()).decode()
 
-    return jsonify({"success": True, "id": unique_id, "image": qr_image, "status": 1}), 201
+    return jsonify({
+        "success": True,
+        "image": img_str,
+        "date": str(date.today())  # Include today's date
+    })
 
 
 @app.route('/get_qrs/<username>', methods=['GET'])

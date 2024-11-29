@@ -9,11 +9,10 @@ import LanguageChanger from '../LanguageChanger/LanguageChanger';
 export default function Header() {
     const location = useLocation();
     const { username } = location.state || {};
-    const [backendUsername, setBackendUsername] = useState(''); // State for the backend username
-    const [loading, setLoading] = useState(true); // State to show loading status
+    const [backendUsername, setBackendUsername] = useState('');
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null)
     useEffect(() => {
-        // Fetch backend username on component mount
         if (username) {
             axios
                 .post('http://127.0.0.1:5000/get_username', { username })

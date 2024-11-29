@@ -19,9 +19,12 @@
 
             .user-page-qr-img-container {
                 margin-bottom: 40px;
+                border: 2px solid $primary-color;
+                border-radius: $primary-border-radius;
 
                 img {
                     width: 250px;
+                    border-radius: $primary-border-radius;
                 }
             }
 
