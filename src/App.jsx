@@ -1,5 +1,6 @@
 import './App.css';
 import Login from './pages/Login/Login';
+import Scanner from "./pages/Scanner/Scanner";
 import Header from './components/Header/Header';
 import UserQr from './pages/User/UserQr/UserQr';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
@@ -16,11 +17,12 @@ function App() {
       {/* <Header /> */}
       {/* <UserQr /> */}
       {/* <FacultyAdminAside /> */}
-      <Routes>
+      {/* <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/user-page" element={<UserQr />} />
-      </Routes>
+      </Routes> */}
       {/* <LoginError /> */}
+      <Scanner />
     </>
   )
 }

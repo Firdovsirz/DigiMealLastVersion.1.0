@@ -1,33 +1,12 @@
 import cv2
-#from pyzbar.pyzbar 
-import decode
 import numpy as np
-import sqlite3
 import time
+import sqlite3
 
-DB_PATH = 'LoginDemo.db'
+# Define your database path
+DB_PATH = '/Users/firdovsirzaev/Desktop/DigiMeal/src/BackScript/DigiMealDemoBack/LoginDemo.db'
 
-# Database connection and table setup
-def initialize_db():
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-
-    # Ensure table matches backend structure
-    cursor.execute('''
-         CREATE TABLE IF NOT EXISTS qr_codes (
-            id TEXT PRIMARY KEY,
-            username TEXT,
-            image BLOB,
-            date TEXT,
-            status INTEGER DEFAULT 1,
-            FOREIGN KEY (username) REFERENCES identify(username)    
-        )
-    ''')
-
-    conn.commit()
-    conn.close()
-
-
+# Function to update the status in the database
 def update_status_in_db(qr_id):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -46,59 +25,54 @@ def update_status_in_db(qr_id):
 
     conn.close()
 
-# Function to scan QR codes
-def scan_qr_code():
-    cap = cv2.VideoCapture(0)
-    ready_to_scan = True
+# Function to scan QR code
+def scan_qr_code(): 
+    cap = cv2.VideoCapture(0) 
+    ready_to_scan = True 
 
-    while True:
-        ret, frame = cap.read()
-        if not ret:
-            break
+    # Create a QRCodeDetector object
+    qr_decoder = cv2.QRCodeDetector() 
 
-        if ready_to_scan:
-            qr_codes = decode(frame)
-            if qr_codes:
-                for qr_code in qr_codes:
-                    qr_data = qr_code.data.decode("utf-8")
+    while True: 
+        ret, frame = cap.read() 
+        if not ret: 
+            break 
 
-                    # Draw polygon around the QR code
-                    pts = qr_code.polygon
-                    if len(pts) == 4:
-                        pts = [(point.x, point.y) for point in pts]
-                        pts = np.array(pts, dtype=np.int32)
-                        cv2.polylines(frame, [pts], True, (0, 255, 0), 3)
+        if ready_to_scan: 
+            # Use OpenCV's QRCodeDetector to detect and decode the QR code
+            qr_data, pts, _ = qr_decoder.detectAndDecode(frame) 
 
-                    # Display QR code data on the screen
-                    cv2.putText(frame, f"QR Code: {qr_data}", (qr_code.rect.left, qr_code.rect.top - 10),
-                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+            if qr_data: 
+                # If a QR code is detected, draw the bounding box and display data
+                pts = np.int32(pts).reshape(-1, 2) 
+                for i in range(4): 
+                    cv2.line(frame, tuple(pts[i]), tuple(pts[(i + 1) % 4]), (0, 255, 0), 3) 
 
-                    print("QR Code Data:", qr_data)
+                cv2.putText(frame, f"QR Code Data: {qr_data}", (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 0), 2) 
 
-                    # Update the status in the database if the ID matches
-                    update_status_in_db(qr_data)
+                print("QR Code Data:", qr_data)
 
-                ready_to_scan = False
-                start_time = time.time()
+                # Update the QR code status in the database using the decoded QR code (assumed to be the qr_id)
+                update_status_in_db(qr_data)
 
-        else:
-            elapsed_time = time.time() - start_time
-            if elapsed_time >= 15:
-                ready_to_scan = True
-            else:
-                cv2.putText(frame, "Ready to scan again in {:.0f} seconds".format(15 - elapsed_time),
-                            (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
+                ready_to_scan = False 
+                start_time = time.time() 
 
-        cv2.imshow("QR Code Scanner", frame)
+        else: 
+            elapsed_time = time.time() - start_time 
+            if elapsed_time >= 15: 
+                ready_to_scan = True  # Set flag to scan again 
+            else: 
+                cv2.putText(frame, "Ready to scan again in {:.0f} seconds".format(15 - elapsed_time), 
+                            (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2) 
 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+        cv2.imshow("QR Code Scanner", frame) 
 
-    cap.release()
+        if cv2.waitKey(1) & 0xFF == ord('q'): 
+            break 
+
+    cap.release() 
     cv2.destroyAllWindows()
 
-# Initialize the database and table
-initialize_db()
-
-# Run the QR code scanner
+# Start the QR code scanner
 scan_qr_code()
