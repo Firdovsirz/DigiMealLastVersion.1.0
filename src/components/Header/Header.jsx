@@ -11,7 +11,8 @@ export default function Header() {
     const { username } = location.state || {};
     const [backendUsername, setBackendUsername] = useState('');
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null)
+    const [error, setError] = useState(null);
+    const [burgerMenu, setBurgerMenu] = useState(false);
     useEffect(() => {
         if (username) {
             axios
@@ -53,8 +54,34 @@ export default function Header() {
                 </div>
                 <div className={styles['user-header-profile']}>
                     <p>{backendUsername}</p>
-                    <AccountCircleIcon style={{ color: 'rgb(24, 38, 98', fontSize: 40, marginLeft: 15, cursor: 'pointer', marginRight: 30 }} />
-                    <LanguageChanger position={'relative'} top={0} right={0} />
+                    <AccountCircleIcon
+                        style={{
+                            color: 'rgb(24, 38, 98',
+                            fontSize: 40,
+                            marginLeft: 15,
+                            cursor: 'pointer',
+                            marginRight: 30
+                        }} />
+                    {window.innerWidth > 600 ? <LanguageChanger
+                        position={'relative'}
+                        top={0}
+                        right={0}
+                    /> : null}
+                </div>
+                <div className={styles['burger-menu']}>
+                    <div className={styles['burger-profile-info']}>
+                        <p>{backendUsername}</p>
+                    </div>
+                    <div className={styles['burger-pages']}>
+                        <ul>
+                            <li>Generate Qr</li>
+                            <li>History</li>
+                        </ul>
+                    </div>
+                    <LanguageChanger
+                        position={'fixed'}
+                        top={500}
+                        bottom={'40px'} />
                 </div>
             </nav>
         </header>

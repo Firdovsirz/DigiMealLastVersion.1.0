@@ -1,8 +1,10 @@
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import CloseIcon from '@mui/icons-material/Close';
 import styles from "../UserQr/UserQr.module.scss";
 import Header from "../../../components/Header/Header";
 import React, { useState, useEffect, useRef } from "react";
+import BottomNavigation from "../../../components/BottomNavigation/BottomNavigation";
 
 export default function UserQr() {
   const { t } = useTranslation();
@@ -78,7 +80,7 @@ export default function UserQr() {
 
   useEffect(() => {
     if (username) {
-      fetchQrCodeStatus(); // Fetch QR codes when the username is available
+      fetchQrCodeStatus();
     }
   }, [username]);
 
@@ -86,7 +88,7 @@ export default function UserQr() {
   const handleGenerateQR = () => {
     if (!username) {
       setErrorMessage("Username is required.");
-      return;  // Prevent generating QR code if username is missing
+      return;
     }
 
     fetch("http://127.0.0.1:5000/generate_qr", {
@@ -170,6 +172,7 @@ export default function UserQr() {
             )}
           </div>
         </section>
+        {window.innerWidth < 600 ? <BottomNavigation /> : null}
       </main>
     </>
   );

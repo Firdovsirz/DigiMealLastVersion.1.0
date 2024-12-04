@@ -6,7 +6,7 @@ import UsaFlag from "../../assets/Language/usa-flag.png";
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import styles from "../LanguageChanger/LanguageChanger.module.scss";
 
-export default function LanguageChanger({position, top, right}) {
+export default function LanguageChanger({ position, top, right, bottom }) {
     const [currentLang, setCurrentLang] = useState('Az');
     const [currentFlag, setCurrentFlag] = useState(AzFlag);
     const [dropdown, setDropdown] = useState(false);
@@ -44,7 +44,9 @@ export default function LanguageChanger({position, top, right}) {
     ];
 
     return (
-        <div className={styles['lang-changer-main']} style={{position: position, top: top, right: right}}>
+        <div
+            className={styles['lang-changer-main']}
+            style={{ position: position, top: top, right: right, bottom: bottom }}>
             <div className={styles['lang-changer-container']}>
                 <div className={styles['current-lang']} onClick={handleDropdown}>
                     <div className={styles['current-lang-info']}>

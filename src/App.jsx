@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LanguageChanger from './components/LanguageChanger/LanguageChanger';
 import FacultyAdminAside from './pages/Admin/FacultyAdmin/FacultyAdminAside/FacultyAdminAside';
 import LoginError from './pages/Login/LoginError/LoginError';
+import BottomNavigation from './components/BottomNavigation/BottomNavigation';
 
 function App() {
 
@@ -17,12 +18,13 @@ function App() {
       {/* <Header /> */}
       {/* <UserQr /> */}
       {/* <FacultyAdminAside /> */}
-      {/* <Routes>
+      <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/user-page" element={<UserQr />} />
-      </Routes> */}
+      </Routes>
       {/* <LoginError /> */}
-      <Scanner />
+      {/* <Scanner /> */}
+      {/* <BottomNavigation /> */}
     </>
   )
 }
