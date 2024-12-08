@@ -1,0 +1,111 @@
+@import "../../styles/variables";
+
+.about-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .about-logos {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        // margin-bottom: 80px;
+        padding: 40px;
+
+        img {
+            width: 150px;
+            margin-inline: 20px;
+        }
+    }
+
+    .about-digimeal-text-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 50px;
+
+        h2 {
+            color: $primary-color;
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            color: $primary-color;
+            font-size: 20px;
+            width: 800px;
+            text-align: center;
+        }
+    }
+
+    .developer-img-container {
+        margin-bottom: 80px;
+
+        .developer-img {
+            width: 600px;
+            border-radius: 20px;
+            box-shadow: 2px 2px 20px rgb(52, 52, 52);
+        }
+    }
+
+    .developer-contact-info {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+        padding: 10px 300px;
+
+        .front-developer-info,
+        .back-developer-info {
+            border: 3px solid $primary-color;
+            padding: 20px;
+            border-radius: $primary-border-radius;
+
+            .front-dev-profile-info,
+            .back-dev-profile-info {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 20px;
+
+                img {
+                    width: 60px;
+                    border-radius: 50%;
+                    margin-right: 20px;
+                }
+
+                .front-dev-profile-text,
+                .back-dev-profile-text {
+                    h3 {
+                        color: $primary-color;
+                        margin-bottom: 5px;
+                    }
+
+                    p {
+                        color: $primary-color;
+                    }
+                }
+            }
+
+            .front-dev-socials,
+            .back-dev-socials {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                a {
+                    .dev-social-icon {
+                        color: $primary-color;
+                        font-size: 25px;
+                        cursor: pointer;
+                        border: 1px solid $primary-color;
+                        padding: 5px;
+                        border-radius: $primary-border-radius;
+                    }
+                }
+            }
+        }
+    }
+}

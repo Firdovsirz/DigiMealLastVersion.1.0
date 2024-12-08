@@ -49,6 +49,9 @@
             .user-download-qr-btn {
                 @include button();
             }
+            .user-generate-qr-btn{
+                @include button($width: 'fit-content');
+            }
         }
     }
 

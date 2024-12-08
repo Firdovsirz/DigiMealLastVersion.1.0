@@ -18,6 +18,10 @@
             display: flex;
             align-items: center;
             width: calc(100% / 3);
+
+            @media (max-width: 600px) {
+                width: calc(100% / 2);
+            }
         }
 
         .header-pages {
@@ -60,22 +64,76 @@
         .user-header-profile {
             display: flex;
             align-items: center;
-            justify-content: space-evenly;
+            justify-content: flex-end;
             width: calc(100% / 3);
+
+            p {
+                width: fit-content;
+            }
+
+            @media (max-width: 600px) {
+                width: calc(100% / 2);
+
+                p {
+                    width: 70px;
+                }
+            }
         }
 
         .burger-menu {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            background: $primary-color;
             width: 250px;
             height: 100vh;
             position: fixed;
             top: 0;
             right: 0;
-            z-index: 100;
+            background: $primary-color;
+            transition: all 400ms;
+
+            .burger-menu-close-icon-container {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 20px;
+
+                .burger-menu-close-icon {
+                    color: #fff;
+                    font-size: 40px;
+                }
+
+                .burger-menu-digimeal-logo {
+                    display: flex;
+                    align-items: center;
+                    color: #fff;
+
+                    p {
+                        color: #fff;
+                        font-size: 25px;
+                    }
+                }
+            }
+            .burger-menu-profile-info{
+                padding: 20px;
+                border-top: 1px solid #fff;
+                border-bottom: 1px solid #fff;
+                h3{
+                    color: #fff;
+                }
+            }
+            .burger-menu-pages {
+                padding: 20px;
+
+                ul {
+                    li {
+                        color: #fff;
+                        font-size: 18px;
+                        list-style: none;
+
+                        &:first-child {
+                            margin-bottom: 20px;
+                        }
+                    }
+                }
+            }
         }
     }
 }

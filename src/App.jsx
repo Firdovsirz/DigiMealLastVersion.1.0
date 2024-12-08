@@ -3,11 +3,13 @@ import Login from './pages/Login/Login';
 import Scanner from "./pages/Scanner/Scanner";
 import Header from './components/Header/Header';
 import UserQr from './pages/User/UserQr/UserQr';
+import LoginError from './pages/Login/LoginError/LoginError';
+import UserHistory from './pages/User/UserHistory/UserHistory';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LanguageChanger from './components/LanguageChanger/LanguageChanger';
-import FacultyAdminAside from './pages/Admin/FacultyAdmin/FacultyAdminAside/FacultyAdminAside';
-import LoginError from './pages/Login/LoginError/LoginError';
 import BottomNavigation from './components/BottomNavigation/BottomNavigation';
+import FacultyAdminAside from './pages/Admin/FacultyAdmin/FacultyAdminAside/FacultyAdminAside';
+import About from './components/About/About';
 
 function App() {
 
@@ -21,12 +23,14 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/user-page" element={<UserQr />} />
+        <Route path="/user-history" element={<UserHistory />} />
       </Routes>
       {/* <LoginError /> */}
       {/* <Scanner /> */}
       {/* <BottomNavigation /> */}
+      {/* <About /> */}
     </>
   )
 }
 
-export default App
+export default App;

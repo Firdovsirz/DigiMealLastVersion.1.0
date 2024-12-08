@@ -12,19 +12,23 @@ from flask import Flask, request, jsonify
 from apscheduler.schedulers.background import BackgroundScheduler
 
 app = Flask(__name__)
-CORS(app, resources={r"*": {"origins": "http://localhost:5173"}})
+CORS(app, resources={r"*": {"origins": "*"}})
 
 LOCAL_DB_PATH = "/Users/firdovsirzaev/Desktop/DigiMeal/src/BackScript/DigiMealDemoBack/LoginDemo.db"
 
+
+# Initialize database schema and add user_page table
 def init_db():
     conn = sqlite3.connect(LOCAL_DB_PATH)
     cursor = conn.cursor()
 
+    # Create 'identify' table
     cursor.execute('''CREATE TABLE IF NOT EXISTS identify (
         username TEXT PRIMARY KEY,
         password TEXT NOT NULL
     )''')
 
+    # Create 'qr_codes' table
     cursor.execute('''CREATE TABLE IF NOT EXISTS qr_codes (
         id TEXT PRIMARY KEY,
         username TEXT,
@@ -34,11 +38,24 @@ def init_db():
         status_scanner integer default 1,
         FOREIGN KEY (username) REFERENCES identify(username)
     )''')
+
+    # Create 'user_page' table
+    cursor.execute('''CREATE TABLE IF NOT EXISTS user_page (
+        username TEXT PRIMARY KEY,
+        istifadeci_adi TEXT NOT NULL
+    )''')
+
+    # Insert some test data into the user_page table
+    cursor.execute('INSERT OR IGNORE INTO user_page (username, istifadeci_adi) VALUES (?, ?)', ('Karam Shukurlu', 'Karam Shukurlu'))
+
     conn.commit()
     conn.close()
 
+
 init_db()
 
+
+# Schedule job to mark old QR codes as expired
 def update_old_qr_codes():
     today = str(date.today())
     conn = sqlite3.connect(LOCAL_DB_PATH)
@@ -47,11 +64,14 @@ def update_old_qr_codes():
     conn.commit()
     conn.close()
 
+
 scheduler = BackgroundScheduler()
-scheduler.add_job(update_old_qr_codes, 'cron', hour=0, minute=1)
+scheduler.add_job(update_old_qr_codes, 'cron', hour=23, minute=0)
 scheduler.start()
 atexit.register(lambda: scheduler.shutdown())
 
+
+# Handle user login
 def check_login(username, password):
     try:
         conn = sqlite3.connect(LOCAL_DB_PATH)
@@ -67,6 +87,8 @@ def check_login(username, password):
     finally:
         conn.close()
 
+
+# Login endpoint
 @app.route('/login', methods=['POST'])
 def login():
     data = request.json
@@ -79,6 +101,8 @@ def login():
     result = check_login(username, password)
     return jsonify(result), 200 if result['success'] else 401
 
+
+# Generate a QR code
 def generate_qr_code(data):
     qr = qrcode.QRCode(
         version=1,
@@ -93,6 +117,8 @@ def generate_qr_code(data):
     img.save(buffered, format="PNG")
     return base64.b64encode(buffered.getvalue()).decode("utf-8")
 
+
+# Generate QR endpoint
 @app.route('/generate_qr', methods=['POST'])
 def generate_qr():
     data = request.json
@@ -116,45 +142,22 @@ def generate_qr():
             "date": existing_qr[2]
         })
 
-    # Generate a new QR code since there is none for today
-    qr = qrcode.QRCode(
-        version=1,
-        error_correction=qrcode.constants.ERROR_CORRECT_L,
-        box_size=10,
-        border=4,
-    )
-    qr.add_data(username)
-    qr.make(fit=True)
-
-    img = qr.make_image(fill_color="black", back_color="white")
-    buffered = BytesIO()
-    img.save(buffered, format="PNG")
-    img_str = base64.b64encode(buffered.getvalue()).decode()
-
-    # Save new QR code to the database
+    # Generate a new QR code if none exists
     qr_id = str(uuid.uuid4())
-    cursor.execute('''INSERT INTO qr_codes (id, username, image, date, status) VALUES (?, ?, ?, ?, 1)''', 
-                   (qr_id, username, img_str, today))
+    qr_image = generate_qr_code(username)
+    cursor.execute('''INSERT INTO qr_codes (id, username, image, date, status) VALUES (?, ?, ?, ?, 1)''',
+                   (qr_id, username, qr_image, today))
     conn.commit()
     conn.close()
 
     return jsonify({
         "success": True,
-        "image": img_str,
-        "date": today  # Include today's date
+        "image": qr_image,
+        "date": today
     })
 
-@app.route('/get_qrs/<username>', methods=['GET'])
-def get_qrs(username):
-    conn = sqlite3.connect(LOCAL_DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute('SELECT id, image, date, status FROM qr_codes WHERE username = ?', (username,))
-    rows = cursor.fetchall()
-    conn.close()
 
-    qr_data = [{"id": row[0], "image": row[1], "date": row[2], "status": row[3]} for row in rows]
-    return jsonify(qr_data), 200
-
+# Handle username query
 @app.route('/get_username', methods=['POST'])
 def get_username():
     data = request.json
@@ -180,14 +183,20 @@ def get_username():
     finally:
         conn.close()
 
-@app.route('/update_status/<qr_id>', methods=['PATCH'])
-def update_status(qr_id):
+
+# Return QR data history
+@app.route('/history/<username>', methods=['GET'])
+def history(username):
     conn = sqlite3.connect(LOCAL_DB_PATH)
     cursor = conn.cursor()
-    cursor.execute('UPDATE qr_codes SET status = 0 WHERE id = ?', (qr_id,))
-    conn.commit()
+    cursor.execute('SELECT username, image, date, status_scanner FROM qr_codes WHERE username = ?', (username,))
+    rows = cursor.fetchall()
     conn.close()
-    return jsonify({"message": "Status updated successfully"}), 200
 
+    qr_data = [{"username": row[0], "image": row[1], "date": row[2], "status_scanner": row[3]} for row in rows]
+    return jsonify(qr_data), 200
+
+
+# Main server execution
 if __name__ == '__main__':
     app.run(debug=True)

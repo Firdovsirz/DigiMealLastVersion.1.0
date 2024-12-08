@@ -1,7 +1,9 @@
+import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import CloseIcon from '@mui/icons-material/Close';
+import CloseIcon from "@mui/icons-material/Close";
 import styles from "../UserQr/UserQr.module.scss";
+import { setUsername } from "../../../redux/authSlice";
 import Header from "../../../components/Header/Header";
 import React, { useState, useEffect, useRef } from "react";
 import BottomNavigation from "../../../components/BottomNavigation/BottomNavigation";
@@ -10,8 +12,8 @@ export default function UserQr() {
   const { t } = useTranslation();
   const downloadRef = useRef(null);
   const location = useLocation();
-  const { username } = location.state || {};
-  const displayName = username || "Anonymous";  // Ensure username is not undefined
+  const username = useSelector((state) => state.auth.username);
+  const displayName = username || "Anonymous";
 
   const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
   const [qrCodeImg, setQrCodeImg] = useState(null);
@@ -44,76 +46,74 @@ export default function UserQr() {
     return () => clearInterval(timer);
   }, []);
 
-  // Fetch QR code status on load
-  const fetchQrCodeStatus = () => {
-    if (!username) {
-      setErrorMessage("Username is required.");
-      return;  // Prevent fetching if username is not available
-    }
+  // Fetch today's QR code if already generated
+  useEffect(() => {
+    const fetchQrCodeStatus = async () => {
+      if (!username) {
+        setErrorMessage("Username is required.");
+        return;
+      }
 
-    fetch(`http://127.0.0.1:5000/get_qrs/${username}`)
-      .then((response) => response.json())
-      .then((data) => {
-        const today = new Date().toISOString().split("T")[0];
-        const todaysQr = data.find((qr) => qr.date === today && qr.status === 1);
+      try {
+        const response = await fetch(`http://127.0.0.1:5000/history/${username}`);
+        const data = await response.json();
 
-        if (todaysQr) {
-          // Show the generated QR code for today
-          setQrCodeImg(`data:image/png;base64,${todaysQr.image}`);
-          setIsButtonDisabled(true); // Disable button
-        } else {
-          // If no QR for today, show the most recent QR code
-          const latestQr = data.find((qr) => qr.status === 1); // Get the most recent active QR
-          if (latestQr) {
-            setQrCodeImg(`data:image/png;base64,${latestQr.image}`);
+        if (data && data.length > 0) {
+          const today = new Date().toISOString().split("T")[0];
+          const todaysQr = data.find(
+            (qr) => qr.date === today && qr.status_scanner === 1
+          );
+
+          if (todaysQr) {
+            setQrCodeImg(`data:image/png;base64,${todaysQr.image}`);
+            setIsButtonDisabled(true); // Disable the button if QR code exists
           } else {
             setQrCodeImg(null);
+            setIsButtonDisabled(false); // Allow user to generate QR
           }
-          setIsButtonDisabled(false); // Enable button if no QR for today
+        } else {
+          setErrorMessage("No QR code history found.");
+          setIsButtonDisabled(false);
         }
-      })
-      .catch((error) => {
-        console.error("Error fetching QR status:", error);
-        setErrorMessage("Failed to fetch QR code status.");
-      });
-  };
+      } catch (error) {
+        console.error("Error fetching QR history:", error);
+        setErrorMessage("Failed to fetch QR code history.");
+      }
+    };
 
-  useEffect(() => {
-    if (username) {
-      fetchQrCodeStatus();
-    }
+    fetchQrCodeStatus();
   }, [username]);
 
-  // Generate QR code
-  const handleGenerateQR = () => {
+  // Handle Generate QR Code
+  const handleGenerateQR = async () => {
     if (!username) {
       setErrorMessage("Username is required.");
       return;
     }
 
-    fetch("http://127.0.0.1:5000/generate_qr", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setQrCodeImg(`data:image/png;base64,${data.image}`);
-          setIsButtonDisabled(true);
-        } else {
-          setErrorMessage(data.message || "Failed to generate QR code.");
-        }
-      })
-      .catch((error) => {
-        console.error("Error generating QR code:", error);
-        setErrorMessage("An error occurred while generating the QR code.");
+    try {
+      const response = await fetch("http://127.0.0.1:5000/generate_qr", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username }),
       });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setQrCodeImg(`data:image/png;base64,${data.image}`);
+        setIsButtonDisabled(true); // Disable the button after generating
+      } else {
+        setErrorMessage(data.message || "Failed to generate QR code.");
+      }
+    } catch (error) {
+      console.error("Error generating QR code:", error);
+      setErrorMessage("An error occurred while generating the QR code.");
+    }
   };
 
-  // Handle QR code download
   const handleDownload = () => {
     if (downloadRef.current && qrCodeImg) {
       const a = document.createElement("a");

@@ -1,44 +1,63 @@
-import axios from 'axios';
-import { useLocation } from 'react-router-dom';
-import React, { useEffect, useState } from 'react';
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
 import styles from "../Header/Header.module.scss";
+import { setUsername } from '../../redux/authSlice';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
 import SchoolIcon from '@mui/icons-material/School';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LanguageChanger from '../LanguageChanger/LanguageChanger';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+
+// Fetch full name using the backend API
+
 
 export default function Header() {
-    const location = useLocation();
-    const { username } = location.state || {};
-    const [backendUsername, setBackendUsername] = useState('');
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [burgerMenu, setBurgerMenu] = useState(false);
+    const dispatch = useDispatch();
+    const globalUsername = useSelector((state) => state.auth.username);
+    const [fullName, setFullName] = useState(globalUsername); // Default to username if not yet fetched
+    const [burgerMenu, setBurgerMenu] = useState(true);
+
+    const handleBurgerMenu = () => {
+        setBurgerMenu(!burgerMenu);
+    };
+
     useEffect(() => {
-        if (username) {
-            axios
-                .post('http://127.0.0.1:5000/get_username', { username })
-                .then(response => {
-                    if (response.data.success) {
-                        setBackendUsername(response.data.istifadeci_adi);
-                    } else {
-                        setError(response.data.message);
-                    }
-                })
-                .catch(err => setError('Failed to fetch username.'))
-                .finally(() => setLoading(false));
-        } else {
-            setError('No username provided.');
-            setLoading(false);
+        // Fetch full name only when the username changes
+        if (globalUsername) {
+            fetchFullName(globalUsername).then((name) => setFullName(name));
         }
-    }, [username]);
+    }, [globalUsername]);
 
-    if (loading) {
-        return <p>Loading...</p>;
+    if (!globalUsername) {
+        return <p>Please log in to access the dashboard</p>;
     }
+    const fetchFullName = async (username) => {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/get_username', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username }),
+            });
 
-    if (error) {
-        return <p>Error: {error}</p>;
-    }
+            if (!response.ok) {
+                throw new Error('Failed to fetch full name');
+            }
+
+            const result = await response.json();
+            if (result.success) {
+                return result.istifadeci_adi;
+            } else {
+                return username; // Fallback to username if full name isn't available
+            }
+        } catch (error) {
+            console.error(error);
+            return username;
+        }
+    };
+
     return (
         <header className={styles['user-header']}>
             <nav className={styles['user-nav']}>
@@ -48,42 +67,45 @@ export default function Header() {
                 </div>
                 <div className={styles['header-pages']}>
                     <ul>
-                        <li>Qr Code Generate</li>
-                        <li>History</li>
+                        <li>
+                            <Link to={'/user-page'} state={{ username: globalUsername }}>Qr Code Generate</Link>
+                        </li>
+                        <li>
+                            <Link to={'/user-history'} state={{ username: globalUsername }}>Qr Code History</Link>
+                        </li>
                     </ul>
                 </div>
                 <div className={styles['user-header-profile']}>
-                    <p>{backendUsername}</p>
+                    <p>{fullName}</p>
                     <AccountCircleIcon
+                        onClick={handleBurgerMenu}
                         style={{
                             color: 'rgb(24, 38, 98',
                             fontSize: 40,
-                            marginLeft: 15,
                             cursor: 'pointer',
-                            marginRight: 30
                         }} />
-                    {window.innerWidth > 600 ? <LanguageChanger
-                        position={'relative'}
-                        top={0}
-                        right={0}
-                    /> : null}
+                    {window.innerWidth > 600 ? <LanguageChanger position={'relative'} top={0} right={0}/> : null}
+
                 </div>
-                <div className={styles['burger-menu']}>
-                    <div className={styles['burger-profile-info']}>
-                        <p>{backendUsername}</p>
+                <div className={styles['burger-menu']} style={burgerMenu ? { marginRight: '-250px' } : { marginRight: 0 }}>
+                    <div className={styles['burger-menu-close-icon-container']}>
+                        <CloseIcon className={styles['burger-menu-close-icon']} onClick={handleBurgerMenu} />
+                        <div className={styles['burger-menu-digimeal-logo']}>
+                            <SchoolIcon style={{ color: '#fff', fontSize: 30, marginRight: 10 }} />
+                            <p>DigiMeal</p>
+                        </div>
                     </div>
-                    <div className={styles['burger-pages']}>
+                    <div className={styles['burger-menu-profile-info']}>
+                        <h3>{fullName}</h3>
+                    </div>
+                    <div className={styles['burger-menu-pages']}>
                         <ul>
-                            <li>Generate Qr</li>
+                            <li>Qr Generate</li>
                             <li>History</li>
                         </ul>
                     </div>
-                    <LanguageChanger
-                        position={'fixed'}
-                        top={500}
-                        bottom={'40px'} />
                 </div>
             </nav>
         </header>
-    )
+    );
 }

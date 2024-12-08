@@ -1,12 +1,15 @@
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import UserQr from '../User/UserQr/UserQr';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import styles from "../Login/Login.module.scss";
 import LoginError from './LoginError/LoginError';
 import React, { useState, useEffect } from 'react';
+import { setUsername } from '../../redux/authSlice';
 import SchoolIcon from '@mui/icons-material/School';
 import Header from '../../components/Header/Header';
+import { useSelector, useDispatch } from 'react-redux';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CopyRight from '../../components/CopyRight/CopyRight';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
@@ -15,12 +18,11 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import AztuLogoLight from "../../assets/LoginPage/aztu-logo-light.png";
 import ThikLogoLight from "../../assets/LoginPage/thik-logo-light.png";
 import LanguageChanger from '../../components/LanguageChanger/LanguageChanger';
-import UserQr from '../User/UserQr/UserQr';
 
 export default function Login() {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const { t } = useTranslation();
-    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [finHelp, setFinHelp] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -28,6 +30,7 @@ export default function Login() {
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
     const [errorContainer, setErrorContainer] = useState(false);
+    const username = useSelector((state) => state.auth.username);
 
     const handleFinHelpToggle = (e) => {
         e.stopPropagation();
@@ -72,6 +75,7 @@ export default function Login() {
 
             if (response.ok) {
                 setIsLoggedIn(true);
+                dispatch(setUsername(result.username || username));
                 navigate('user-page', { state: { username: result.username || username } });
             } else {
                 console.log(result.message);
@@ -107,7 +111,7 @@ export default function Login() {
                                 <input
                                     type="text"
                                     value={username}
-                                    onChange={(e) => setUsername(e.target.value)}
+                                    onChange={(e) => dispatch(setUsername(e.target.value))}
                                     id='username'
                                     required
                                 />
@@ -161,8 +165,8 @@ export default function Login() {
                 toggleErrorContainer={toggleErrorContainer} />
             {isLoggedIn && username && (
                 <>
-                    <Header username={username} />
-                    <UserQr username={username} />
+                    <Header/>
+                    <UserQr/>
                 </>
             )}
         </>
