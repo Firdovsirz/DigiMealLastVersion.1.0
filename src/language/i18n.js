@@ -5,27 +5,33 @@ import { initReactI18next } from 'react-i18next';
 // EN
 import translationEnUser from "./locales/en/user.json";
 import translationEnLogin from "./locales/en/login.json";
+import translationEnHeader from "./locales/en/header.json";
 
 // RU
 import translationRuUser from "./locales/ru/user.json";
 import translationRuLogin from "./locales/ru/login.json";
+import translationRuHeader from "./locales/ru/header.json";
 
 // AZ
 import translationAzUser from "./locales/az/user.json";
 import translationAzLogin from "./locales/az/login.json";
+import translationAzHeader from "./locales/az/header.json";
 
 const resources = {
     en: {
+        user: translationEnUser,
         login: translationEnLogin,
-        user: translationEnUser
+        header: translationEnHeader,
     },
     ru: {
+        user: translationRuUser,
         login: translationRuLogin,
-        user: translationRuUser
+        header: translationRuHeader,
     },
     az: {
+        user: translationAzUser,
         login: translationAzLogin,
-        user: translationAzUser
+        header: translationAzHeader,
     }
 };
 
@@ -38,7 +44,7 @@ i18n
         interpolation: {
             escapeValue: fabClasses
         },
-        ns: ['login', 'user'],
+        ns: ['login', 'user', 'header'],
         defaultNS: 'login'
     });
 

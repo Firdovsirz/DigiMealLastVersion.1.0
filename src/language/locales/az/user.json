@@ -1,3 +1,7 @@
 {
-    "user-download-qr-btn-txt": "Qr yüklə"
+    "user-download-qr-btn-txt": "Qr yüklə",
+    "user-qr-hour": "saat ",
+    "user-qr-minute": "dəqiqə ",
+    "user-qr-second": "saniyə",
+    "user-history-heading": "İstifadəçi Tarixçəsi"
 }

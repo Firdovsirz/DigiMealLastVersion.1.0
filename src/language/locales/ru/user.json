@@ -1,3 +1,7 @@
 {
-    "user-download-qr-btn-txt": "Скачать Гр"
+    "user-download-qr-btn-txt": "Скачать Гр",
+    "user-qr-hour": "часы ",
+    "user-qr-minute": "минут ",
+    "user-qr-second": "секунды ",
+    "user-history-heading": "История пользователя"
 }

@@ -10,6 +10,7 @@ import LanguageChanger from './components/LanguageChanger/LanguageChanger';
 import BottomNavigation from './components/BottomNavigation/BottomNavigation';
 import FacultyAdminAside from './pages/Admin/FacultyAdmin/FacultyAdminAside/FacultyAdminAside';
 import About from './components/About/About';
+import AdminLogin from './pages/Admin/AdminLogin/AdminLogin';
 
 function App() {
 
@@ -20,11 +21,12 @@ function App() {
       {/* <Header /> */}
       {/* <UserQr /> */}
       {/* <FacultyAdminAside /> */}
-      <Routes>
+      {/* <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/user-page" element={<UserQr />} />
         <Route path="/user-history" element={<UserHistory />} />
-      </Routes>
+      </Routes> */}
+      <AdminLogin />
       {/* <LoginError /> */}
       {/* <Scanner /> */}
       {/* <BottomNavigation /> */}

@@ -1,3 +1,7 @@
 {
-    "user-download-qr-btn-txt": "Download Qr"
+    "user-download-qr-btn-txt": "Download Qr",
+    "user-qr-hour": "hours ",
+    "user-qr-minute": "minutes ",
+    "user-qr-second": "seconds ",
+    "user-history-heading": "User History"
 }

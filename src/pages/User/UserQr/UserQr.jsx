@@ -46,23 +46,21 @@ export default function UserQr() {
     return () => clearInterval(timer);
   }, []);
 
-  // Fetch today's QR code if already generated
+  // Fetch today's QR code using the get_qrs route
   useEffect(() => {
-    const fetchQrCodeStatus = async () => {
+    const fetchQrCodes = async () => {
       if (!username) {
         setErrorMessage("Username is required.");
         return;
       }
 
       try {
-        const response = await fetch(`http://127.0.0.1:5000/history/${username}`);
+        const response = await fetch(`http://127.0.0.1:5000/get_qrs/${username}`);
         const data = await response.json();
 
         if (data && data.length > 0) {
           const today = new Date().toISOString().split("T")[0];
-          const todaysQr = data.find(
-            (qr) => qr.date === today && qr.status_scanner === 1
-          );
+          const todaysQr = data.find((qr) => qr.date === today && qr.status === 1);
 
           if (todaysQr) {
             setQrCodeImg(`data:image/png;base64,${todaysQr.image}`);
@@ -76,12 +74,12 @@ export default function UserQr() {
           setIsButtonDisabled(false);
         }
       } catch (error) {
-        console.error("Error fetching QR history:", error);
-        setErrorMessage("Failed to fetch QR code history.");
+        console.error("Error fetching QR codes:", error);
+        setErrorMessage("Failed to fetch QR codes.");
       }
     };
 
-    fetchQrCodeStatus();
+    fetchQrCodes();
   }, [username]);
 
   // Handle Generate QR Code
@@ -141,7 +139,9 @@ export default function UserQr() {
               )}
             </div>
             <p className={styles["countdown-container"]}>
-              {timeLeft.hours} saat {timeLeft.minutes} dəqiqə {timeLeft.seconds} saniyə
+              {timeLeft.hours} {t("user-qr-hour", { ns: "user" })}
+              {timeLeft.minutes} {t("user-qr-minute", { ns: "user" })}
+              {timeLeft.seconds} {t("user-qr-second", { ns: "user" })}
             </p>
             <button
               onClick={handleGenerateQR}
@@ -166,7 +166,7 @@ export default function UserQr() {
                   onClick={handleDownload}
                   className={styles["user-download-qr-btn"]}
                 >
-                  QR Kod Yüklə
+                  {t("user-download-qr-btn-txt", { ns: "user" })}
                 </button>
               </>
             )}

@@ -1,21 +1,20 @@
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import styles from "../Header/Header.module.scss";
-import { setUsername } from '../../redux/authSlice';
 import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { setUsername } from '../../redux/authSlice';
 import SchoolIcon from '@mui/icons-material/School';
+import { useSelector, useDispatch } from 'react-redux';
 import LanguageChanger from '../LanguageChanger/LanguageChanger';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
-// Fetch full name using the backend API
-
-
 export default function Header() {
+    const { t } = useTranslation();
     const dispatch = useDispatch();
     const globalUsername = useSelector((state) => state.auth.username);
-    const [fullName, setFullName] = useState(globalUsername); // Default to username if not yet fetched
+    const [fullName, setFullName] = useState(globalUsername);
     const [burgerMenu, setBurgerMenu] = useState(true);
 
     const handleBurgerMenu = () => {
@@ -23,7 +22,6 @@ export default function Header() {
     };
 
     useEffect(() => {
-        // Fetch full name only when the username changes
         if (globalUsername) {
             fetchFullName(globalUsername).then((name) => setFullName(name));
         }
@@ -50,7 +48,7 @@ export default function Header() {
             if (result.success) {
                 return result.istifadeci_adi;
             } else {
-                return username; // Fallback to username if full name isn't available
+                return username;
             }
         } catch (error) {
             console.error(error);
@@ -68,10 +66,20 @@ export default function Header() {
                 <div className={styles['header-pages']}>
                     <ul>
                         <li>
-                            <Link to={'/user-page'} state={{ username: globalUsername }}>Qr Code Generate</Link>
+                            <Link
+                                to={'/user-page'}
+                                state={{ username: globalUsername }}
+                                className={styles['header-page-link-qr']}>
+                                {t("header-qr-generate", { ns: "header" })}
+                            </Link>
                         </li>
                         <li>
-                            <Link to={'/user-history'} state={{ username: globalUsername }}>Qr Code History</Link>
+                            <Link
+                                to={'/user-history'}
+                                state={{ username: globalUsername }}
+                                className={styles['header-page-link-history']}>
+                                {t("header-history", { ns: "header" })}
+                            </Link>
                         </li>
                     </ul>
                 </div>
@@ -84,7 +92,7 @@ export default function Header() {
                             fontSize: 40,
                             cursor: 'pointer',
                         }} />
-                    {window.innerWidth > 600 ? <LanguageChanger position={'relative'} top={0} right={0}/> : null}
+                    {window.innerWidth > 600 ? <LanguageChanger position={'relative'} top={0} right={0} /> : null}
 
                 </div>
                 <div className={styles['burger-menu']} style={burgerMenu ? { marginRight: '-250px' } : { marginRight: 0 }}>

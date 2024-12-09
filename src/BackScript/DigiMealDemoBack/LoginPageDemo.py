@@ -17,18 +17,15 @@ CORS(app, resources={r"*": {"origins": "*"}})
 LOCAL_DB_PATH = "/Users/firdovsirzaev/Desktop/DigiMeal/src/BackScript/DigiMealDemoBack/LoginDemo.db"
 
 
-# Initialize database schema and add user_page table
 def init_db():
     conn = sqlite3.connect(LOCAL_DB_PATH)
     cursor = conn.cursor()
 
-    # Create 'identify' table
     cursor.execute('''CREATE TABLE IF NOT EXISTS identify (
         username TEXT PRIMARY KEY,
         password TEXT NOT NULL
     )''')
 
-    # Create 'qr_codes' table
     cursor.execute('''CREATE TABLE IF NOT EXISTS qr_codes (
         id TEXT PRIMARY KEY,
         username TEXT,
@@ -39,13 +36,11 @@ def init_db():
         FOREIGN KEY (username) REFERENCES identify(username)
     )''')
 
-    # Create 'user_page' table
     cursor.execute('''CREATE TABLE IF NOT EXISTS user_page (
         username TEXT PRIMARY KEY,
         istifadeci_adi TEXT NOT NULL
     )''')
 
-    # Insert some test data into the user_page table
     cursor.execute('INSERT OR IGNORE INTO user_page (username, istifadeci_adi) VALUES (?, ?)', ('Karam Shukurlu', 'Karam Shukurlu'))
 
     conn.commit()
@@ -55,7 +50,6 @@ def init_db():
 init_db()
 
 
-# Schedule job to mark old QR codes as expired
 def update_old_qr_codes():
     today = str(date.today())
     conn = sqlite3.connect(LOCAL_DB_PATH)
@@ -71,7 +65,6 @@ scheduler.start()
 atexit.register(lambda: scheduler.shutdown())
 
 
-# Handle user login
 def check_login(username, password):
     try:
         conn = sqlite3.connect(LOCAL_DB_PATH)
@@ -88,7 +81,6 @@ def check_login(username, password):
         conn.close()
 
 
-# Login endpoint
 @app.route('/login', methods=['POST'])
 def login():
     data = request.json
@@ -102,7 +94,6 @@ def login():
     return jsonify(result), 200 if result['success'] else 401
 
 
-# Generate a QR code
 def generate_qr_code(data):
     qr = qrcode.QRCode(
         version=1,
@@ -118,7 +109,6 @@ def generate_qr_code(data):
     return base64.b64encode(buffered.getvalue()).decode("utf-8")
 
 
-# Generate QR endpoint
 @app.route('/generate_qr', methods=['POST'])
 def generate_qr():
     data = request.json
@@ -127,7 +117,6 @@ def generate_qr():
     if not username:
         return jsonify({"success": False, "message": "Username is required."}), 400
 
-    # Check if a QR code already exists for today
     today = str(date.today())
     conn = sqlite3.connect(LOCAL_DB_PATH)
     cursor = conn.cursor()
@@ -189,14 +178,22 @@ def get_username():
 def history(username):
     conn = sqlite3.connect(LOCAL_DB_PATH)
     cursor = conn.cursor()
-    cursor.execute('SELECT username, image, date, status_scanner FROM qr_codes WHERE username = ?', (username,))
+    cursor.execute('SELECT id, date, status_scanner FROM qr_codes WHERE username = ?', (username,))
     rows = cursor.fetchall()
     conn.close()
 
-    qr_data = [{"username": row[0], "image": row[1], "date": row[2], "status_scanner": row[3]} for row in rows]
+    qr_data = [{"id": row[0], "date": row[1], "status_scanner": row[2]} for row in rows]
+    return jsonify(qr_data), 200
+@app.route('/get_qrs/<username>', methods=['GET'])
+def get_qrs(username):
+    conn = sqlite3.connect(LOCAL_DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute('SELECT id, image, date, status FROM qr_codes WHERE username = ?', (username,))
+    rows = cursor.fetchall()
+    conn.close()
+
+    qr_data = [{"id": row[0], "image": row[1], "date": row[2], "status": row[3]} for row in rows]
     return jsonify(qr_data), 200
 
-
-# Main server execution
 if __name__ == '__main__':
     app.run(debug=True)

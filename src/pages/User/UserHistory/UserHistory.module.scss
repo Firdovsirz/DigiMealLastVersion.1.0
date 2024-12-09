@@ -1,0 +1,78 @@
+@import "../../../styles/variables";
+
+.user-history-main {
+    .user-history-head-txt-container {
+        margin-block: 40px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        h2 {
+            color: $primary-color;
+        }
+    }
+
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .history-table-wrapper {
+        width: 90%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid $primary-color;
+        border-radius: $primary-border-radius;
+
+        .history-table {
+            border-radius: $primary-border-radius;
+            width: 100%;
+            border-collapse: collapse;
+            border-spacing: 0;
+
+            .history-table-head {
+                border-radius: $primary-border-radius;
+                border-bottom: 1px solid $primary-color;
+
+                tr {
+                    th {
+                        padding: 20px;
+                        width: calc(100% / 3);
+                        color: $primary-color;
+                        font-size: 17px;
+                        text-align: center;
+                        ;
+
+                        &:not(:last-child) {
+                            border-right: 1px solid $primary-color;
+                        }
+                    }
+                }
+            }
+
+            .history-table-body {
+                border: 1px solid $primary-color;
+                border-radius: 10px;
+
+                tr {
+                    border-bottom: 1px solid $primary-color;
+
+                    td {
+                        width: calc(100% / 3);
+                        text-align: center;
+                        padding: 20px;
+                        color: $primary-color;
+                        font-size: 19px;
+
+                        &:not(:last-child) {
+                            border-right: 1px solid $primary-color;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
