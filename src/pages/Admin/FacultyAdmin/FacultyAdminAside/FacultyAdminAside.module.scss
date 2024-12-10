@@ -1,8 +1,9 @@
 @import "../../../../styles/variables";
 
 .faculty-admin-aside {
+    height: 100%;
     width: 300px;
-    background: red;
+    background: rgb(32, 41, 61);
     transition: all 600ms;
 
     .faculty-admin-aside-heading {
@@ -11,13 +12,17 @@
         justify-content: space-between;
         padding: 20px;
 
+        h2 {
+            color: #fff;
+        }
+
         .faculty-admin-aside-burger-menu-icon-container {
             cursor: pointer;
 
             .fac-adm-burger-menu-first-line {
                 min-width: 30px;
                 height: 4px;
-                background: $primary-color;
+                background: #fff;
                 margin-bottom: 5px;
                 border-radius: 20px;
                 transition: all 400ms;
@@ -29,7 +34,7 @@
             .fac-adm-burger-menu-first-line-closed {
                 min-width: 30px;
                 height: 4px;
-                background: $primary-color;
+                background: #fff;
                 margin-bottom: 5px;
                 border-radius: 20px;
                 transition: all 400ms;
@@ -38,7 +43,7 @@
             .fac-adm-burger-menu-second-line {
                 min-width: 0;
                 height: 4px;
-                background: $primary-color;
+                background: #fff;
                 margin-bottom: 5px;
                 border-radius: 20px;
                 transition: all 400ms;
@@ -50,7 +55,7 @@
             .fac-adm-burger-menu-second-line-closed {
                 min-width: 30px;
                 height: 4px;
-                background: $primary-color;
+                background: #fff;
                 margin-bottom: 5px;
                 border-radius: 20px;
                 transition: all 400ms;
@@ -59,7 +64,7 @@
             .fac-adm-burger-menu-third-line {
                 min-width: 30px;
                 height: 4px;
-                background: $primary-color;
+                background: #fff;
                 margin-bottom: 5px;
                 border-radius: 20px;
                 transition: all 400ms;
@@ -71,11 +76,29 @@
             .fac-adm-burger-menu-third-line-closed {
                 min-width: 30px;
                 height: 4px;
-                background: $primary-color;
+                background: #fff;
                 margin-bottom: 5px;
                 border-radius: 20px;
                 transform: all 400ms;
             }
+        }
+    }
+
+    .faculty-admin-profile-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 100px;
+
+        .fac-adm-profile-icon {
+            color: $primary-admin-green-color;
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+
+        h3 {
+            color: #fff;
         }
     }
 
@@ -87,6 +110,31 @@
                 align-items: center;
                 list-style-type: none;
                 padding: 20px;
+                font-size: 18px;
+                color: #fff;
+                position: relative;
+                cursor: pointer;
+
+                &:after {
+                    content: "";
+                    position: absolute;
+                    bottom: 2px;
+                    left: 20px;
+                    width: 0;
+                    height: 4px;
+                    background: $primary-admin-green-color;
+                    border-radius: 10px;
+                    transition: all 400ms
+                }
+
+                &:hover:after {
+                    width: 80%;
+                }
+
+                .fac-adm-page-icon {
+                    color: $primary-admin-green-color;
+                    margin-right: 20px;
+                }
             }
         }
     }

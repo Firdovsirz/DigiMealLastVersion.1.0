@@ -11,6 +11,7 @@ import BottomNavigation from './components/BottomNavigation/BottomNavigation';
 import FacultyAdminAside from './pages/Admin/FacultyAdmin/FacultyAdminAside/FacultyAdminAside';
 import About from './components/About/About';
 import AdminLogin from './pages/Admin/AdminLogin/AdminLogin';
+import FacultyAdminRegister from './pages/Admin/FacultyAdmin/FacultyAdminRegister/FacultyAdminRegister';
 
 function App() {
 
@@ -26,11 +27,16 @@ function App() {
         <Route path="/user-page" element={<UserQr />} />
         <Route path="/user-history" element={<UserHistory />} />
       </Routes> */}
-      <AdminLogin />
+      {/* <AdminLogin /> */}
       {/* <LoginError /> */}
       {/* <Scanner /> */}
       {/* <BottomNavigation /> */}
       {/* <About /> */}
+      <FacultyAdminRegister />
+      {/* <Routes>
+        <Route path='/' element={<AdminLogin />} />
+        <Route path='/fac-adm-reg' element={<FacultyAdminRegister />} />
+      </Routes> */}
     </>
   )
 }
