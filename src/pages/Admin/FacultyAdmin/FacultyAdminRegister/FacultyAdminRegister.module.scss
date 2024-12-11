@@ -63,6 +63,7 @@
                             border-top: none;
                             border-right: none;
                             border-left: none;
+                            border-radius: 10px 10px 0 0;
                             border-bottom: 1px solid rgb(107, 110, 119);
                             color: #fff;
                             font-size: 18px;
@@ -102,6 +103,71 @@
                     }
                 }
 
+                .fac-adm-reg-phone-label {
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+
+                    .fac-adm-reg-phone-prefix {
+                        position: relative;
+
+                        .fac-adm-reg-phone-prefix-head {
+                            width: 150px;
+                            background: rgb(48, 53, 66);
+                            height: 50px;
+                            border-radius: 10px 10px 0 0;
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+                            padding: 20px;
+                            color: #fff;
+                            border-bottom: 1px solid rgb(107, 110, 119);
+                            cursor: pointer;
+                        }
+
+                        .fac-adm-reg-phone-preffix-list {
+                            background: rgb(48, 53, 66);
+                            border: 1px solid rgb(107, 110, 119);
+                            position: absolute;
+                            top: 40px;
+                            left: 10px;
+                            z-index: 100;
+                            width: 200px;
+                            border-radius: 10px 10px 0 0;
+                            ul{
+                                li{
+                                    list-style-type: none;
+                                    padding: 10px;
+                                    color: #fff;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    cursor: pointer;
+                                    &:not(:last-child){
+                                        border-bottom: 1px solid rgb(107, 110, 119);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    input {
+                        width: calc(100% - 160px);
+                        height: 50px;
+                        background: rgb(48, 53, 66);
+                        border-top: none;
+                        border-right: none;
+                        border-left: none;
+                        border-radius: 10px 10px 0 0;
+                        border-bottom: 1px solid rgb(107, 110, 119);
+                        color: #fff;
+                        font-size: 18px;
+                        outline: none;
+                        padding: 10px;
+                    }
+                }
+
                 .fac-adm-reg-fin-code-label,
                 .fac-adm-reg-id-label,
                 .fac-adm-reg-faculty-label,
@@ -118,6 +184,7 @@
                         border-top: none;
                         border-right: none;
                         border-left: none;
+                        border-radius: 10px 10px 0 0;
                         border-bottom: 1px solid rgb(107, 110, 119);
                         color: #fff;
                         font-size: 18px;

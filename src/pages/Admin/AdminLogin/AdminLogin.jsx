@@ -4,6 +4,8 @@ import SchoolIcon from '@mui/icons-material/School';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setAdminUsername } from '../../../redux/adminAuthSlice'; // Import the action
 
 export default function AdminLogin() {
     const [visibility, setVisibility] = useState(false);
@@ -11,6 +13,7 @@ export default function AdminLogin() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const dispatch = useDispatch(); // Hook to dispatch Redux actions
 
     const handleVisibility = () => {
         setVisibility(!visibility);
@@ -30,11 +33,14 @@ export default function AdminLogin() {
         const result = await response.json();
 
         if (result.success) {
-            // On successful login, navigate to /fac-adm-reg
+            // Update Redux store with the admin username
+            dispatch(setAdminUsername(username));
+
+            // Navigate to /fac-adm-reg
             navigate('/fac-adm-reg');
             console.log('logged in');
         } else {
-            setError(result.message);  // Show error message if login fails
+            setError(result.message); // Show error message if login fails
         }
     };
 

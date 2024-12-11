@@ -12,7 +12,7 @@ export default function UserHistory() {
 
   useEffect(() => {
     if (username) {
-      fetch(`http://127.0.0.1:5000/history/${username}`)
+      fetch(`http://127.0.0.1:5000/user/history/${username}`)
         .then((response) => {
           if (!response.ok) {
             throw new Error('Failed to fetch history data');

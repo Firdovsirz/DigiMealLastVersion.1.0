@@ -32,11 +32,11 @@ function App() {
       {/* <Scanner /> */}
       {/* <BottomNavigation /> */}
       {/* <About /> */}
-      <FacultyAdminRegister />
-      {/* <Routes>
+      {/* <FacultyAdminRegister /> */}
+      <Routes>
         <Route path='/' element={<AdminLogin />} />
         <Route path='/fac-adm-reg' element={<FacultyAdminRegister />} />
-      </Routes> */}
+      </Routes>
     </>
   )
 }

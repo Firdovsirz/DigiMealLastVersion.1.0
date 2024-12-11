@@ -12,7 +12,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 # Flask app setup
 app = Flask(__name__)
-CORS(app, resources={r"*": {"origins": "*"}})
+CORS(app, resources={r"/*": {"origins": ["http://localhost:5173", "http://127.0.0.1:5173"]}})
 
 # Database paths
 LOCAL_DB_PATH = "/Users/firdovsirzaev/Desktop/DigiMeal/src/BackScript/DigiMealDemoBack/LoginDemo.db"
@@ -101,6 +101,16 @@ def user_login():
     result = check_user_login(username, password)
     return jsonify(result), 200 if result['success'] else 401
 
+@app.route('/user/get_qrs/<username>', methods=['GET'])
+def get_qrs(username):
+    conn = sqlite3.connect(LOCAL_DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute('SELECT id, image, date, status FROM qr_codes WHERE username = ?', (username,))
+    rows = cursor.fetchall()
+    conn.close()
+
+    qr_data = [{"id": row[0], "image": row[1], "date": row[2], "status": row[3]} for row in rows]
+    return jsonify(qr_data), 200
 
 @app.route('/user/generate_qr', methods=['POST'])
 def generate_user_qr():
@@ -126,6 +136,36 @@ def generate_user_qr():
     return jsonify({"success": True, "image": qr_image, "date": today})
 
 
+@app.route('/user/get_username', methods=['POST'])
+def get_username():
+    data = request.json
+    username = data.get('username')
+
+    if not username:
+        return jsonify({"success": False, "message": "Username is required"}), 400
+
+    conn = sqlite3.connect(LOCAL_DB_PATH)
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute('SELECT istifadeci_adi FROM user_page WHERE username = ?', (username,))
+        result = cursor.fetchone()
+
+        if result:
+            istifadeci_adi = result[0]
+            return jsonify({"success": True, "istifadeci_adi": istifadeci_adi}), 200
+        else:
+            return jsonify({"success": False, "message": "Username not found"}), 404
+    except sqlite3.Error as e:
+        return jsonify({"success": False, "message": f"Database error: {str(e)}"}), 500
+    finally:
+        conn.close()
+
+
+
+
+
+
 def generate_qr_code(data):
     qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=10, border=4)
     qr.add_data(data)
@@ -141,22 +181,65 @@ def check_admin_login(username, password):
     try:
         conn = sqlite3.connect(ADMIN_DB_PATH)
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM adminsidenfication WHERE username = ? AND password = ?", (username, password))
+        print(f"Checking admin credentials for {username}")  # Debugging line
+        cursor.execute("SELECT * FROM adminsidenfication WHERE usernameadmin = ? AND passwordadmin = ?", (username, password))
         admin = cursor.fetchone()
-        return {"success": bool(admin), "username": username if admin else None, "message": "Login successful" if admin else "Incorrect username or password"}
+        print(f"Admin found: {admin}")  # Debugging line
+        return {
+            "success": bool(admin),
+            "username": username if admin else None,
+            "message": "Login successful" if admin else "Incorrect username or password",
+        }
+    except Exception as e:
+        print(f"Error in check_admin_login: {e}")  # Log the error
+        return {"success": False, "message": "Database error"}
     finally:
         conn.close()
 
 
 @app.route('/admin/login', methods=['POST'])
 def admin_login():
+    try:
+        data = request.json
+        print(f"Received data: {data}")  # Debugging line
+        username = data.get('username')
+        password = data.get('password')
+
+        if not username or not password:
+            return jsonify({"success": False, "message": "Username and password required"}), 400
+
+        result = check_admin_login(username, password)
+        return jsonify(result), 200 if result['success'] else 401
+
+    except Exception as e:
+        print(f"Error during admin login: {e}")  # Log the error
+        return jsonify({"success": False, "message": "Internal server error"}), 500
+
+
+@app.route('/admin/get_admin_username', methods=['POST'])
+def get_admin_username():
     data = request.json
     username = data.get('username')
-    password = data.get('password')
-    if not username or not password:
-        return jsonify({"success": False, "message": "Username and password required"}), 400
-    result = check_admin_login(username, password)
-    return jsonify(result), 200 if result['success'] else 401
+
+    if not username:
+        return jsonify({"success": False, "message": "Username is required"}), 400
+
+    conn = sqlite3.connect(ADMIN_DB_PATH)
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute('SELECT istifadeci_adi FROM admin_page WHERE usernameadmin = ?', (username,))
+        result = cursor.fetchone()
+
+        if result:
+            istifadeci_adi = result[0]
+            return jsonify({"success": True, "istifadeci_adi": istifadeci_adi}), 200
+        else:
+            return jsonify({"success": False, "message": "Username not found"}), 404
+    except sqlite3.Error as e:
+        return jsonify({"success": False, "message": f"Database error: {str(e)}"}), 500
+    finally:
+        conn.close()
 
 
 @app.route('/user/history/<username>', methods=['GET'])

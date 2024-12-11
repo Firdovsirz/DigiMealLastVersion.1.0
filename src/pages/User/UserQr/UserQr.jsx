@@ -55,7 +55,7 @@ export default function UserQr() {
       }
 
       try {
-        const response = await fetch(`http://127.0.0.1:5000/get_qrs/${username}`);
+        const response = await fetch(`http://127.0.0.1:5000/user/get_qrs/${username}`);
         const data = await response.json();
 
         if (data && data.length > 0) {
@@ -90,7 +90,7 @@ export default function UserQr() {
     }
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/generate_qr", {
+      const response = await fetch("http://127.0.0.1:5000/user/generate_qr", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -32,7 +32,7 @@ export default function Header() {
     }
     const fetchFullName = async (username) => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/get_username', {
+            const response = await fetch('http://127.0.0.1:5000/user/get_username', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
