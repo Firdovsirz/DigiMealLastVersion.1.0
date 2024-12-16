@@ -1,9 +1,9 @@
 import { useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useLocation, useNavigate } from "react-router-dom";
+import apiClient from "../../../redux/apiClient";
 import CloseIcon from "@mui/icons-material/Close";
 import styles from "../UserQr/UserQr.module.scss";
-import { setUsername } from "../../../redux/authSlice";
 import Header from "../../../components/Header/Header";
 import React, { useState, useEffect, useRef } from "react";
 import BottomNavigation from "../../../components/BottomNavigation/BottomNavigation";
@@ -13,6 +13,8 @@ export default function UserQr() {
   const downloadRef = useRef(null);
   const location = useLocation();
   const username = useSelector((state) => state.auth.username);
+  const navigate = useNavigate();
+  const token = useSelector((state) => state.token.token); // Get JWT token from Redux
   const displayName = username || "Anonymous";
 
   const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
@@ -20,34 +22,26 @@ export default function UserQr() {
   const [errorMessage, setErrorMessage] = useState("");
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
-  // Countdown to midnight
-  const countDown = () => {
-    const now = new Date();
-    const midnight = new Date(now);
-    midnight.setHours(24, 0, 0, 0);
-    const difference = midnight - now;
-
-    if (difference > 0) {
-      const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((difference / (1000 * 60)) % 60);
-      const seconds = Math.floor((difference / 1000) % 60);
-
-      return { hours, minutes, seconds };
-    }
-
-    return { hours: 0, minutes: 0, seconds: 0 };
-  };
-
+  // Check token expiration on page load
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(countDown());
-    }, 1000);
+    const checkTokenExpiration = () => {
+      if (!token) {
+        navigate("/", { replace: true }); // Redirect without refresh
+        return;
+      }
 
-    return () => clearInterval(timer);
-  }, []);
+      const decodedToken = JSON.parse(atob(token.split('.')[1]));
+      const expirationTime = decodedToken.exp * 1000; // Convert expiration time to milliseconds
+      const currentTime = Date.now();
 
-  // Fetch today's QR code using the get_qrs route
-  useEffect(() => {
+      if (currentTime >= expirationTime) {
+        localStorage.removeItem("authToken");
+        navigate("/", { replace: true }); // Redirect without refresh
+      }
+    };
+
+    checkTokenExpiration();
+
     const fetchQrCodes = async () => {
       if (!username) {
         setErrorMessage("Username is required.");
@@ -55,8 +49,8 @@ export default function UserQr() {
       }
 
       try {
-        const response = await fetch(`http://127.0.0.1:5000/user/get_qrs/${username}`);
-        const data = await response.json();
+        const response = await apiClient.get(`/user/get_qrs/${username}`);
+        const data = response.data;
 
         if (data && data.length > 0) {
           const today = new Date().toISOString().split("T")[0];
@@ -64,10 +58,10 @@ export default function UserQr() {
 
           if (todaysQr) {
             setQrCodeImg(`data:image/png;base64,${todaysQr.image}`);
-            setIsButtonDisabled(true); // Disable the button if QR code exists
+            setIsButtonDisabled(true);
           } else {
             setQrCodeImg(null);
-            setIsButtonDisabled(false); // Allow user to generate QR
+            setIsButtonDisabled(false);
           }
         } else {
           setErrorMessage("No QR code history found.");
@@ -79,10 +73,9 @@ export default function UserQr() {
       }
     };
 
-    fetchQrCodes();
-  }, [username]);
+    if (token) fetchQrCodes();
+  }, [username, token, navigate]);
 
-  // Handle Generate QR Code
   const handleGenerateQR = async () => {
     if (!username) {
       setErrorMessage("Username is required.");
@@ -90,19 +83,12 @@ export default function UserQr() {
     }
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/user/generate_qr", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username }),
-      });
-
-      const data = await response.json();
+      const response = await apiClient.post("/user/generate_qr", { username });
+      const data = response.data;
 
       if (data.success) {
         setQrCodeImg(`data:image/png;base64,${data.image}`);
-        setIsButtonDisabled(true); // Disable the button after generating
+        setIsButtonDisabled(true);
       } else {
         setErrorMessage(data.message || "Failed to generate QR code.");
       }
@@ -121,12 +107,23 @@ export default function UserQr() {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    navigate('/', { replace: true }); // Redirect to login page without refresh
+  };
+
+  // Prevent back navigation by replacing the current history entry
+  useEffect(() => {
+    window.history.replaceState(null, '', location.pathname);
+  }, [location]);
+
   return (
     <>
       <Header />
       <main className={styles["user-page-main"]}>
         <section className={styles["user-page-qr-section"]}>
           <div className={styles["user-page-qr-container"]}>
+            {/* QR Code display and error handling */}
             <div className={styles["user-page-qr-img-container"]}>
               {qrCodeImg ? (
                 <img
@@ -138,11 +135,7 @@ export default function UserQr() {
                 <p>{errorMessage || "Click the button to generate a QR code."}</p>
               )}
             </div>
-            <p className={styles["countdown-container"]}>
-              {timeLeft.hours} {t("user-qr-hour", { ns: "user" })}
-              {timeLeft.minutes} {t("user-qr-minute", { ns: "user" })}
-              {timeLeft.seconds} {t("user-qr-second", { ns: "user" })}
-            </p>
+            <p onClick={handleLogout}>log out</p>
             <button
               onClick={handleGenerateQR}
               className={styles["user-generate-qr-btn"]}
@@ -153,22 +146,12 @@ export default function UserQr() {
                 : "QR Kod Yarat"}
             </button>
             {qrCodeImg && (
-              <>
-                <a
-                  ref={downloadRef}
-                  href={qrCodeImg}
-                  download={`${username}-qr-code.png`}
-                  style={{ display: "none" }}
-                >
-                  Gizli Yükləmə Linki
-                </a>
-                <button
-                  onClick={handleDownload}
-                  className={styles["user-download-qr-btn"]}
-                >
-                  {t("user-download-qr-btn-txt", { ns: "user" })}
-                </button>
-              </>
+              <button
+                onClick={handleDownload}
+                className={styles["user-download-qr-btn"]}
+              >
+                {t("user-download-qr-btn-txt", { ns: "user" })}
+              </button>
             )}
           </div>
         </section>

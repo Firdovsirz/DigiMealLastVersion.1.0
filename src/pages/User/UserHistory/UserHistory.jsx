@@ -1,45 +1,61 @@
-import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+import apiClient from '../../../redux/apiClient';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from "../../../components/Header/Header";
 import styles from "../UserHistory/UserHistory.module.scss";
-import { useTranslation } from 'react-i18next';
 
 export default function UserHistory() {
   const { t } = useTranslation();
-  const username = useSelector((state) => state.auth.username);
-  const [historyData, setHistoryData] = useState([]);
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [historyData, setHistoryData] = useState([]);
+  const token = useSelector((state) => state.token.token);
+  const username = useSelector((state) => state.auth.username);
 
   useEffect(() => {
-    if (username) {
-      fetch(`http://127.0.0.1:5000/user/history/${username}`)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error('Failed to fetch history data');
-          }
-          return response.json();
-        })
-        .then((data) => {
-          setHistoryData(data);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error("Error fetching history data:", error);
-          setLoading(false);
-        });
-    }
-  }, [username]);
+    const checkTokenExpiration = () => {
+      if (!token) {
+        navigate("/", { replace: true });
+        return;
+      }
+      const decodedToken = JSON.parse(atob(token.split('.')[1]));
+      const expirationTime = decodedToken.exp * 1000;
+      const currentTime = Date.now();
+      if (currentTime >= expirationTime) {
+        localStorage.removeItem("authToken");
+        navigate("/", { replace: true });
+      }
+    };
+    checkTokenExpiration();
+    const fetchHistoryData = async () => {
+      if (!username) return;
 
-  // if (loading) {
-  //   return (
-  //     <>
-  //       <Header />
-  //       <main className={styles['user-history-main']}>
-  //         <p>Loading history...</p>
-  //       </main>
-  //     </>
-  //   );
-  // }
+      try {
+        const response = await apiClient.get(`/user/history/${username}`);
+        setHistoryData(response.data);
+      } catch (error) {
+        console.error("Error fetching history data:", error);
+        setHistoryData([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHistoryData();
+  }, [username, token, navigate]);
+
+  if (loading) {
+    return (
+      <>
+        <Header />
+        <main className={styles['user-history-main']}>
+          <p>Loading history...</p>
+        </main>
+      </>
+    );
+  }
 
   return (
     <>

@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import styles from "./AdminLogin.module.scss";
-import SchoolIcon from '@mui/icons-material/School';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { setAdminUsername } from '../../../redux/adminAuthSlice'; // Import the action
+import styles from "./AdminLogin.module.scss";
+import { useNavigate } from 'react-router-dom';
+import apiClient from '../../../redux/apiClient';
+import SchoolIcon from '@mui/icons-material/School';
+import { setToken } from '../../../redux/tokenSlice';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import { setAdminAuth } from '../../../redux/adminAuthSlice';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 export default function AdminLogin() {
     const [visibility, setVisibility] = useState(false);
@@ -13,7 +15,7 @@ export default function AdminLogin() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
-    const dispatch = useDispatch(); // Hook to dispatch Redux actions
+    const dispatch = useDispatch();
 
     const handleVisibility = () => {
         setVisibility(!visibility);
@@ -22,25 +24,20 @@ export default function AdminLogin() {
     const handleLogin = async (e) => {
         e.preventDefault();
 
-        const response = await fetch('http://127.0.0.1:5000/admin/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ username, password }),
-        });
+        try {
+            const response = await apiClient.post('/admin/login', { username, password });
+            const result = response.data;
 
-        const result = await response.json();
-
-        if (result.success) {
-            // Update Redux store with the admin username
-            dispatch(setAdminUsername(username));
-
-            // Navigate to /fac-adm-reg
-            navigate('/fac-adm-reg');
-            console.log('logged in');
-        } else {
-            setError(result.message); // Show error message if login fails
+            if (result.success) {
+                dispatch(setToken(result.token));
+                dispatch(setAdminAuth({ username, token: result.token }));
+                navigate('/fac-adm-reg');
+            } else {
+                setError(result.message);
+            }
+        } catch (err) {
+            console.error('Login error:', err);
+            setError('An error occurred while trying to log in. Please try again.');
         }
     };
 

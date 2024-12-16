@@ -4,36 +4,53 @@ import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
-import axios from 'axios'; // Make sure to install axios for API requests
+import apiClient from '../../../../redux/apiClient'; // Use the configured axios instance
 import styles from "../FacultyAdminAside/FacultyAdminAside.module.scss";
 
 export default function FacultyAdmin() {
     const [openedBurger, setOpenedBurger] = useState(true);
-    const [facultyName, setFacultyName] = useState('');
-    const adminUsername = useSelector((state) => state.adminAuth.username);
-    
-    useEffect(() => {
-        const fetchFacultyName = async () => {
-            try {
-                const response = await axios.post('http://127.0.0.1:5000/admin/get_admin_username', { username: adminUsername });
-                if (response.data.success) {
-                    setFacultyName(response.data.istifadeci_adi);
-                } else {
-                    console.error('Error fetching faculty name:', response.data.message);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        };
+  const [facultyName, setFacultyName] = useState('');
+  const adminUsername = useSelector((state) => state.adminAuth.username);
+  const adminToken = useSelector((state) => state.adminAuth.token);  // Get token from Redux state
+  const isAdminAuthenticated = useSelector((state) => state.adminAuth.isAuthenticated);  // Check authentication status
 
-        if (adminUsername) {
-            fetchFacultyName();
+  useEffect(() => {
+    if (!isAdminAuthenticated) {
+      // Handle case when admin is not authenticated (show an alert or redirect)
+      console.log('Admin is not authenticated!');
+      return;
+    }
+
+    const fetchFacultyName = async () => {
+      try {
+        const response = await apiClient.post(
+          '/admin/get_admin_username',
+          { usernameadmin: adminUsername },
+          {
+            headers: {
+              Authorization: `Bearer ${adminToken}`,  // Use token from Redux store
+            },
+          }
+        );
+
+        if (response.data.success) {
+          setFacultyName(response.data.results[0].istifadeciadi);
+        } else {
+          console.error('Error fetching faculty name:', response.data.message);
         }
-    }, [adminUsername]);
-
-    const handleBurgerMenu = () => {
-        setOpenedBurger(!openedBurger);
+      } catch (error) {
+        console.error('Error:', error);
+      }
     };
+
+    if (adminUsername) {
+      fetchFacultyName();
+    }
+  }, [adminUsername, adminToken, isAdminAuthenticated]);  // Add authentication check as dependency
+
+  const handleBurgerMenu = () => {
+    setOpenedBurger(!openedBurger);
+  };
 
     return (
         <aside

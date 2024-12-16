@@ -2,33 +2,40 @@ import os
 import uuid
 import qrcode
 import base64
-import sqlite3
+from PIL import Image
 import atexit
+import sqlite3
 from io import BytesIO
 from datetime import date
 from flask_cors import CORS
 from flask import Flask, request, jsonify
 from apscheduler.schedulers.background import BackgroundScheduler
+import jwt
+import datetime
+from functools import wraps
 
-# Flask app setup
+# Initialize Flask app
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": ["http://localhost:5173", "http://127.0.0.1:5173"]}})
+CORS(app, resources={r"*": {"origins": "*"}})
+
+# Secret key for JWT encoding/decoding
+SECRET_KEY = 'your_secret_key'  # Change this to a more secure key
 
 # Database paths
 LOCAL_DB_PATH = "/Users/firdovsirzaev/Desktop/DigiMeal/src/BackScript/DigiMealDemoBack/LoginDemo.db"
 ADMIN_DB_PATH = "/Users/firdovsirzaev/Desktop/DigiMeal/src/BackScript/DigiMealDemoBack/admins_identify.db"  # Proper path
 
-# Initialize User and Admin Databases
+# Initialize databases
 def init_db():
-    """Initializes the databases for users and admins."""
-    # Initialize User Database
     conn = sqlite3.connect(LOCAL_DB_PATH)
     cursor = conn.cursor()
-    cursor.execute('''CREATE TABLE IF NOT EXISTS identify (
+
+    cursor.execute('''CREATE TABLE IF NOT EXISTS identify ( 
         username TEXT PRIMARY KEY, 
         password TEXT NOT NULL 
     )''')
-    cursor.execute('''CREATE TABLE IF NOT EXISTS qr_codes (
+
+    cursor.execute('''CREATE TABLE IF NOT EXISTS qr_codes ( 
         id TEXT PRIMARY KEY, 
         username TEXT, 
         image BLOB, 
@@ -37,20 +44,24 @@ def init_db():
         status_scanner INTEGER DEFAULT 1, 
         FOREIGN KEY (username) REFERENCES identify(username) 
     )''')
-    cursor.execute('''CREATE TABLE IF NOT EXISTS user_page (
+
+    cursor.execute('''CREATE TABLE IF NOT EXISTS user_page ( 
         username TEXT PRIMARY KEY, 
         istifadeci_adi TEXT NOT NULL 
     )''')
-    cursor.execute('INSERT OR IGNORE INTO user_page (username, istifadeci_adi) VALUES (?, ?)', ('Karam Shukurlu', 'Karam Shukurlu'))
+
+    cursor.execute('INSERT OR IGNORE INTO user_page (username, istifadeci_adi) VALUES (?, ?)',
+                   ('Karam Shukurlu', 'Karam Shukurlu'))
+
     conn.commit()
     conn.close()
-    
+
     # Initialize Admin Database
     conn = sqlite3.connect(ADMIN_DB_PATH)
     cursor = conn.cursor()
     cursor.execute('''CREATE TABLE IF NOT EXISTS adminsidenfication (
-        username TEXT PRIMARY KEY, 
-        password TEXT NOT NULL 
+        usernameadmin TEXT PRIMARY KEY, 
+        passwordadmin TEXT NOT NULL 
     )''')
     cursor.execute('''CREATE TABLE IF NOT EXISTS admin_page (
         username TEXT PRIMARY KEY, 
@@ -61,88 +72,195 @@ def init_db():
 
 init_db()
 
-# Background scheduler to update QR codes
-scheduler = BackgroundScheduler()
+
+# JWT token generation
+def generate_jwt(username, is_admin=False):
+    expiration_time = datetime.datetime.utcnow() + datetime.timedelta(hours=0.001)
+    payload = {
+        'username': username,
+        'is_admin': is_admin,
+        'exp': expiration_time
+    }
+    return jwt.encode(payload, SECRET_KEY, algorithm='HS256')
 
 
-def update_old_qr_codes():
-    today = str(date.today())
-    conn = sqlite3.connect(LOCAL_DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute('''UPDATE qr_codes SET status = 2 WHERE status = 1 AND date < ?''', (today,))
-    conn.commit()
-    conn.close()
-
-
-scheduler.add_job(update_old_qr_codes, 'cron', hour=23, minute=0)
-scheduler.start()
-atexit.register(lambda: scheduler.shutdown())
-
-
-# User Authentication
-def check_user_login(username, password):
+# Function to check user login
+def check_login(username, password):
     try:
         conn = sqlite3.connect(LOCAL_DB_PATH)
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM identify WHERE username = ? AND password = ?", (username, password))
         user = cursor.fetchone()
-        return {"success": bool(user), "username": username if user else None, "message": "Login successful" if user else "Incorrect username or password"}
+        if user:
+            token = generate_jwt(username)
+            return {"success": True, "username": username, "message": "Login successful", "token": token}
+        else:
+            return {"success": False, "message": "Incorrect username or password"}
+    except sqlite3.Error as e:
+        return {"success": False, "message": f"Database error: {str(e)}"}
     finally:
         conn.close()
 
 
+# Function to check admin login
+def check_admin_login(username, password):
+    try:
+        conn = sqlite3.connect(ADMIN_DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM adminsidenfication WHERE usernameadmin = ? AND passwordadmin = ?", (username, password))
+        admin = cursor.fetchone()
+        if admin:
+            token = generate_jwt(username, is_admin=True)
+            return {"success": True, "username": username, "message": "Login successful", "token": token}
+        else:
+            return {"success": False, "message": "Incorrect username or password"}
+    finally:
+        conn.close()
+
+
+# Decorator for token-required routes
+def token_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        token = request.headers.get('Authorization')
+
+        if not token:
+            return jsonify({'message': 'Token is missing!'}), 403
+        try:
+            token = token.split(" ")[1]  # Extract token part from "Bearer <token>"
+            payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+            current_user = payload['username']
+            is_admin = payload['is_admin']
+        except (jwt.ExpiredSignatureError, jwt.InvalidTokenError):
+            return jsonify({'message': 'Token is invalid!'}), 403
+
+        # Add user info to the request context
+        request.current_user = current_user
+        request.is_admin = is_admin
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+
+# Routes for user and admin login
 @app.route('/user/login', methods=['POST'])
-def user_login():
+def login():
+    data = request.json
+    username = data.get('username')
+    password = data.get('password')
+
+    if not username or not password:
+        return jsonify({"success": False, "message": "Username and password required"}), 400
+
+    result = check_login(username, password)
+    return jsonify(result), 200 if result['success'] else 401
+
+
+@app.route('/admin/login', methods=['POST'])
+def admin_login():
     data = request.json
     username = data.get('username')
     password = data.get('password')
     if not username or not password:
         return jsonify({"success": False, "message": "Username and password required"}), 400
-    result = check_user_login(username, password)
+    result = check_admin_login(username, password)
     return jsonify(result), 200 if result['success'] else 401
 
-@app.route('/user/get_qrs/<username>', methods=['GET'])
-def get_qrs(username):
-    conn = sqlite3.connect(LOCAL_DB_PATH)
+@app.route('/admin/get_admin_username', methods=['POST'])
+@token_required
+def get_admin_username():
+    # Ensure the request is from an admin user
+    if not request.is_admin:
+        return jsonify({"success": False, "message": "Admin access required"}), 403
+
+    data = request.json
+    usernameadmin = data.get('usernameadmin')
+
+    if not usernameadmin:  # Ensuring 'usernameadmin' is provided
+        return jsonify({"success": False, "message": "Username is required"}), 400
+
+    conn = sqlite3.connect(ADMIN_DB_PATH)
     cursor = conn.cursor()
-    cursor.execute('SELECT id, image, date, status FROM qr_codes WHERE username = ?', (username,))
-    rows = cursor.fetchall()
-    conn.close()
 
-    qr_data = [{"id": row[0], "image": row[1], "date": row[2], "status": row[3]} for row in rows]
-    return jsonify(qr_data), 200
+    try:
+        # Query to fetch the admin data
+        cursor.execute('SELECT istifadeci_adi, faculty FROM admin_page WHERE usernameadmin = ?', (usernameadmin,))
+        result = cursor.fetchall()  # Fetch all matching rows
 
+        # Format the results for response
+        results_for_admin = [{"istifadeciadi": row[0], "faculty": row[1]} for row in result]
+
+        if results_for_admin:  # Check if results exist
+            return jsonify({"success": True, "results": results_for_admin}), 200
+        else:
+            return jsonify({"success": False, "message": "Username not found"}), 404
+    except sqlite3.Error as e:
+        # Handle database errors
+        return jsonify({"success": False, "message": f"Database error: {str(e)}"}), 500
+    finally:
+        # Close the database connection
+        conn.close()
+# Route to generate QR code for user
 @app.route('/user/generate_qr', methods=['POST'])
-def generate_user_qr():
+@token_required
+def generate_qr():
     data = request.json
     username = data.get('username')
+
     if not username:
         return jsonify({"success": False, "message": "Username is required."}), 400
 
     today = str(date.today())
     conn = sqlite3.connect(LOCAL_DB_PATH)
     cursor = conn.cursor()
-    cursor.execute('SELECT id, image, date FROM qr_codes WHERE username = ? AND date = ? AND status = 1', (username, today))
+    cursor.execute('SELECT id, image, date FROM qr_codes WHERE username = ? AND date = ? AND status = 1',
+                   (username, today))
     existing_qr = cursor.fetchone()
 
     if existing_qr:
-        conn.close()
-        return jsonify({"success": True, "image": existing_qr[1], "date": existing_qr[2]})
+        # Return existing QR code for today
+        return jsonify({
+            "success": True,
+            "image": existing_qr[1],
+            "date": existing_qr[2]
+        })
+
+    # Generate a new QR code if none exists
     qr_id = str(uuid.uuid4())
     qr_image = generate_qr_code(username)
-    cursor.execute('INSERT INTO qr_codes (id, username, image, date, status) VALUES (?, ?, ?, ?, 1)', (qr_id, username, qr_image, today))
+    cursor.execute('''INSERT INTO qr_codes (id, username, image, date, status) VALUES (?, ?, ?, ?, 1)''',
+                   (qr_id, username, qr_image, today))
     conn.commit()
     conn.close()
-    return jsonify({"success": True, "image": qr_image, "date": today})
+
+    return jsonify({
+        "success": True,
+        "image": qr_image,
+        "date": today
+    })
 
 
-@app.route('/user/get_username', methods=['POST'])
+# Function to generate QR code image
+def generate_qr_code(data):
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(data)
+    qr.make(fit=True)
+    img = qr.make_image(fill="black", back_color="white")
+    buffered = BytesIO()
+    img.save(buffered, format="PNG")
+    return base64.b64encode(buffered.getvalue()).decode("utf-8")
+
+
+# Route to get the username for a user
+@app.route('/user/username', methods=['POST'])
+@token_required
 def get_username():
-    data = request.json
-    username = data.get('username')
-
-    if not username:
-        return jsonify({"success": False, "message": "Username is required"}), 400
+    username = request.current_user  # Access username from the request context
 
     conn = sqlite3.connect(LOCAL_DB_PATH)
     cursor = conn.cursor()
@@ -160,96 +278,31 @@ def get_username():
         return jsonify({"success": False, "message": f"Database error: {str(e)}"}), 500
     finally:
         conn.close()
-
-
-
-
-
-
-def generate_qr_code(data):
-    qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=10, border=4)
-    qr.add_data(data)
-    qr.make(fit=True)
-    img = qr.make_image(fill="black", back_color="white")
-    buffered = BytesIO()
-    img.save(buffered, format="PNG")
-    return base64.b64encode(buffered.getvalue()).decode("utf-8")
-
-
-# Admin Authentication
-def check_admin_login(username, password):
-    try:
-        conn = sqlite3.connect(ADMIN_DB_PATH)
-        cursor = conn.cursor()
-        print(f"Checking admin credentials for {username}")  # Debugging line
-        cursor.execute("SELECT * FROM adminsidenfication WHERE usernameadmin = ? AND passwordadmin = ?", (username, password))
-        admin = cursor.fetchone()
-        print(f"Admin found: {admin}")  # Debugging line
-        return {
-            "success": bool(admin),
-            "username": username if admin else None,
-            "message": "Login successful" if admin else "Incorrect username or password",
-        }
-    except Exception as e:
-        print(f"Error in check_admin_login: {e}")  # Log the error
-        return {"success": False, "message": "Database error"}
-    finally:
-        conn.close()
-
-
-@app.route('/admin/login', methods=['POST'])
-def admin_login():
-    try:
-        data = request.json
-        print(f"Received data: {data}")  # Debugging line
-        username = data.get('username')
-        password = data.get('password')
-
-        if not username or not password:
-            return jsonify({"success": False, "message": "Username and password required"}), 400
-
-        result = check_admin_login(username, password)
-        return jsonify(result), 200 if result['success'] else 401
-
-    except Exception as e:
-        print(f"Error during admin login: {e}")  # Log the error
-        return jsonify({"success": False, "message": "Internal server error"}), 500
-
-
-@app.route('/admin/get_admin_username', methods=['POST'])
-def get_admin_username():
-    data = request.json
-    username = data.get('username')
-
-    if not username:
-        return jsonify({"success": False, "message": "Username is required"}), 400
-
-    conn = sqlite3.connect(ADMIN_DB_PATH)
-    cursor = conn.cursor()
-
-    try:
-        cursor.execute('SELECT istifadeci_adi FROM admin_page WHERE usernameadmin = ?', (username,))
-        result = cursor.fetchone()
-
-        if result:
-            istifadeci_adi = result[0]
-            return jsonify({"success": True, "istifadeci_adi": istifadeci_adi}), 200
-        else:
-            return jsonify({"success": False, "message": "Username not found"}), 404
-    except sqlite3.Error as e:
-        return jsonify({"success": False, "message": f"Database error: {str(e)}"}), 500
-    finally:
-        conn.close()
-
-
+        # Route to get user QR code history
 @app.route('/user/history/<username>', methods=['GET'])
-def user_history(username):
+@token_required
+def history(username):
     conn = sqlite3.connect(LOCAL_DB_PATH)
     cursor = conn.cursor()
     cursor.execute('SELECT id, date, status_scanner FROM qr_codes WHERE username = ?', (username,))
     rows = cursor.fetchall()
     conn.close()
+
     qr_data = [{"id": row[0], "date": row[1], "status_scanner": row[2]} for row in rows]
+    return jsonify(qr_data), 200
+
+
+# Route to get all QR codes for a user
+@app.route('/user/get_qrs/<username>', methods=['GET'])
+@token_required
+def get_qrs(username):
+    conn = sqlite3.connect(LOCAL_DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute('SELECT id, image, date, status FROM qr_codes WHERE username = ?', (username,))
+    rows = cursor.fetchall()
+    conn.close()
+
+    qr_data = [{"id": row[0], "image": row[1], "date": row[2], "status": row[3]} for row in rows]
     return jsonify(qr_data), 200
 
 

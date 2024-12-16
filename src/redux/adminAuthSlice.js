@@ -1,21 +1,29 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+const initialState = {
+  username: null,
+  isAuthenticated: false,
+  token: null,
+};
+
 const adminAuthSlice = createSlice({
   name: 'adminAuth',
-  initialState: {
-    username: '',
-  },
+  initialState,
   reducers: {
-    setAdminUsername: (state, action) => {
-      state.username = action.payload || '';
-      localStorage.setItem('adminUsername', action.payload || '');
+    setAdminAuth: (state, action) => {
+      const { username, token } = action.payload;
+      state.username = username;
+      state.isAuthenticated = true;  // Set authentication to true when the token is set
+      state.token = token;
     },
-    clearAdminUsername: (state) => {
-      state.username = '';
-      localStorage.removeItem('adminUsername');
+    clearAdminAuth: (state) => {
+      state.username = null;
+      state.isAuthenticated = false;
+      state.token = null;
     },
   },
 });
 
-export const { setAdminUsername, clearAdminUsername } = adminAuthSlice.actions;
+export const { setAdminAuth, clearAdminAuth } = adminAuthSlice.actions;
+
 export default adminAuthSlice.reducer;

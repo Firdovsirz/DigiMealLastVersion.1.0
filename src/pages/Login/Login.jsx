@@ -1,31 +1,31 @@
-import AOS from 'aos';
-import 'aos/dist/aos.css';
-import UserQr from '../User/UserQr/UserQr';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import styles from "../Login/Login.module.scss";
-import LoginError from './LoginError/LoginError';
-import React, { useState, useEffect } from 'react';
-import { setUsername } from '../../redux/authSlice';
-import SchoolIcon from '@mui/icons-material/School';
-import Header from '../../components/Header/Header';
 import { useSelector, useDispatch } from 'react-redux';
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+import styles from "../Login/Login.module.scss";
+import { setToken } from '../../redux/tokenSlice';
+import { setUsername } from '../../redux/authSlice';
+import apiClient from '../../redux/apiClient'; // Updated Axios client
+import LanguageChanger from '../../components/LanguageChanger/LanguageChanger';
 import CopyRight from '../../components/CopyRight/CopyRight';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import FinCodeHelp from "../../assets/LoginPage/card-id-fin.png";
+import SchoolIcon from '@mui/icons-material/School';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import LoginError from './LoginError/LoginError';
+import FinCodeHelp from "../../assets/LoginPage/card-id-fin.png";
 import AztuLogoLight from "../../assets/LoginPage/aztu-logo-light.png";
 import ThikLogoLight from "../../assets/LoginPage/thik-logo-light.png";
-import LanguageChanger from '../../components/LanguageChanger/LanguageChanger';
 
 export default function Login() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { t } = useTranslation();
+
     const [password, setPassword] = useState("");
     const [finHelp, setFinHelp] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [visibility, setVisibility] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
@@ -59,30 +59,26 @@ export default function Login() {
         setSuccessMessage("");
 
         if (!username || !password) {
+            setErrorMessage("Username and password are required");
+            toggleErrorContainer();
             return;
         }
 
         try {
-            const response = await fetch("http://127.0.0.1:5000/user/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ username, password }),
-            });
+            const response = await apiClient.post('/user/login', { username, password });
+            const { success, token, message } = response.data;
 
-            const result = await response.json();
-
-            if (response.ok) {
-                setIsLoggedIn(true);
-                dispatch(setUsername(result.username || username));
-                navigate('user-page', { state: { username: result.username || username } });
+            if (success) {
+                dispatch(setToken(token));
+                dispatch(setUsername(username));
+                navigate('/user-page', { state: { username } });
             } else {
-                console.log(result.message);
+                setErrorMessage(message || "Login failed");
                 toggleErrorContainer();
             }
         } catch (error) {
-            console.log(error);
+            setErrorMessage("Network error. Please try again.");
+            toggleErrorContainer();
         }
     };
 
@@ -107,41 +103,33 @@ export default function Login() {
                             <h1>DigiMeal</h1>
                         </div>
                         <form onSubmit={handleLogin} data-aos="fade-up">
-                            <div htmlFor="username" className={styles['login-form-fin-label']} id='usernam'>
+                            <div className={styles['login-form-fin-label']}>
                                 <input
                                     type="text"
                                     value={username}
                                     onChange={(e) => dispatch(setUsername(e.target.value))}
-                                    id='username'
                                     required
                                 />
                                 <div className={styles['fin-code-placeholder']}>
                                     {t("login-fin-input-placeholder", { ns: "login" })}
                                 </div>
                                 <HelpOutlineIcon style={{ cursor: "pointer" }} onClick={handleFinHelpToggle} />
-                                {finHelp ? <img src={FinCodeHelp} alt="fin-code-help" /> : null}
+                                {finHelp && <img src={FinCodeHelp} alt="fin-code-help" />}
                             </div>
-                            <div htmlFor="password" className={styles['login-form-pass-label']} id='password'>
+                            <div className={styles['login-form-pass-label']}>
                                 <input
                                     type={visibility ? "text" : "password"}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    id='password'
                                     required
                                 />
                                 <div className={styles['password-placeholder']}>
                                     {t("login-pass-input-placeholder", { ns: "login" })}
                                 </div>
                                 {visibility ? (
-                                    <VisibilityIcon
-                                        style={{ color: "rgb(24, 38, 98)", cursor: "pointer" }}
-                                        onClick={handleVisibility}
-                                    />
+                                    <VisibilityIcon style={{ cursor: "pointer" }} onClick={handleVisibility} />
                                 ) : (
-                                    <VisibilityOffIcon
-                                        style={{ color: "rgb(24, 38, 98)", cursor: "pointer" }}
-                                        onClick={handleVisibility}
-                                    />
+                                    <VisibilityOffIcon style={{ cursor: "pointer" }} onClick={handleVisibility} />
                                 )}
                             </div>
                             <button type="submit">
@@ -151,24 +139,14 @@ export default function Login() {
                         <p className={styles['forget-pass-txt']} data-aos="zoom-in">
                             {t("login-forget-password", { ns: "login" })}
                         </p>
-                        <CopyRight
-                            color={'black'}
-                            marginTop={0}
-                            display={window.innerWidth < 600 ? 'flex' : 'none'}
-                            width={'100%'}
-                        />
                     </div>
                 </section>
             </main>
             <LoginError
                 errorContainer={errorContainer}
-                toggleErrorContainer={toggleErrorContainer} />
-            {isLoggedIn && username && (
-                <>
-                    <Header/>
-                    <UserQr/>
-                </>
-            )}
+                toggleErrorContainer={toggleErrorContainer}
+            />
+            {successMessage && <div>{successMessage}</div>}
         </>
     );
 }

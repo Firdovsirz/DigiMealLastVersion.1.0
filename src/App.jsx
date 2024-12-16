@@ -12,33 +12,26 @@ import FacultyAdminAside from './pages/Admin/FacultyAdmin/FacultyAdminAside/Facu
 import About from './components/About/About';
 import AdminLogin from './pages/Admin/AdminLogin/AdminLogin';
 import FacultyAdminRegister from './pages/Admin/FacultyAdmin/FacultyAdminRegister/FacultyAdminRegister';
+import PrivateRoute from './pages/User/PrivateRoute';
 
 function App() {
-
   return (
     <>
-      {/* <LanguageChanger /> */}
-      {/* <Login /> */}
-      {/* <Header /> */}
-      {/* <UserQr /> */}
-      {/* <FacultyAdminAside /> */}
-      {/* <Routes>
+      <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/user-page" element={<UserQr />} />
-        <Route path="/user-history" element={<UserHistory />} />
-      </Routes> */}
-      {/* <AdminLogin /> */}
-      {/* <LoginError /> */}
-      {/* <Scanner /> */}
-      {/* <BottomNavigation /> */}
-      {/* <About /> */}
-      {/* <FacultyAdminRegister /> */}
-      <Routes>
-        <Route path='/' element={<AdminLogin />} />
-        <Route path='/fac-adm-reg' element={<FacultyAdminRegister />} />
+        <Route path="/user-page/history" element={<UserHistory />} />
+        <Route
+          path="/"
+          element={<PrivateRoute element={<Login />} />}
+        />
       </Routes>
+      {/* <Routes>
+      <Route path="/" element={<AdminLogin />} />
+      <Route path="/fac-adm-reg" element={<FacultyAdminRegister />} />
+      </Routes> */}
     </>
-  )
+  );
 }
 
 export default App;
