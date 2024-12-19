@@ -75,7 +75,7 @@ init_db()
 
 # JWT token generation
 def generate_jwt(username, is_admin=False):
-    expiration_time = datetime.datetime.utcnow() + datetime.timedelta(hours=0.001)
+    expiration_time = datetime.datetime.utcnow() + datetime.timedelta(hours=1)
     payload = {
         'username': username,
         'is_admin': is_admin,
