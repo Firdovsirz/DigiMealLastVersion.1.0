@@ -1,8 +1,10 @@
+import Stack from '@mui/material/Stack';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import apiClient from '../../../redux/apiClient';
+import Pagination from '@mui/material/Pagination';
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Header from "../../../components/Header/Header";
 import styles from "../UserHistory/UserHistory.module.scss";
 
@@ -88,6 +90,11 @@ export default function UserHistory() {
         ) : (
           <p>No history found for the user.</p>
         )}
+        <div className={styles['user-history-pagination-container']}>
+          <Stack spacing={2} className={styles['pagination-component']}>
+            <Pagination count={10} />
+          </Stack>
+        </div>
       </main>
     </>
   );

@@ -27,11 +27,11 @@ function App() {
         />
       </Routes>
       {/* <Routes>
-      <Route path="/" element={<AdminLogin />} />
-      <Route path="/fac-adm-reg" element={<FacultyAdminRegister />} />
+        <Route path="/" element={<AdminLogin />} />
+        <Route path="/fac-adm-reg" element={<FacultyAdminRegister />} />
       </Routes> */}
     </>
   );
 }
 
-export default App;
+export default App; 4

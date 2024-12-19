@@ -102,6 +102,9 @@
             border: 2px solid $primary-color;
             padding: 10px 0;
             border-radius: $primary-border-radius;
+            @media (max-width: 600px) {
+                display: none;
+            }
             cursor: pointer;
 
             .nav-log-out-icon {

@@ -206,7 +206,8 @@ export default function UserQr() {
             )}
           </div>
         </section>
-        {window.innerWidth < 600 ? <BottomNavigation /> : null}
+        {/* {window.innerWidth < 600 ? <BottomNavigation /> : null} */}
+        <BottomNavigation />
       </main>
     </>
   );
