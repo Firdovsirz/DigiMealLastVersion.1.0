@@ -8,7 +8,7 @@ import apiClient from '../../../../redux/apiClient'; // Use the configured axios
 import styles from "../FacultyAdminAside/FacultyAdminAside.module.scss";
 
 export default function FacultyAdmin() {
-    const [openedBurger, setOpenedBurger] = useState(true);
+  const [openedBurger, setOpenedBurger] = useState(true);
   const [facultyName, setFacultyName] = useState('');
   const adminUsername = useSelector((state) => state.adminAuth.username);
   const adminToken = useSelector((state) => state.adminAuth.token);  // Get token from Redux state

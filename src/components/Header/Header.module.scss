@@ -6,6 +6,7 @@
     height: 80px;
     display: flex;
     align-items: center;
+    justify-content: center;
     padding: 20px;
 
     .user-nav {
@@ -14,13 +15,23 @@
         align-items: center;
         justify-content: space-between;
 
+        @media (max-width: 600px) {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         .header-logo {
             display: flex;
             align-items: center;
+            justify-content: center;
             width: calc(100% / 3);
+            h1{
+                color: $primary-color;
+            }
 
             @media (max-width: 600px) {
-                width: calc(100% / 2);
+                width: calc(100%);
             }
         }
 
@@ -87,6 +98,7 @@
 
             @media (max-width: 600px) {
                 width: calc(100% / 2);
+                display: none;
 
                 p {
                     width: 70px;
@@ -114,89 +126,6 @@
 
             .nav-log-out-txt {
                 color: $primary-color;
-            }
-        }
-
-        .burger-menu {
-            width: 250px;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            right: 0;
-            background: $primary-color;
-            transition: all 400ms;
-            z-index: 100000;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-
-            .burger-menu-main-container {
-                .burger-menu-close-icon-container {
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    padding: 20px;
-                    cursor: pointer;
-
-                    .burger-menu-close-icon {
-                        color: #fff;
-                        font-size: 40px;
-                    }
-
-                    .burger-menu-digimeal-logo {
-                        display: flex;
-                        align-items: center;
-                        color: #fff;
-
-                        p {
-                            color: #fff;
-                            font-size: 25px;
-                        }
-                    }
-                }
-
-                .burger-menu-profile-info {
-                    padding: 20px;
-                    border-top: 1px solid #fff;
-                    border-bottom: 1px solid #fff;
-
-                    h3 {
-                        color: #fff;
-                    }
-                }
-
-                .burger-menu-pages {
-                    padding: 20px;
-
-                    ul {
-                        li {
-                            color: #fff;
-                            font-size: 18px;
-                            list-style: none;
-
-                            &:first-child {
-                                margin-bottom: 20px;
-                            }
-                        }
-                    }
-                }
-            }
-
-            .burger-menu-log-out {
-                display: flex;
-                align-items: center;
-                padding: 20px;
-                cursor: pointer;
-
-                .burger-log-out-icon {
-                    color: #fff;
-                    cursor: pointer;
-                    margin-right: 20px;
-                }
-
-                .log-out-btn {
-                    color: #fff;
-                }
             }
         }
     }

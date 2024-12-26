@@ -1,0 +1,33 @@
+@import "../../../styles/variables";
+
+.user-settings-main {
+    // padding: 30px;
+    width: 100%;
+    height: calc(100vh - 140px);
+    display: flex;
+    // align-items: center;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .user-settings-info {
+        p {
+            border-bottom: 1px solid rgb(197, 197, 197);
+            padding: 10px;
+
+            span {
+                font-weight: bold;
+                color: $primary-color;
+            }
+        }
+    }
+
+    .user-settings-log-out {
+        display: flex;
+        align-items: center;
+        border-top: 1px solid rgb(197, 197, 197);
+        padding: 10px;
+        .user-settings-log-out-icon{
+            margin-right: 15px;
+        }
+    }
+}

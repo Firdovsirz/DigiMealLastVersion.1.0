@@ -84,7 +84,7 @@ export default function Login() {
 
     return (
         <>
-            <LanguageChanger />
+            {/* <LanguageChanger /> */}
             <main className={styles['login-main']}>
                 <section className={styles['login-section']}>
                     <div className={styles['login-page-txt']}>

@@ -43,78 +43,77 @@ export default function UserQr() {
     return () => clearInterval(intervalId);
   }, []);
 
+   // Load QR code from localStorage or backend on mount
+   const getHeaders = () => ({
+    Authorization: `Bearer ${token}`,
+  });
+
+  // Load QR code from backend on mount
   useEffect(() => {
-    const checkTokenExpiration = () => {
-      if (!token) {
+    const fetchQrCode = async () => {
+      if (!username || !token) {
+        setErrorMessage(t("auth-required"));
         navigate("/", { replace: true });
-        return;
-      }
-
-      const decodedToken = JSON.parse(atob(token.split('.')[1]));
-      const expirationTime = decodedToken.exp * 1000;
-      const currentTime = Date.now();
-
-      if (currentTime >= expirationTime) {
-        localStorage.removeItem("authToken");
-        navigate("/", { replace: true });
-      }
-    };
-
-    checkTokenExpiration();
-
-    const fetchQrCodes = async () => {
-      if (!username) {
-        setErrorMessage("Username is required.");
         return;
       }
 
       try {
-        const response = await apiClient.get(`/user/get_qrs/${username}`);
+        const response = await apiClient.get(`/user/get_qrs/${username}`, {
+          headers: getHeaders(),
+        });
+
         const data = response.data;
 
-        if (data && data.length > 0) {
-          const today = new Date().toISOString().split("T")[0];
-          const todaysQr = data.find((qr) => qr.date === today && qr.status === 1);
+        // Find today's QR code
+        const today = new Date().toISOString().split("T")[0];
+        const todaysQr = data.find((qr) => qr.date === today && qr.status === 1);
 
-          if (todaysQr) {
-            setQrCodeImg(`data:image/png;base64,${todaysQr.image}`);
-            setIsButtonDisabled(true);
-          } else {
-            setQrCodeImg(null);
-            setIsButtonDisabled(false);
-          }
+        if (todaysQr) {
+          setQrCodeImg(`data:image/png;base64,${todaysQr.image}`);
+          setIsButtonDisabled(true);
         } else {
-          setErrorMessage("No QR code history found.");
+          setQrCodeImg(null);
           setIsButtonDisabled(false);
         }
       } catch (error) {
         console.error("Error fetching QR codes:", error);
-        setErrorMessage("Failed to fetch QR codes.");
+        setErrorMessage(t("fetch-error"));
       }
     };
 
-    if (token) fetchQrCodes();
-  }, [username, token, navigate]);
+    fetchQrCode();
+  }, [username, token, navigate, t]);
+
 
   const handleGenerateQR = async () => {
     if (!username) {
-      setErrorMessage("Username is required.");
+      setErrorMessage(t("username-required"));
+      return;
+    }
+
+    if (!token) {
+      setErrorMessage(t("auth-required"));
       return;
     }
 
     try {
-      const response = await apiClient.post("/user/generate_qr", { username });
+      const response = await apiClient.post(
+        "/user/generate_qr",
+        { username },
+        { headers: getHeaders() }
+      );
+
       const data = response.data;
 
       if (data.success) {
         setQrCodeImg(`data:image/png;base64,${data.image}`);
         setIsButtonDisabled(true);
       } else {
-        setErrorMessage(data.message || "Failed to generate QR code.");
+        setErrorMessage(data.message || t("generate-error"));
       }
     } catch (error) {
       console.error("Error generating QR code:", error);
-      setErrorMessage("An error occurred while generating the QR code.");
+      setErrorMessage(t("generate-error"));
     }
   };
 
@@ -150,6 +149,7 @@ export default function UserQr() {
   useEffect(() => {
     window.history.replaceState(null, "", location.pathname);
   }, [location]);
+  
 
   return (
     <>

@@ -7,12 +7,15 @@ import Pagination from '@mui/material/Pagination';
 import React, { useEffect, useState } from 'react';
 import Header from "../../../components/Header/Header";
 import styles from "../UserHistory/UserHistory.module.scss";
+import BottomNavigation from "../../../components/BottomNavigation/BottomNavigation";
 
 export default function UserHistory() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [historyData, setHistoryData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1); // Current page starts at 1
+  const rowsPerPage = 4; // Number of rows per page
   const token = useSelector((state) => state.token.token);
   const username = useSelector((state) => state.auth.username);
 
@@ -31,6 +34,7 @@ export default function UserHistory() {
       }
     };
     checkTokenExpiration();
+
     const fetchHistoryData = async () => {
       if (!username) return;
 
@@ -47,6 +51,17 @@ export default function UserHistory() {
 
     fetchHistoryData();
   }, [username, token, navigate]);
+
+  const handlePageChange = (event, page) => {
+    setCurrentPage(page);
+  };
+
+  const paginatedData = historyData.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
+  );
+
+  const paginationCount = Math.ceil(historyData.length / rowsPerPage);
 
   if (loading) {
     return (
@@ -77,7 +92,7 @@ export default function UserHistory() {
                 </tr>
               </thead>
               <tbody className={styles['history-table-body']}>
-                {historyData.map((item, index) => (
+                {paginatedData.map((item, index) => (
                   <tr key={index}>
                     <td>{item.id}</td>
                     <td>{item.date}</td>
@@ -92,10 +107,15 @@ export default function UserHistory() {
         )}
         <div className={styles['user-history-pagination-container']}>
           <Stack spacing={2} className={styles['pagination-component']}>
-            <Pagination count={10} />
+            <Pagination
+              count={paginationCount}
+              page={currentPage}
+              onChange={handlePageChange}
+            />
           </Stack>
         </div>
       </main>
+      <BottomNavigation />
     </>
   );
 }

@@ -50,9 +50,6 @@ def init_db():
         istifadeci_adi TEXT NOT NULL 
     )''')
 
-    cursor.execute('INSERT OR IGNORE INTO user_page (username, istifadeci_adi) VALUES (?, ?)',
-                   ('Karam Shukurlu', 'Karam Shukurlu'))
-
     conn.commit()
     conn.close()
 
@@ -218,7 +215,7 @@ def generate_qr():
     existing_qr = cursor.fetchone()
 
     if existing_qr:
-        # Return existing QR code for today
+
         return jsonify({
             "success": True,
             "image": existing_qr[1],

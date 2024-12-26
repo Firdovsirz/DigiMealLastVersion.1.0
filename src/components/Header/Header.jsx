@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import apiClient from '../../redux/apiClient';
@@ -13,6 +12,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { clearUsername } from '../../redux/authSlice';
 import LanguageChanger from '../LanguageChanger/LanguageChanger';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 
 export default function Header() {
     const { t } = useTranslation();
@@ -21,6 +21,8 @@ export default function Header() {
     const [fullName, setFullName] = useState(globalUsername);
     const [burgerMenu, setBurgerMenu] = useState(true);
     const dispatch = useDispatch();
+    const location = useLocation();
+    const navigate = useNavigate();
     const handleLogout = () => {
         dispatch(clearToken());
         localStorage.removeItem("authToken");
@@ -35,7 +37,7 @@ export default function Header() {
         if (!token) {
             console.warn('No token available. Using global username.');
             setFullName(globalUsername);
-            return;
+            return <Navigate to={"/"} replace />;
         }
 
         try {
@@ -61,7 +63,7 @@ export default function Header() {
     }, [globalUsername, token]);
 
     if (!token || !globalUsername) {
-        return <p>Please log in to access the dashboard</p>;
+        return <Navigate to={"/"} replace />
     }
 
     return (
@@ -92,44 +94,20 @@ export default function Header() {
                     </ul>
                 </div>
                 <div className={styles['user-header-profile']}>
-                    <p>{fullName}</p>
-                    <AccountCircleIcon
+                    <p>{window.innerWidth < 1000 ? null : fullName}</p>
+                    {/* <AccountCircleIcon
                         onClick={handleBurgerMenu}
                         style={{
                             color: 'rgb(24, 38, 98)',
                             fontSize: 40,
                             cursor: 'pointer',
                         }}
-                    />
+                    /> */}
                     {/* {window.innerWidth > 600 && <LanguageChanger position={'relative'} top={0} right={-40} />} */}
                 </div>
                 <div className={styles['nav-log-out']} onClick={handleLogout}>
                     <LogoutIcon className={styles['nav-log-out-icon']} />
                     <p className={styles['nav-log-out-txt']}>Log Out</p>
-                </div>
-                <div className={styles['burger-menu']} style={burgerMenu ? { marginRight: '-250px' } : { marginRight: 0 }}>
-                    <div className={styles['burger-menu-main-container']}>
-                        <div className={styles['burger-menu-close-icon-container']}>
-                            <CloseIcon className={styles['burger-menu-close-icon']} onClick={handleBurgerMenu} />
-                            <div className={styles['burger-menu-digimeal-logo']}>
-                                <SchoolIcon style={{ color: '#fff', fontSize: 30, marginRight: 10 }} />
-                                <p>DigiMeal</p>
-                            </div>
-                        </div>
-                        <div className={styles['burger-menu-profile-info']}>
-                            <h3>{fullName}</h3>
-                        </div>
-                        <div className={styles['burger-menu-pages']}>
-                            <ul>
-                                <li>{t("header-qr-generate", { ns: "header" })}</li>
-                                <li>{t("header-history", { ns: "header" })}</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div className={styles['burger-menu-log-out']}>
-                        <LogoutIcon className={styles['burger-log-out-icon']} />
-                        <p className={styles['log-out-btn']}>Log Out</p>
-                    </div>
                 </div>
             </nav>
         </header>

@@ -5,6 +5,7 @@
     width: 100vw;
     height: 100vh;
     display: flex;
+    overflow: hidden;
     align-items: center;
     justify-content: center;
     background: linear-gradient(45deg, blue 40%, white);
@@ -18,10 +19,10 @@
         display: flex;
         background: #fff;
         align-items: center;
-        @media (max-width: 600px) {
+        @media (max-width: 800px) {
             flex-direction: column;
             width: 90%;
-            height: 100%;
+            height: 90%;
             margin-top: 30px;
         }
 
@@ -38,7 +39,7 @@
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            @media (max-width: 600px) {
+            @media (max-width: 800px) {
                 border-radius: $primary-border-radius $primary-border-radius 0 0 ;
                 width: 100%;
                 height: fit-content;
@@ -52,7 +53,7 @@
                 align-items: center;
                 justify-content: space-between;
                 padding-inline: 30px;
-                @media (max-width: 600px) {
+                @media (max-width: 800px) {
                     margin-bottom: 20px;
                 }
 
@@ -62,7 +63,7 @@
                     &:first-child {
                         margin-right: 20px;
                     }
-                    @media (max-width: 600px) {
+                    @media (max-width: 800px) {
                         width: 90px;
                     }
                 }
@@ -73,7 +74,7 @@
                 text-align: center;
                 color: #fff;
                 font-size: 20px;
-                @media (max-width: 600px) {
+                @media (max-width: 800px) {
                     font-size: 15px;
                 }
             }
@@ -86,7 +87,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            @media (max-width: 600px) {
+            @media (max-width: 800px) {
                 padding: 10px;
                 width: 90%;
                 height: fit-content;
@@ -115,7 +116,10 @@
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                @media (max-width: 600px) {
+                @media (max-width: 800px) {
+                    width: 100%;
+                }
+                @media (min-width: 800px) {
                     width: 100%;
                 }
 
@@ -123,12 +127,16 @@
                     position: relative;
                     display: flex;
                     align-items: center;
+                    justify-content: space-between;
                     margin-bottom: 20px;
                     border-radius: $primary-border-radius;
                     border: 1px solid $primary-color;
                     padding-inline: 15px;
-                    @media (max-width: 600px) {
+                    @media (max-width: 800px) {
                         width: 100%;
+                    }
+                    @media (min-width: 800px) {
+                        width: 80%;
                     }
 
                     input {
@@ -138,6 +146,9 @@
                         color: $primary-color;
                         outline: none;
                         border: none;
+                        @media (min-width: 800px) {
+                            width: 70%;
+                        }
 
                         &:focus,
                         &:valid {
@@ -178,12 +189,16 @@
                     position: relative;
                     display: flex;
                     align-items: center;
+                    justify-content: space-between;
                     margin-bottom: 50px;
                     border-radius: $primary-border-radius;
                     border: 1px solid $primary-color;
                     padding-inline: 15px;
-                    @media (max-width: 600px) {
+                    @media (max-width: 800px) {
                         width: 100%;
+                    }
+                    @media (min-width: 800px) {
+                        width: 80%;
                     }
 
                     input {
@@ -193,8 +208,11 @@
                         font-size: 18px;
                         color: $primary-color;
                         outline: none;
-                        @media (max-width: 600px) {
+                        @media (max-width: 800px) {
                             width: 100%;
+                        }
+                        @media (min-width: 800px) {
+                            width: 80%;
                         }
 
                         &:focus,
@@ -231,7 +249,7 @@
                 text-decoration: underline;
                 font-size: 14px;
                 cursor: pointer;
-                @media (max-width: 600px) {
+                @media (max-width: 800px) {
                     margin-bottom: 30px;
                 }
             }

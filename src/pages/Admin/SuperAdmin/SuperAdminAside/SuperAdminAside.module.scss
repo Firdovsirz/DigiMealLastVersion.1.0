@@ -1,0 +1,169 @@
+@import "../../../../styles/variables";
+
+.super-admin-aside {
+    height: 100vh;
+    width: 300px;
+    background: rgb(32, 41, 61);
+    transition: all 600ms;
+    overflow: scroll;
+
+    .super-admin-aside-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px;
+
+        .sp-adm-head-txt {
+            color: #fff;
+        }
+
+        .super-admin-burger-icon {
+            cursor: pointer;
+
+            .sp-admin-burger-first-ln {
+                width: 30px;
+                height: 4px;
+                background: #fff;
+                border-radius: 20px;
+                margin-bottom: 5px;
+            }
+
+            .sp-admin-burger-second-ln {
+                width: 30px;
+                height: 4px;
+                background: #fff;
+                border-radius: 20px;
+                margin-bottom: 5px;
+
+            }
+
+            .sp-admin-burger-third-ln {
+                width: 30px;
+                height: 4px;
+                background: #fff;
+                border-radius: 20px;
+            }
+        }
+    }
+
+    .super-admin-profile-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-top: 30px;
+
+        .sp-adm-profile-icon {
+            color: #fff;
+            font-size: 50px;
+            margin-bottom: 5px;
+        }
+
+        .sp-adm-profile-name {
+            color: $primary-admin-green-color;
+            font-size: 25px;
+        }
+    }
+
+    .super-admin-pages {
+        padding: 20px;
+        width: 240px;
+
+        .sp-adm-dashboard-nav-link-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            font-size: 20px;
+            color: $primary-admin-green-color;
+            margin-bottom: 20px;
+            width: 240px;
+
+            .sp-adm-home-icon {
+                font-size: 30px;
+                color: $primary-admin-green-color;
+                margin-right: 20px;
+            }
+        }
+
+        .sp-adm-anchors {
+
+            // padding: 20px;
+            .sp-adm-link-anchor {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                .sp-adm-anchor-container {
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-start;
+                    font-size: 20px;
+                    color: $primary-admin-green-color;
+
+                    .sp-adm-link-icon {
+                        font-size: 30px;
+                        color: $primary-admin-green-color;
+                        margin-right: 20px;
+                    }
+                }
+            }
+
+            .sp-adm-link-container {
+                padding: 10px;
+                transition: all 400ms;
+
+                .sp-adm-app-wait-link-container,
+                .sp-adm-approve-link-container,
+                .sp-adm-fact-link-container,
+                .sp-adm-balance-link-container,
+                .sp-adm-app-wait-container {
+                    display: flex;
+                    align-items: center;
+                    color: #fff;
+                    cursor: pointer;
+
+                    .sp-adm-link-icon {
+                        font-size: 25px;
+                        color: $primary-admin-green-color;
+                        margin-right: 20px;
+                        margin-block: 20px;
+                    }
+                }
+            }
+        }
+
+        .sp-adm-fact-link-cotainer {
+            margin-top: 20px;
+            align-items: center;
+            justify-content: space-between;
+
+            .sp-adm-fact-container {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                .sp-adm-fact-head-txt-container {
+                    display: flex;
+                    align-items: center;
+                    color: $primary-admin-green-color;
+
+                    .sp-adm-link-icon {
+                        color: $primary-admin-green-color;
+                        font-size: 25px;
+                        margin-right: 20px;
+                    }
+                }
+            }
+            .sp-adm-fac-list-container{
+                width: 230px;
+                padding: 10px;
+                margin-top: 15px;
+                li{
+                    margin-block: 10px;
+                    color: #fff;
+                    list-style-type: none;
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+}

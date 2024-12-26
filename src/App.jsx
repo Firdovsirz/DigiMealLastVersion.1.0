@@ -13,23 +13,30 @@ import About from './components/About/About';
 import AdminLogin from './pages/Admin/AdminLogin/AdminLogin';
 import FacultyAdminRegister from './pages/Admin/FacultyAdmin/FacultyAdminRegister/FacultyAdminRegister';
 import PrivateRoute from './pages/User/PrivateRoute';
+import UserSettings from './pages/User/UserSettings/UserSettings';
+import SuperAdminAside from './pages/Admin/SuperAdmin/SuperAdminAside/SuperAdminAside';
+import SuperAdminHome from './pages/Admin/SuperAdmin/SuperAdminHome/SuperAdminHome';
 
 function App() {
   return (
     <>
-      <Routes>
+      {/* <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/user-page" element={<UserQr />} />
         <Route path="/user-page/history" element={<UserHistory />} />
+        <Route path="/user-page/settings" element={<UserSettings />} />
         <Route
           path="/"
           element={<PrivateRoute element={<Login />} />}
         />
-      </Routes>
+      </Routes> */}
       {/* <Routes>
         <Route path="/" element={<AdminLogin />} />
         <Route path="/fac-adm-reg" element={<FacultyAdminRegister />} />
       </Routes> */}
+      {/* <About /> */}
+      {/* <SuperAdminAside /> */}
+      <SuperAdminHome />
     </>
   );
 }
