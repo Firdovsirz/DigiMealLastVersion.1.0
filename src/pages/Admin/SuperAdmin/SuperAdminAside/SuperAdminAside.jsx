@@ -73,7 +73,6 @@ export default function SuperAdminAside() {
                             minHeight: 300
                         } : {
                             minHeight: 0,
-                            minHeight: 0,
                             opacity: 0,
                             visibility: 'hidden'
                         }}>
@@ -121,13 +120,11 @@ export default function SuperAdminAside() {
                             minHeight: 300,
                             visibility: 'visible',
                             opacity: 1,
-                            minHeight: 300, 
                             transition: "all 400ms"
                         } : {
                             minHeight: 0,
-                            minHeight: 0,
-                            opacity: 0,
                             visibility: 'hidden',
+                            opacity: 0,
                             transition: "all 400ms"
                         }}
                     >

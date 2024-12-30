@@ -16,6 +16,8 @@ import PrivateRoute from './pages/User/PrivateRoute';
 import UserSettings from './pages/User/UserSettings/UserSettings';
 import SuperAdminAside from './pages/Admin/SuperAdmin/SuperAdminAside/SuperAdminAside';
 import SuperAdminHome from './pages/Admin/SuperAdmin/SuperAdminHome/SuperAdminHome';
+import SuperAdminApproved from './pages/Admin/SuperAdmin/SuperAdminApproved/SuperAdminApproved';
+import SuperAdminMoreInfo from './pages/Admin/SuperAdmin/SuperAdminMoreInfo/SuperAdminMoreInfo';
 
 function App() {
   return (
@@ -36,7 +38,9 @@ function App() {
       </Routes> */}
       {/* <About /> */}
       {/* <SuperAdminAside /> */}
-      <SuperAdminHome />
+      {/* <SuperAdminHome /> */}
+      <SuperAdminApproved />
+      {/* <SuperAdminMoreInfo /> */}
     </>
   );
 }

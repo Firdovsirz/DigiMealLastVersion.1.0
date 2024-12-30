@@ -1,0 +1,135 @@
+@import "../../../../styles/variables";
+
+.super-admin-approved-main {
+    width: 100%;
+    height: 100%;
+    background: rgb(21, 27, 44);
+    display: flex;
+
+    // align-items: center;
+    .super-admin-approved-main-container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 50px;
+
+        // align-items: center;
+        .sp-adm-approved-head-txt {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+
+            h1 {
+                width: 100%;
+                color: $primary-admin-green-color;
+                text-align: center;
+                margin-bottom: 50px;
+            }
+        }
+
+        .sp-adm-approved-table-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            width: 80%;
+
+            .sp-adm-approved-search-form {
+                margin-bottom: 40px;
+                position: relative;
+                input {
+                    width: 300px;
+                    height: 50px;
+                    outline: none;
+                    border: none;
+                    padding: 10px;
+                    border-radius: 10px;
+                    font-size: 20px;
+                    &:valid,
+                    &:focus{
+                        color: $primary-admin-green-color;
+
+                    }
+                    &:valid+.sp-adm-approved-search-placeholder,
+                    &:focus+.sp-adm-approved-search-placeholder{
+                        transform: translateX(10px);
+                        transform: translateY(-27px);
+                        background: $primary-admin-green-color;
+                        padding: 2px 5px;
+                        border-radius: 5px;
+                        color: #fff;
+                    }
+                }
+                .sp-adm-approved-search-placeholder{
+                    position: absolute;
+                    top: 15px;
+                    left: 10px;
+                    transition: all 400ms;
+                }
+            }
+
+            .sp-adm-approved-table {
+                border: 1px solid rgb(190, 190, 190);
+                border-radius: 10px;
+                border-collapse: collapse;
+                width: 100%;
+
+                thead {
+                    border-bottom: 1px solid rgb(190, 190, 190);
+                    width: 100%;
+
+                    tr {
+                        width: 100%;
+
+                        th {
+                            color: #fff;
+                            padding: 10px;
+
+                            &:not(:last-child) {
+                                border-right: 1px solid rgb(190, 190, 190);
+                            }
+                        }
+                    }
+                }
+
+                tbody {
+                    tr {
+                        text-align: center;
+
+                        &:not(:last-child) {
+                            border-bottom: 1px solid rgb(190, 190, 190);
+                        }
+
+                        td {
+                            padding: 10px;
+                            color: #fff;
+
+                            &:not(:last-child) {
+                                border-right: 1px solid rgb(190, 190, 190);
+                            }
+
+                            &:last-child {
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                            }
+
+                            p {
+                                border: 1px solid $primary-admin-green-color;
+                                width: fit-content;
+                                padding: 5px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                background: $primary-admin-green-color;
+                                border-radius: 10px;
+                                cursor: pointer;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
