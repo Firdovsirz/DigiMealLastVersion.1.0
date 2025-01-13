@@ -78,11 +78,11 @@ export default function UserHistory() {
     <>
       <Header />
       <main className={styles['user-history-main']}>
-        <div className={styles['user-history-head-txt-container']}>
+        <section className={styles['user-history-head-txt-container']}>
           <h2>{t('user-history-heading', { ns: 'user' })}</h2>
-        </div>
+        </section>
         {historyData.length > 0 ? (
-          <div className={styles['history-table-wrapper']}>
+          <section className={styles['history-table-wrapper']}>
             <table className={styles['history-table']}>
               <thead className={styles['history-table-head']}>
                 <tr>
@@ -101,11 +101,11 @@ export default function UserHistory() {
                 ))}
               </tbody>
             </table>
-          </div>
+          </section>
         ) : (
           <p>No history found for the user.</p>
         )}
-        <div className={styles['user-history-pagination-container']}>
+        <section className={styles['user-history-pagination-container']}>
           <Stack spacing={2} className={styles['pagination-component']}>
             <Pagination
               count={paginationCount}
@@ -113,9 +113,9 @@ export default function UserHistory() {
               onChange={handlePageChange}
             />
           </Stack>
-        </div>
+        </section>
       </main>
-      <BottomNavigation />
+      {window.innerWidth < 600 ? <BottomNavigation /> : null}
     </>
   );
 }

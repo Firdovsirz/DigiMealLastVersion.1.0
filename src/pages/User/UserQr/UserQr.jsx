@@ -43,12 +43,10 @@ export default function UserQr() {
     return () => clearInterval(intervalId);
   }, []);
 
-   // Load QR code from localStorage or backend on mount
    const getHeaders = () => ({
     Authorization: `Bearer ${token}`,
   });
 
-  // Load QR code from backend on mount
   useEffect(() => {
     const fetchQrCode = async () => {
       if (!username || !token) {
@@ -64,7 +62,6 @@ export default function UserQr() {
 
         const data = response.data;
 
-        // Find today's QR code
         const today = new Date().toISOString().split("T")[0];
         const todaysQr = data.find((qr) => qr.date === today && qr.status === 1);
 
@@ -157,7 +154,6 @@ export default function UserQr() {
       <main className={styles["user-page-main"]}>
         <section className={styles["user-page-qr-section"]}>
           <div className={styles["user-page-qr-container"]}>
-            {/* QR Code display and error handling */}
             <div className={styles["user-page-qr-img-container"]}>
               {qrCodeImg ? (
                 <img
@@ -206,8 +202,7 @@ export default function UserQr() {
             )}
           </div>
         </section>
-        {/* {window.innerWidth < 600 ? <BottomNavigation /> : null} */}
-        <BottomNavigation />
+        {window.innerWidth < 600 ? <BottomNavigation /> : null}
       </main>
     </>
   );

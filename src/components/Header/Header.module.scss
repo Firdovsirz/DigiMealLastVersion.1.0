@@ -24,9 +24,10 @@
         .header-logo {
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             width: calc(100% / 3);
-            h1{
+
+            h1 {
                 color: $primary-color;
             }
 
@@ -36,6 +37,9 @@
         }
 
         .header-pages {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             width: calc(100% / 3);
 
             @media (max-width: 600px) {
@@ -55,32 +59,53 @@
                     .header-page-link-qr {
                         text-decoration: none;
                         cursor: pointer;
-                        color: $primary-color;
+                        // color: $primary-color;
+                        color: rgb(146, 146, 146);
                         font-size: 18px;
+                        transition: all 400ms;
+                        &:hover{
+                            color: $primary-color;
+                        }
                     }
 
                     .header-page-link-history {
                         text-decoration: none;
                         cursor: pointer;
-                        color: $primary-color;
+                        // color: $primary-color;
+                        color: rgb(146, 146, 146);
                         font-size: 20px;
-                    }
-
-                    &:after {
-                        content: "";
-                        position: absolute;
-                        bottom: -5px;
-                        left: 0;
-                        width: 0;
-                        height: 4px;
-                        background: $primary-color;
-                        border-radius: 20px;
                         transition: all 400ms;
+                        &:hover{
+                            color: $primary-color;
+                        }
+                    }
+                    .header-page-link-about {
+                        text-decoration: none;
+                        cursor: pointer;
+                        // color: $primary-color;
+                        color: rgb(146, 146, 146);
+                        font-size: 20px;
+                        transition: all 400ms;
+                        &:hover{
+                            color: $primary-color;
+                        }
                     }
 
-                    &:hover:after {
-                        width: 100%;
-                    }
+                    // &:after {
+                    //     content: "";
+                    //     position: absolute;
+                    //     bottom: -5px;
+                    //     left: 0;
+                    //     width: 0;
+                    //     height: 4px;
+                    //     background: $primary-color;
+                    //     border-radius: 20px;
+                    //     transition: all 400ms;
+                    // }
+
+                    // &:hover:after {
+                    //     width: 100%;
+                    // }
                 }
             }
         }
@@ -94,6 +119,7 @@
 
             p {
                 width: fit-content;
+                margin-right: 10px;
             }
 
             @media (max-width: 600px) {
@@ -114,9 +140,11 @@
             border: 2px solid $primary-color;
             padding: 10px 0;
             border-radius: $primary-border-radius;
+
             @media (max-width: 600px) {
                 display: none;
             }
+
             cursor: pointer;
 
             .nav-log-out-icon {

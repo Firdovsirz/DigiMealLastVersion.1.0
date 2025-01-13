@@ -24,6 +24,7 @@ SECRET_KEY = 'your_secret_key'  # Change this to a more secure key
 # Database paths
 LOCAL_DB_PATH = "/Users/firdovsirzaev/Desktop/DigiMeal/src/BackScript/DigiMealDemoBack/LoginDemo.db"
 ADMIN_DB_PATH = "/Users/firdovsirzaev/Desktop/DigiMeal/src/BackScript/DigiMealDemoBack/admins_identify.db"  # Proper path
+SCANNER_DB_PATH = "/Users/firdovsirzaev/Desktop/DigiMeal/src/BackScript/DigiMealDemoBack/ScannerLogin.db" #scanner db path
 
 # Initialize databases
 def init_db():
@@ -66,13 +67,45 @@ def init_db():
     )''')
     conn.commit()
     conn.close()
+    # scanner
+    conn = sqlite3.connect(SCANNER_DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS scanneridenfication (
+        scanner_username TEXT PRIMARY KEY, 
+        scanner_password TEXT NOT NULL 
+    )''')
+    cursor.execute('''CREATE TABLE IF NOT EXISTS scannerpage (
+        scannerusername TEXT PRIMARY KEY, 
+        scanner_istifadeci_adi TEXT NOT NULL, 
+        faculty TEXT NOT NULL
+    )''')
+    conn.commit()
+    conn.close()
 
 init_db()
 
 
+
+def check_scanner_login(scanner_username, scanner_password):
+    try:
+        conn = sqlite3.connect(SCANNER_DB_PATH)
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM scanneridenfication WHERE scanner_username = ? AND scanner_password = ?", 
+                       (scanner_username, scanner_password))
+        scanner = cursor.fetchone()
+        if scanner:
+            token = generate_jwt(scanner_username, is_admin=False)
+            return {"success": True, "username": scanner_username, "message": "Login successful", "token": token}
+        else:
+            return {"success": False, "message": "Incorrect username or password"}
+    finally:
+        conn.close()
+
+
+
 # JWT token generation
 def generate_jwt(username, is_admin=False):
-    expiration_time = datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+    expiration_time = datetime.datetime.utcnow() + datetime.timedelta(hours=0.001)
     payload = {
         'username': username,
         'is_admin': is_admin,
@@ -154,6 +187,7 @@ def login():
 
 
 @app.route('/admin/login', methods=['POST'])
+@token_required
 def admin_login():
     data = request.json
     username = data.get('username')
@@ -303,5 +337,48 @@ def get_qrs(username):
     return jsonify(qr_data), 200
 
 
+
+
+#scanner
+
+
+@app.route('/scanner/login', methods=['POST'])
+def scanner_login():
+    data = request.json
+    scanner_username = data.get('username')
+    scanner_password = data.get('password')
+    if not scanner_username or not scanner_password:
+        return jsonify({"success": False, "message": "Username and password required"}), 400
+    result = check_scanner_login(scanner_username, scanner_password)
+    return jsonify(result), 200 if result['success'] else 401
+
+
+# Route to get scanner username and faculty
+@app.route('/scanner/get_scanner_username', methods=['POST'])
+def get_scanner_username():
+    data = request.json
+    usernamesc = data.get('usernamesc')
+
+    if not usernamesc:
+        return jsonify({"success": False, "message": "Username is required"}), 400
+
+    conn = sqlite3.connect(SCANNER_DB_PATH)
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute('SELECT scanner_istifadeci_adi, faculty FROM scannerpage WHERE scannerusername = ?', 
+                       (usernamesc,))
+        result = cursor.fetchall()
+
+        results_for_sc = [{"istifadeciadi": row[0], "faculty": row[1]} for row in result]
+
+        if results_for_sc:
+            return jsonify({"success": True, "results": results_for_sc}), 200
+        else:
+            return jsonify({"success": False, "message": "Username not found"}), 404
+    except sqlite3.Error as e:
+        return jsonify({"success": False, "message": f"Database error: {str(e)}"}), 500
+    finally:
+        conn.close()
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,71 +1,115 @@
-import styles from "./Scanner.module.scss";
-import SchoolIcon from '@mui/icons-material/School';
-import CropFreeIcon from '@mui/icons-material/CropFree';
 import React, { useEffect, useRef, useState } from 'react';
+import axios from 'axios';
+import ScannerHeader from "../../components/Header/ScannerHeader/ScannerHeader";
+import ScannerBottomNavigation from "../../components/BottomNavigation/ScannerBottomNavigation/ScannerBottomNavigation";
+import styles from "./Scanner.module.scss";
 
 export default function Scanner() {
-  const videoRef = useRef(null);
-  const [isScanning, setIsScanning] = useState(false);
-  const [qrData, setQrData] = useState(null);
+  const [isReady, setIsReady] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [scanResult, setScanResult] = useState(null);
+  const videoRef = useRef(null); // Reference to the video element
+  const canvasRef = useRef(null); // Reference to canvas to capture video frames
+  const [cameraStream, setCameraStream] = useState(null);
 
-  useEffect(() => {
-    // Access the webcam
-    const startWebcam = async () => {
+  const handleScan = async (qrData) => {
+    if (qrData && isReady) {
+      setScanResult(qrData);
+      setIsReady(false);
+  
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
+        // Send the scanned QR code data to the Flask app
+        const response = await axios.post('http://127.0.0.1:5000/update-status', { qr_id: qrData });
+        if (response.data.success) {
+          alert(`QR Code processed: ${qrData}`);
+        } else {
+          alert(`Error processing QR Code: ${response.data.message}`);
         }
-      } catch (err) {
-        console.error("Error accessing webcam:", err);
+      } catch (error) {
+        setErrorMessage('Failed to communicate with the server.');
+        console.error(error);
       }
-    };
-
-    startWebcam();
-
-    return () => {
-      // Cleanup webcam stream on unmount
-      if (videoRef.current && videoRef.current.srcObject) {
-        const stream = videoRef.current.srcObject;
-        const tracks = stream.getTracks();
-        tracks.forEach((track) => track.stop());
-      }
-    };
-  }, []);
-
-  const handleQrDetection = (data) => {
-    setQrData(data);
-    setIsScanning(false); // Stop scanning once QR is detected
+  
+      // Reset scanner after 15 seconds
+      setTimeout(() => setIsReady(true), 15000);
+    }
   };
 
-  // QR Code scanning logic can be implemented here using an external library (e.g., `jsQR` or OpenCV)
-  // You can use `handleQrDetection` to update the state with QR code data
+  const startCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      setCameraStream(stream);
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+    } catch (error) {
+      setErrorMessage('Failed to access the camera.');
+      console.error(error);
+    }
+  };
+
+  const captureFrame = () => {
+    if (videoRef.current && canvasRef.current) {
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      const imageData = canvas.toDataURL('image/jpeg');
+      
+      axios.post('http://127.0.0.1:5000/scan-qr', { image: imageData })
+        .then(response => {
+          if (response.data.qr_code) {
+            handleScan(response.data.qr_code);
+          } else {
+            setErrorMessage('QR Code not detected.');
+          }
+        })
+        .catch(error => {
+          console.error(error);
+          setErrorMessage('Error while scanning QR code.');
+        });
+    }
+  };
+
+  useEffect(() => {
+    startCamera();
+
+    return () => {
+      if (cameraStream) {
+        const tracks = cameraStream.getTracks();
+        tracks.forEach(track => track.stop());
+      }
+    };
+  }, [cameraStream]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (isReady) {
+        captureFrame();
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isReady]);
 
   return (
-    <main className={styles['scaner-page-main']}>
-      <div className={styles['scaner-container']}>
-        <h1>
-          <SchoolIcon style={{ fontSize: 40, color: "rgb(24, 38, 98)", marginRight: 20 }} />
-          DigiMeal
-        </h1>
-        <p>Skaner</p>
-        <div className={styles['icon-container']}>
-          <video
-            style={{ borderRadius: 20 }}
-            ref={videoRef}
-            className={styles['video-feed']}
-            autoPlay
-            muted
-            onPlay={() => setIsScanning(true)}
-            onPause={() => setIsScanning(false)}
-          />
+    <>
+      <ScannerHeader />
+      <main className={styles['scanner-page-main']}>
+        <div className={styles['scanner-container']}>
+          {errorMessage && <p className={styles['error-message']}>{errorMessage}</p>}
+          
+          <video ref={videoRef} autoPlay muted style={{ width: '50%', height: '400px' }} />
+          
+          <canvas ref={canvasRef} style={{ display: 'none' }} />
+
+          {scanResult && <p>Last scanned QR Code: {scanResult}</p>}
         </div>
-        {qrData && (
-          <div className={styles['qr-result']}>
-            <p>QR Code Data: {qrData}</p>
-          </div>
-        )}
-      </div>
-    </main>
+      </main>
+      <ScannerBottomNavigation />
+    </>
   );
 }

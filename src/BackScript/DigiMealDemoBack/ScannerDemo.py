@@ -1,78 +1,79 @@
 import cv2
+from pyzbar.pyzbar import decode
 import numpy as np
-import time
-import sqlite3
+from flask_cors import CORS
+from flask import Flask, request, jsonify
 
-# Define your database path
-DB_PATH = '/Users/firdovsirzaev/Desktop/DigiMeal/src/BackScript/DigiMealDemoBack/LoginDemo.db'
+app = Flask(__name__)
+CORS(app, resources={r"*": {"origins": "*"}})
 
-# Function to update the status in the database
-def update_status_in_db(qr_id):
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
+# Flag to control scanning
+ready_to_scan = False
 
-    # Check if the ID exists with status 1
-    cursor.execute("SELECT * FROM qr_codes WHERE id = ? AND status = 1", (qr_id,))
-    result = cursor.fetchone()
+def scan_qr_code():
+    global ready_to_scan
+    cap = cv2.VideoCapture(0)
 
-    if result:
-        # Update status to 0 if a match is found
-        cursor.execute("UPDATE qr_codes SET status = 0 WHERE id = ?", (qr_id,))
-        conn.commit()
-        print(f"Status for QR ID {qr_id} updated to 0.")
-    else:
-        print(f"No matching QR ID {qr_id} with status 1 found.")
+    while ready_to_scan:
+        ret, frame = cap.read()
+        if not ret:
+            break
 
-    conn.close()
+        qr_codes = decode(frame)
+        if qr_codes:
+            for qr_code in qr_codes:
+                qr_data = qr_code.data.decode("utf-8")
+                qr_type = qr_code.type
 
-# Function to scan QR code
-def scan_qr_code(): 
-    cap = cv2.VideoCapture(0) 
-    ready_to_scan = True 
+                # Draw polygon around QR code
+                pts = qr_code.polygon
+                if len(pts) == 4:
+                    pts = [(point.x, point.y) for point in pts]
+                    pts = np.array(pts, dtype=np.int32)
+                    cv2.polylines(frame, [pts], True, (0, 255, 0), 3)
 
-    # Create a QRCodeDetector object
-    qr_decoder = cv2.QRCodeDetector() 
-
-    while True: 
-        ret, frame = cap.read() 
-        if not ret: 
-            break 
-
-        if ready_to_scan: 
-            # Use OpenCV's QRCodeDetector to detect and decode the QR code
-            qr_data, pts, _ = qr_decoder.detectAndDecode(frame) 
-
-            if qr_data: 
-                # If a QR code is detected, draw the bounding box and display data
-                pts = np.int32(pts).reshape(-1, 2) 
-                for i in range(4): 
-                    cv2.line(frame, tuple(pts[i]), tuple(pts[(i + 1) % 4]), (0, 255, 0), 3) 
-
-                cv2.putText(frame, f"QR Code Data: {qr_data}", (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 0), 2) 
+                # Display QR code data
+                cv2.putText(frame, f"{qr_type}: {qr_data}",
+                            (qr_code.rect.left, qr_code.rect.top - 10),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
 
                 print("QR Code Data:", qr_data)
+                ready_to_scan = False
+                break
 
-                # Update the QR code status in the database using the decoded QR code (assumed to be the qr_id)
-                update_status_in_db(qr_data)
+        cv2.imshow("QR Code Scanner", frame)
 
-                ready_to_scan = False 
-                start_time = time.time() 
+        # Exit when 'q' is pressed
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
 
-        else: 
-            elapsed_time = time.time() - start_time 
-            if elapsed_time >= 15: 
-                ready_to_scan = True  # Set flag to scan again 
-            else: 
-                cv2.putText(frame, "Ready to scan again in {:.0f} seconds".format(15 - elapsed_time), 
-                            (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2) 
-
-        cv2.imshow("QR Code Scanner", frame) 
-
-        if cv2.waitKey(1) & 0xFF == ord('q'): 
-            break 
-
-    cap.release() 
+    cap.release()
     cv2.destroyAllWindows()
 
-# Start the QR code scanner
-scan_qr_code()
+
+@app.route('/start-scan', methods=['POST'])
+def start_scan():
+    """
+    Start scanning for QR codes.
+    """
+    global ready_to_scan
+    if not ready_to_scan:
+        ready_to_scan = True
+        scan_qr_code()
+        return jsonify({"status": "Scanning complete."}), 200
+    else:
+        return jsonify({"status": "Already scanning."}), 400
+
+
+@app.route('/stop-scan', methods=['POST'])
+def stop_scan():
+    """
+    Stop scanning for QR codes.
+    """
+    global ready_to_scan
+    ready_to_scan = False
+    return jsonify({"status": "Scanning stopped."}), 200
+
+
+if __name__ == '__main__':
+    app.run(debug=True)

@@ -1,0 +1,254 @@
+@import "../../styles/variables";
+
+.about-main {
+    width: 100vw;
+
+    .about-head-section {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 50px;
+
+        .about-head-txt-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            .about-head-txt {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                margin-top: 50px;
+
+                h1 {
+                    font-size: 40px;
+                    font-weight: 400;
+                    margin-bottom: 20px;
+                }
+
+                p {
+                    font-size: 20px;
+                    font-weight: 300;
+                }
+            }
+
+            .about-head-buttons {
+                margin-top: 20px;
+
+                button:first-child {
+                    width: 150px;
+                    height: 50px;
+                    // background: ;
+                    border-radius: 10px;
+                    border: 1px solid $primary-color;
+                    background: $primary-color;
+                    color: #fff;
+                    font-size: 16px;
+                    padding: 5px;
+                    margin-right: 20px;
+                    transition: all 400ms;
+                    cursor: pointer;
+
+                    &:hover {
+                        color: $primary-color;
+                        background: transparent;
+                    }
+                }
+
+                button:last-child {
+                    width: 150px;
+                    height: 50px;
+                    margin-right: 20px;
+                    // background: ;
+                    border-radius: 10px;
+                    border: 1px solid $primary-color;
+                    background: transparent;
+                    transition: all 400ms;
+                    cursor: pointer;
+                    font-size: 16px;
+                    padding: 5px;
+
+                    &:hover {
+                        background: $primary-color;
+                        color: #fff;
+                    }
+                }
+            }
+        }
+    }
+
+    .about-video-section {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 40px;
+
+        .about-video-container {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .about-video {
+                width: 70%;
+                height: 500px;
+                box-shadow: 2px 2px 20px rgb(190, 190, 190);
+            }
+        }
+    }
+
+    .about-digimeal-section {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        padding: 100px;
+        margin-top: 50px;
+        margin-bottom: 50px;
+
+        .about-digimeal-img-container {
+            margin-right: 40px;
+
+            img {
+                border-radius: 20px;
+                width: 700px;
+                height: 700px;
+            }
+        }
+
+        .about-digimeal-txt-container {
+            width: 50%;
+
+            .about-digimeal-head {
+                border: 1px solid rgb(210, 210, 210);
+                width: fit-content;
+                padding: 10px;
+                border-radius: 30px;
+                display: flex;
+                align-items: center;
+                margin-bottom: 20px;
+
+                .about-digimeal-breath-dot-container {
+                    width: 20px;
+                    height: 20px;
+                    background: rgb(105, 115, 161);
+                    border-radius: 50%;
+                    margin-right: 10px;
+                    animation: breath 4s ease-in-out infinite;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    .about-digimeal-breath-dot {
+                        width: 12px;
+                        height: 12px;
+                        background: $primary-color;
+                        border-radius: 50%;
+                    }
+                }
+
+                h2 {
+                    font-size: 25px;
+                    margin-bottom: 0;
+                }
+            }
+
+            h2 {
+                font-size: 30px;
+                font-weight: 400;
+                text-align: center;
+                margin-bottom: 40px;
+
+                span {
+                    color: rgb(162, 162, 162);
+                }
+            }
+
+            h3 {
+                font-size: 25px;
+                font-weight: 400;
+                margin-bottom: 20px;
+            }
+
+            p {
+                color: rgb(148, 148, 148);
+                font-size: 20px;
+                text-align: start;
+                margin-bottom: 20px;
+            }
+
+            p:last-child {
+                color: #000;
+            }
+        }
+    }
+
+    .about-our-team-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 100px;
+
+        h2 {
+            font-size: 30px;
+            font-weight: 400;
+            margin-bottom: 50px;
+        }
+
+        .about-our-team-container {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
+
+            .about-our-team-front-end,
+            .about-our-team-back-end {
+                width: 400px;
+                height: 500px;
+                background: url(../../assets/AboutPage/developer.jpg);
+                background-repeat: no-repeat;
+                background-size: cover;
+                border-radius: 20px;
+                padding: 20px;
+                position: relative;
+                // display: flex;
+                // align-items: center;
+                // justify-content: center;
+
+                .about-our-team-front-contact,
+                .about-our-team-back-contact {
+                    position: absolute;
+                    bottom: 0;
+                    left: 50%;
+                    right: 50%;
+                    width: 100%;
+                    background: rgba(255, 255, 255, 0.7);
+                    width: 95%;
+                    border-radius: 10px;
+                    padding: 10px;
+                    transform: translate(-50%, -50%);
+                }
+            }
+        }
+    }
+}
+
+@keyframes breath {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+
+    50% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+}

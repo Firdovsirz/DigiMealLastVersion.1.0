@@ -69,7 +69,7 @@ export default function UserSettings() {
                     <p>Log Out</p>
                 </section>
             </main>
-            <BottomNavigation />
+            {window.innerWidth < 600 ? <BottomNavigation /> : null}
         </>
     )
 }

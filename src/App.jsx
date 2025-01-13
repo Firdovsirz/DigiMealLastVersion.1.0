@@ -18,6 +18,8 @@ import SuperAdminAside from './pages/Admin/SuperAdmin/SuperAdminAside/SuperAdmin
 import SuperAdminHome from './pages/Admin/SuperAdmin/SuperAdminHome/SuperAdminHome';
 import SuperAdminApproved from './pages/Admin/SuperAdmin/SuperAdminApproved/SuperAdminApproved';
 import SuperAdminMoreInfo from './pages/Admin/SuperAdmin/SuperAdminMoreInfo/SuperAdminMoreInfo';
+import ScannerLogin from './pages/Scanner/ScannerLogin/ScannerLogin';
+import ScannerHistory from './pages/Scanner/ScannerHistory/ScannerHistory';
 
 function App() {
   return (
@@ -27,6 +29,7 @@ function App() {
         <Route path="/user-page" element={<UserQr />} />
         <Route path="/user-page/history" element={<UserHistory />} />
         <Route path="/user-page/settings" element={<UserSettings />} />
+        <Route path="/user-page/about" element={<About />} />
         <Route
           path="/"
           element={<PrivateRoute element={<Login />} />}
@@ -36,13 +39,16 @@ function App() {
         <Route path="/" element={<AdminLogin />} />
         <Route path="/fac-adm-reg" element={<FacultyAdminRegister />} />
       </Routes> */}
-      {/* <About /> */}
+      <About />
       {/* <SuperAdminAside /> */}
       {/* <SuperAdminHome /> */}
-      <SuperAdminApproved />
+      {/* <SuperAdminApproved /> */}
       {/* <SuperAdminMoreInfo /> */}
+      {/* <ScannerLogin /> */}
+      {/* <Scanner /> */}
+      {/* <ScannerHistory /> */}
     </>
   );
 }
 
-export default App; 4
+export default App;

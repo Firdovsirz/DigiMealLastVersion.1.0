@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import apiClient from '../../redux/apiClient';
 import { useTranslation } from 'react-i18next';
 import MenuIcon from '@mui/icons-material/Menu';
-import {clearToken} from "../../redux/tokenSlice";
+import { clearToken } from "../../redux/tokenSlice";
 import styles from "../Header/Header.module.scss";
 import CloseIcon from '@mui/icons-material/Close';
 import React, { useState, useEffect } from 'react';
@@ -19,7 +19,6 @@ export default function Header() {
     const globalUsername = useSelector((state) => state.auth.username);
     const token = useSelector((state) => state.token.token);
     const [fullName, setFullName] = useState(globalUsername);
-    const [burgerMenu, setBurgerMenu] = useState(true);
     const dispatch = useDispatch();
     const location = useLocation();
     const navigate = useNavigate();
@@ -28,9 +27,6 @@ export default function Header() {
         localStorage.removeItem("authToken");
         localStorage.removeItem("username");
         navigate("/", { replace: true });
-      };
-    const handleBurgerMenu = () => {
-        setBurgerMenu(!burgerMenu);
     };
 
     const fetchFullName = async () => {
@@ -91,23 +87,27 @@ export default function Header() {
                                 {t("header-history", { ns: "header" })}
                             </Link>
                         </li>
+                        <li>
+                            <Link
+                                to={"/user-page/about"}
+                                className={styles['header-page-link-about']}>
+                                {t("header-about", { ns: "header" })}
+                            </Link>
+                        </li>
                     </ul>
                 </div>
                 <div className={styles['user-header-profile']}>
                     <p>{window.innerWidth < 1000 ? null : fullName}</p>
-                    {/* <AccountCircleIcon
-                        onClick={handleBurgerMenu}
-                        style={{
-                            color: 'rgb(24, 38, 98)',
-                            fontSize: 40,
-                            cursor: 'pointer',
-                        }}
-                    /> */}
-                    {/* {window.innerWidth > 600 && <LanguageChanger position={'relative'} top={0} right={-40} />} */}
-                </div>
-                <div className={styles['nav-log-out']} onClick={handleLogout}>
-                    <LogoutIcon className={styles['nav-log-out-icon']} />
-                    <p className={styles['nav-log-out-txt']}>Log Out</p>
+                    <Link
+                        to={'/user-page/settings'}>
+                        <AccountCircleIcon
+                            style={{
+                                color: 'rgb(24, 38, 98)',
+                                fontSize: 40,
+                                cursor: 'pointer',
+                            }}
+                        />
+                    </Link>
                 </div>
             </nav>
         </header>

@@ -10,251 +10,282 @@
     justify-content: center;
     background: linear-gradient(45deg, blue 40%, white);
 
-
-    .login-section {
-        border: 1px solid #fff;
-        border-radius: $primary-border-radius;
-        width: 60%;
-        height: 70%;
+    .test-container {
+        width: 100%;
+        height: 100%;
         display: flex;
-        background: #fff;
         align-items: center;
-        @media (max-width: 800px) {
-            flex-direction: column;
-            width: 90%;
-            height: 90%;
-            margin-top: 30px;
-        }
+        justify-content: center;
 
-        .login-page-txt {
-            background: url(../../assets/LoginPage/login-page-bg.png);
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: cover;
-            width: 50%;
-            height: 100%;
-            border-radius: $primary-border-radius 0 0 $primary-border-radius;
-            padding: 40px;
+        .login-section {
+            border: 1px solid #fff;
+            border-radius: $primary-border-radius;
+            width: 60%;
+            height: 100vh;
             display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            background: #fff;
             align-items: center;
+
             @media (max-width: 800px) {
-                border-radius: $primary-border-radius $primary-border-radius 0 0 ;
-                width: 100%;
-                height: fit-content;
-                padding: 20px 10px;
-                justify-content: space-evenly;
-            }
-
-            .login-page-txt-logos {
-                width: 100%;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding-inline: 30px;
-                @media (max-width: 800px) {
-                    margin-bottom: 20px;
-                }
-
-                img {
-                    width: 120px;
-
-                    &:first-child {
-                        margin-right: 20px;
-                    }
-                    @media (max-width: 800px) {
-                        width: 90px;
-                    }
-                }
-            }
-
-            .login-info-txt {
-                width: 300px;
-                text-align: center;
-                color: #fff;
-                font-size: 20px;
-                @media (max-width: 800px) {
-                    font-size: 15px;
-                }
-            }
-        }
-
-        .login-form-container {
-            width: 50%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            @media (max-width: 800px) {
-                padding: 10px;
+                flex-direction: column;
                 width: 90%;
-                height: fit-content;
+                height: 90%;
+                margin-top: 30px;
+            }
+            @media (max-height: 600px) {
+                flex-direction: column;
+                width: 90%;
+                height: 100%;
+                margin-top: 30px;
             }
 
-            .login-form-txt {
-                display: flex;
-                align-items: center;
-                margin-bottom: 50px;
-
-                h1 {
-                    width: 260px;
-                    font-size: 40px;
-                    font-family: monospace;
-                    color: $primary-color;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    border-right: 5px solid;
-                    letter-spacing: 5px;
-                    animation: typing 2s linear infinite,
-                        blink 0.7s step-end infinite;
-                }
-            }
-
-            form {
+            .login-page-txt {
+                background: url(../../assets/LoginPage/login-page-bg.png);
+                background-repeat: no-repeat;
+                background-position: center;
+                background-size: cover;
+                width: 50%;
+                height: 100%;
+                border-radius: $primary-border-radius 0 0 $primary-border-radius;
+                padding: 40px;
                 display: flex;
                 flex-direction: column;
+                justify-content: space-between;
                 align-items: center;
+
                 @media (max-width: 800px) {
+                    border-radius: $primary-border-radius $primary-border-radius 0 0;
                     width: 100%;
-                }
-                @media (min-width: 800px) {
-                    width: 100%;
+                    height: fit-content;
+                    padding: 20px 10px;
+                    justify-content: space-evenly;
                 }
 
-                .login-form-fin-label {
-                    position: relative;
+                .login-page-txt-logos {
+                    width: 100%;
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
-                    margin-bottom: 20px;
-                    border-radius: $primary-border-radius;
-                    border: 1px solid $primary-color;
-                    padding-inline: 15px;
+                    padding-inline: 30px;
+
                     @media (max-width: 800px) {
-                        width: 100%;
-                    }
-                    @media (min-width: 800px) {
-                        width: 80%;
-                    }
-
-                    input {
-                        height: 47px;
-                        width: 320px;
-                        font-size: 18px;
-                        color: $primary-color;
-                        outline: none;
-                        border: none;
-                        @media (min-width: 800px) {
-                            width: 70%;
-                        }
-
-                        &:focus,
-                        &:valid {
-                            color: $primary-color;
-                        }
-
-                        &:focus+.fin-code-placeholder,
-                        &:valid+.fin-code-placeholder {
-                            color: #fff;
-                            padding: 2px 10px;
-                            transform: translate(10px, -28px);
-                            font-size: 16px;
-                            background: $primary-color;
-                            border-radius: 5px;
-                            backdrop-filter: blur(20px);
-                        }
-                    }
-
-                    .fin-code-placeholder {
-                        color: $primary-color;
-                        position: absolute;
-                        top: 14px;
-                        left: 15px;
-                        transition: all 400ms;
+                        margin-bottom: 20px;
                     }
 
                     img {
-                        width: 250px;
-                        position: absolute;
-                        top: 47px;
-                        right: -120px;
-                        z-index: 10000;
-                        transition: all 400ms;
+                        width: 120px;
+
+                        &:first-child {
+                            margin-right: 20px;
+                        }
+
+                        @media (max-width: 800px) {
+                            width: 90px;
+                        }
                     }
                 }
 
-                .login-form-pass-label {
-                    position: relative;
+                .login-info-txt {
+                    width: 300px;
+                    text-align: center;
+                    color: #fff;
+                    font-size: 20px;
+
+                    @media (max-width: 800px) {
+                        font-size: 15px;
+                    }
+                }
+            }
+
+            .login-form-container {
+                width: 50%;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+
+                @media (max-width: 800px) {
+                    padding: 10px;
+                    width: 90%;
+                    height: fit-content;
+                }
+
+                .login-form-txt {
                     display: flex;
                     align-items: center;
-                    justify-content: space-between;
                     margin-bottom: 50px;
-                    border-radius: $primary-border-radius;
-                    border: 1px solid $primary-color;
-                    padding-inline: 15px;
+
+                    h1 {
+                        width: 260px;
+                        font-size: 40px;
+                        font-family: monospace;
+                        color: $primary-color;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        border-right: 5px solid;
+                        letter-spacing: 5px;
+                        animation: typing 2s linear infinite,
+                            blink 0.7s step-end infinite;
+                    }
+                }
+
+                form {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+
                     @media (max-width: 800px) {
                         width: 100%;
                     }
+
                     @media (min-width: 800px) {
-                        width: 80%;
+                        width: 100%;
                     }
 
-                    input {
-                        height: 47px;
-                        width: 320px;
-                        border: none;
-                        font-size: 18px;
-                        color: $primary-color;
-                        outline: none;
+                    .login-form-fin-label {
+                        position: relative;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        margin-bottom: 20px;
+                        border-radius: $primary-border-radius;
+                        border: 1px solid $primary-color;
+                        padding-inline: 15px;
+
                         @media (max-width: 800px) {
                             width: 100%;
                         }
+
                         @media (min-width: 800px) {
                             width: 80%;
                         }
 
-                        &:focus,
-                        &:valid {
+                        input {
+                            height: 47px;
+                            width: 320px;
+                            font-size: 18px;
                             color: $primary-color;
+                            outline: none;
+                            border: none;
+
+                            @media (min-width: 800px) {
+                                width: 70%;
+                            }
+
+                            &:focus,
+                            &:valid {
+                                color: $primary-color;
+                            }
+
+                            &:focus+.fin-code-placeholder,
+                            &:valid+.fin-code-placeholder {
+                                color: #fff;
+                                padding: 2px 10px;
+                                transform: translate(10px, -28px);
+                                font-size: 16px;
+                                background: $primary-color;
+                                border-radius: 5px;
+                                backdrop-filter: blur(20px);
+                            }
                         }
 
-                        &:focus+.password-placeholder,
-                        &:valid+.password-placeholder {
-                            color: #fff;
-                            padding: 2px 10px;
-                            transform: translate(10px, -28px);
-                            font-size: 16px;
-                            background: $primary-color;
-                            border-radius: 5px;
+                        .fin-code-placeholder {
+                            color: $primary-color;
+                            position: absolute;
+                            top: 14px;
+                            left: 15px;
+                            transition: all 400ms;
+                        }
+
+                        img {
+                            width: 250px;
+                            position: absolute;
+                            top: 47px;
+                            right: -120px;
+                            z-index: 10000;
+                            transition: all 400ms;
                         }
                     }
 
-                    .password-placeholder {
-                        color: $primary-color;
-                        position: absolute;
-                        top: 14px;
-                        left: 15px;
-                        transition: all 400ms;
+                    .login-form-pass-label {
+                        position: relative;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        margin-bottom: 50px;
+                        border-radius: $primary-border-radius;
+                        border: 1px solid $primary-color;
+                        padding-inline: 15px;
+
+                        @media (max-width: 800px) {
+                            width: 100%;
+                        }
+
+                        @media (min-width: 800px) {
+                            width: 80%;
+                        }
+
+                        input {
+                            height: 47px;
+                            width: 320px;
+                            border: none;
+                            font-size: 18px;
+                            color: $primary-color;
+                            outline: none;
+
+                            @media (max-width: 800px) {
+                                width: 100%;
+                            }
+
+                            @media (min-width: 800px) {
+                                width: 80%;
+                            }
+
+                            &:focus,
+                            &:valid {
+                                color: $primary-color;
+                            }
+
+                            &:focus+.password-placeholder,
+                            &:valid+.password-placeholder {
+                                color: #fff;
+                                padding: 2px 10px;
+                                transform: translate(10px, -28px);
+                                font-size: 16px;
+                                background: $primary-color;
+                                border-radius: 5px;
+                            }
+                        }
+
+                        .password-placeholder {
+                            color: $primary-color;
+                            position: absolute;
+                            top: 14px;
+                            left: 15px;
+                            transition: all 400ms;
+                        }
+                    }
+
+                    button {
+                        @include button();
                     }
                 }
 
-                button {
-                    @include button();
-                }
-            }
+                .forget-pass-txt {
+                    text-decoration: underline;
+                    font-size: 14px;
+                    cursor: pointer;
 
-            .forget-pass-txt {
-                text-decoration: underline;
-                font-size: 14px;
-                cursor: pointer;
-                @media (max-width: 800px) {
-                    margin-bottom: 30px;
+                    @media (max-width: 800px) {
+                        margin-bottom: 30px;
+                    }
                 }
             }
         }
     }
+
+
 }
 
 @keyframes typing {
