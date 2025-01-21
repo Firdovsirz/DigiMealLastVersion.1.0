@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { useSelector, useDispatch } from 'react-redux';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import apiClient from '../../redux/apiClient';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import styles from "../Login/Login.module.scss";
-import { setToken } from '../../redux/tokenSlice';
-import { setUsername } from '../../redux/authSlice';
-import apiClient from '../../redux/apiClient'; // Updated Axios client
-import LanguageChanger from '../../components/LanguageChanger/LanguageChanger';
-import CopyRight from '../../components/CopyRight/CopyRight';
-import SchoolIcon from '@mui/icons-material/School';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import LoginError from './LoginError/LoginError';
+import { setToken } from '../../redux/tokenSlice';
+import React, { useState, useEffect } from 'react';
+import { setUsername } from '../../redux/authSlice';
+import SchoolIcon from '@mui/icons-material/School';
+import { useSelector, useDispatch } from 'react-redux';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import CopyRight from '../../components/CopyRight/CopyRight';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import FinCodeHelp from "../../assets/LoginPage/card-id-fin.png";
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import AztuLogoLight from "../../assets/LoginPage/aztu-logo-light.png";
 import ThikLogoLight from "../../assets/LoginPage/thik-logo-light.png";
+import LanguageChanger from '../../components/LanguageChanger/LanguageChanger';
 
 export default function Login() {
     const navigate = useNavigate();

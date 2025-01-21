@@ -162,7 +162,8 @@ export default function UserQr() {
                   className={styles["qr-code-img"]}
                 />
               ) : (
-                <p>{errorMessage || "Click the button to generate a QR code."}</p>
+                // <p>{errorMessage || "Click the button to generate a QR code."}</p>
+                <div style={{display: "none"}}></div>
               )}
             </div>
             {isButtonDisabled ? <div className={styles["countdown-timer"]}>

@@ -24,7 +24,7 @@ import ScannerHistory from './pages/Scanner/ScannerHistory/ScannerHistory';
 function App() {
   return (
     <>
-      {/* <Routes>
+      <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/user-page" element={<UserQr />} />
         <Route path="/user-page/history" element={<UserHistory />} />
@@ -34,12 +34,12 @@ function App() {
           path="/"
           element={<PrivateRoute element={<Login />} />}
         />
-      </Routes> */}
+      </Routes>
       {/* <Routes>
         <Route path="/" element={<AdminLogin />} />
         <Route path="/fac-adm-reg" element={<FacultyAdminRegister />} />
       </Routes> */}
-      <About />
+      {/* <About /> */}
       {/* <SuperAdminAside /> */}
       {/* <SuperAdminHome /> */}
       {/* <SuperAdminApproved /> */}

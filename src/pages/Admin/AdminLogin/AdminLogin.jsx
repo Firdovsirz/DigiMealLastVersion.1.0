@@ -20,6 +20,8 @@ export default function AdminLogin() {
     const handleVisibility = () => {
         setVisibility(!visibility);
     };
+    
+    
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -27,19 +29,28 @@ export default function AdminLogin() {
         try {
             const response = await apiClient.post('/admin/login', { username, password });
             const result = response.data;
+            console.log(username, password);
+            
 
             if (result.success) {
                 dispatch(setToken(result.token));
                 dispatch(setAdminAuth({ username, token: result.token }));
                 navigate('/fac-adm-reg');
+            console.log(username, password);
+
             } else {
                 setError(result.message);
+            console.log(username, password);
+
             }
         } catch (err) {
             console.error('Login error:', err);
+            console.log(username, password);
+
             setError('An error occurred while trying to log in. Please try again.');
         }
     };
+    console.log(username);
 
     return (
         <main className={styles['admin-login-main']}>

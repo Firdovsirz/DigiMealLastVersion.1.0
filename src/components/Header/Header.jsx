@@ -64,8 +64,20 @@ export default function Header() {
 
     return (
         <header className={styles['user-header']}>
-            <nav className={styles['user-nav']}>
-                <div className={styles['header-logo']}>
+            <nav className={styles['user-nav']} style={
+                window.innerWidth > 600 ? {
+                    justifyContent: "space-between"
+                } : {
+                    justifyContent: "center"
+                }
+            }>
+                <div className={styles['header-logo']} style={
+                    window.innerWidth > 600 ? {
+                        width: "100%"
+                    } : {
+                        width: "calc(100% / 3)"
+                    }
+                }>
                     <SchoolIcon style={{ color: 'rgb(24, 38, 98)', fontSize: 35, marginRight: 15 }} />
                     <h1>DigiMeal</h1>
                 </div>

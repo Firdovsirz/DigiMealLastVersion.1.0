@@ -20,6 +20,8 @@ export default function BottomNavigation() {
             setActiveLink('user/history');
         } else if (location.pathname === '/user-page/settings') {
             setActiveLink('/user/settings');
+        } else if (location.pathname === '/user-page/about') {
+            setActiveLink('user/about');
         }
     })
     return (
@@ -35,23 +37,30 @@ export default function BottomNavigation() {
                     </NavLink>
                 </div>
                 <div className={styles['bottom-nav-history']}>
-                    <NavLink 
-                    to={"/user-page/history"}
-                    className={styles[`${activeLink === 'user/history' ? 'history-active' : 'history-link'}`]}>
+                    <NavLink
+                        to={"/user-page/history"}
+                        className={styles[`${activeLink === 'user/history' ? 'history-active' : 'history-link'}`]}>
                         <HistoryIcon className={styles['bottom-nav-history-icon']} />
                     </NavLink>
                 </div>
                 <div className={styles['bottom-nav-qr']}>
                     <QrCode2Icon className={styles['bottom-nav-qr-icon']} />
+                    <div className={styles['bottom-nav-qr-pop-up']}>
+                        <p>Click for generating qr code for today</p>
+                    </div>
                 </div>
                 <div className={styles['bottom-nav-about']}>
-                    <InfoIcon className={styles['bottom-nav-about-icon']} />
+                    <NavLink
+                        to={'/user-page/about'}
+                        className={styles[`${activeLink === '/user/about' ? 'about-active' : 'about-link'}`]}>
+                        <InfoIcon className={styles['bottom-nav-about-icon']} />
+                    </NavLink>
                 </div>
                 <div className={styles['bottom-nav-settings']}>
                     <NavLink
-                    to={"/user-page/settings"}
-                    className={styles[`${activeLink === '/user/settings' ? 'settings-active' : 'settings-link'}`]}>
-                    <SettingsIcon className={styles['bottom-nav-settings-icon']} />
+                        to={"/user-page/settings"}
+                        className={styles[`${activeLink === '/user/settings' ? 'settings-active' : 'settings-link'}`]}>
+                        <SettingsIcon className={styles['bottom-nav-settings-icon']} />
                     </NavLink>
                 </div>
             </div>
