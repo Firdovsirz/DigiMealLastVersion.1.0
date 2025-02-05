@@ -1,8 +1,9 @@
+import { motion } from "framer-motion";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import styles from "./UserSettings.module.scss";
-import {clearToken} from "../../../redux/tokenSlice";
+import { clearToken } from "../../../redux/tokenSlice";
 import apiClient from "../../../redux/apiClient";
 import React, { useState, useEffect } from 'react';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -21,7 +22,7 @@ export default function UserSettings() {
         localStorage.removeItem("authToken");
         localStorage.removeItem("username");
         navigate("/", { replace: true });
-      };
+    };
     const fetchFullName = async () => {
         if (!token) {
             console.warn('No token available. Using global username.');
@@ -57,19 +58,29 @@ export default function UserSettings() {
     return (
         <>
             <Header />
-            <main className={styles['user-settings-main']}>
-                <section className={styles['user-settings-info']}>
+            <motion.main
+                initial={{ x: "100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "-100%" }}
+                transition={{ duration: 0.3 }}
+                className={styles['user-settings-main']}>
+                <motion.section
+                    initial={{ y: "100%" }}
+                    animate={{ y: 0 }}
+                    exit={{ y: "-100%" }}
+                    transition={{ duration: 0.3 }}
+                    className={styles['user-settings-info']}>
                     <p>Ad: <span>{name}</span></p>
                     <p>Soyad: <span>{surname}</span></p>
                     <p>Status: <span>Telebe</span></p>
                     <p>Fakulte: <span>ITT</span></p>
-                </section>
+                </motion.section>
                 <section className={styles['user-settings-log-out']}>
-                    <LogoutIcon className={styles['user-settings-log-out-icon']} onClick={handleLogout}/>
+                    <LogoutIcon className={styles['user-settings-log-out-icon']} onClick={handleLogout} />
                     <p>Log Out</p>
                 </section>
-            </main>
-            {window.innerWidth < 600 ? <BottomNavigation /> : null}
+            </motion.main>
+            {window.innerWidth < 600 ? <BottomNavigation isButtonDisabled={true} /> : null}
         </>
     )
 }

@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import Stack from '@mui/material/Stack';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -14,8 +15,8 @@ export default function UserHistory() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [historyData, setHistoryData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1); // Current page starts at 1
-  const rowsPerPage = 4; // Number of rows per page
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 4;
   const token = useSelector((state) => state.token.token);
   const username = useSelector((state) => state.auth.username);
 
@@ -77,12 +78,22 @@ export default function UserHistory() {
   return (
     <>
       <Header />
-      <main className={styles['user-history-main']}>
+      <motion.main
+        initial={{ x: "100%" }}
+        animate={{ x: 0 }}
+        exit={{ x: "-100%" }}
+        transition={{ duration: 0.3 }}
+        className={styles['user-history-main']}>
         <section className={styles['user-history-head-txt-container']}>
           <h2>{t('user-history-heading', { ns: 'user' })}</h2>
         </section>
         {historyData.length > 0 ? (
-          <section className={styles['history-table-wrapper']}>
+          <motion.section
+            initial={{ y: "-100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ duration: 0.3 }}
+            className={styles['history-table-wrapper']}>
             <table className={styles['history-table']}>
               <thead className={styles['history-table-head']}>
                 <tr>
@@ -101,7 +112,7 @@ export default function UserHistory() {
                 ))}
               </tbody>
             </table>
-          </section>
+          </motion.section>
         ) : (
           <p>No history found for the user.</p>
         )}
@@ -114,8 +125,8 @@ export default function UserHistory() {
             />
           </Stack>
         </section>
-      </main>
-      {window.innerWidth < 600 ? <BottomNavigation /> : null}
+      </motion.main>
+      {window.innerWidth < 600 ? <BottomNavigation isButtonDisabled={true} /> : null}
     </>
   );
 }

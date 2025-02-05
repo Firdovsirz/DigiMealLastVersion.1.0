@@ -13,7 +13,7 @@ const adminAuthSlice = createSlice({
     setAdminAuth: (state, action) => {
       const { username, token } = action.payload;
       state.username = username;
-      state.isAuthenticated = true;  // Set authentication to true when the token is set
+      state.isAuthenticated = true;
       state.token = token;
     },
     clearAdminAuth: (state) => {

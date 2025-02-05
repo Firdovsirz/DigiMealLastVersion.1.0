@@ -2,12 +2,12 @@ import React from 'react';
 import Header from '../Header/Header';
 import styles from "./About.module.scss";
 import { useTranslation } from 'react-i18next';
-import { BottomNavigation } from '@mui/material';
 import Aztu from "../../assets/AboutPage/aztu.jpg";
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import Developer from "../../assets/AboutPage/developer.jpg";
+import BottomNavigation from '../BottomNavigation/BottomNavigation';
 
 export default function About() {
   const { t } = useTranslation();
@@ -61,6 +61,9 @@ export default function About() {
           <div className={styles['about-our-team-container']}>
             <div className={styles['about-our-team-front-end']}>
               <div className={styles['about-our-team-front-contact']}>
+                <div className={styles['about-our-team-front-img-contact']}>
+                  <img src={Developer} alt="front-developer" />
+                </div>
                 <div className={styles['about-front-name-details']}>
                   <h3>Firdovsi Rzaev</h3>
                   <p>Frontend Developer</p>
@@ -80,18 +83,21 @@ export default function About() {
             </div>
             <div className={styles['about-our-team-back-end']}>
               <div className={styles['about-our-team-back-contact']}>
+              <div className={styles['about-our-team-back-img-contact']}>
+                  <img src={Developer} alt="back-developer" />
+                </div>
                 <div className={styles['about-back-name-details']}>
                   <h3>Kerem Shukurlu</h3>
                   <p>Backend Developer</p>
                 </div>
-                <div className={styles['about-front-social-media']}>
-                  <div className={styles['about-front-linkedin']}>
+                <div className={styles['about-back-social-media']}>
+                  <div className={styles['about-back-linkedin']}>
                     <LinkedInIcon />
                   </div>
-                  <div className={styles['about-front-telegram']}>
+                  <div className={styles['about-back-telegram']}>
                     <TelegramIcon />
                   </div>
-                  <div className={styles['about-front-instagram']}>
+                  <div className={styles['about-back-instagram']}>
                     <InstagramIcon />
                   </div>
                 </div>
@@ -100,7 +106,7 @@ export default function About() {
           </div>
         </section>
       </main>
-      {window.innerWidth < 600 ? <BottomNavigation /> : null}
+      {window.innerWidth < 600 ? <BottomNavigation isButtonDisabled={true}/> : null}
     </>
   )
 }

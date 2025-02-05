@@ -3,10 +3,10 @@ import { useDispatch } from 'react-redux';
 import apiClient from '../../redux/apiClient';
 import { useTranslation } from 'react-i18next';
 import MenuIcon from '@mui/icons-material/Menu';
-import { clearToken } from "../../redux/tokenSlice";
 import styles from "../Header/Header.module.scss";
 import CloseIcon from '@mui/icons-material/Close';
 import React, { useState, useEffect } from 'react';
+import { clearToken } from "../../redux/tokenSlice";
 import SchoolIcon from '@mui/icons-material/School';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { clearUsername } from '../../redux/authSlice';
@@ -72,8 +72,11 @@ export default function Header() {
                 }
             }>
                 <div className={styles['header-logo']} style={
-                    window.innerWidth > 600 ? {
-                        width: "100%"
+                    window.innerWidth < 600 ? {
+                        width: "100%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center"
                     } : {
                         width: "calc(100% / 3)"
                     }

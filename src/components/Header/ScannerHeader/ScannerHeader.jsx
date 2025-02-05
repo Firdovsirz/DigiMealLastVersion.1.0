@@ -1,5 +1,4 @@
 import React from 'react';
-import { School } from '@mui/icons-material';
 import styles from "./ScannerHeader.module.scss";
 import SchoolIcon from '@mui/icons-material/School';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';

@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import apiClient from "../../../redux/apiClient";
@@ -16,12 +17,27 @@ export default function UserQr() {
   const navigate = useNavigate();
   const token = useSelector((state) => state.token.token);
   const displayName = username || "Anonymous";
+  const [currentDay, setCurrentDay] = useState(new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Baku" }));
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      const now = new Date();
+      const todayStart = now.toLocaleDateString("en-CA", { timeZone: "Asia/Baku" });
+      const timeSinceStart = now - todayStart;
+  
+      if (timeSinceStart < 1000 * 60) {
+        setCurrentDay(now.toLocaleDateString("en-CA", { timeZone: "Asia/Baku" }));
+        console.log("Day updated to:", currentDay);
+      }
+    }, 1000 * 30);
+  
+    return () => clearInterval(intervalId);
+  }, []);
+  
 
   const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
   const [qrCodeImg, setQrCodeImg] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-
   useEffect(() => {
     const calculateTimeLeft = () => {
       const now = new Date();
@@ -43,7 +59,7 @@ export default function UserQr() {
     return () => clearInterval(intervalId);
   }, []);
 
-   const getHeaders = () => ({
+  const getHeaders = () => ({
     Authorization: `Bearer ${token}`,
   });
 
@@ -51,7 +67,6 @@ export default function UserQr() {
     const fetchQrCode = async () => {
       if (!username || !token) {
         setErrorMessage(t("auth-required"));
-        navigate("/", { replace: true });
         return;
       }
 
@@ -59,11 +74,13 @@ export default function UserQr() {
         const response = await apiClient.get(`/user/get_qrs/${username}`, {
           headers: getHeaders(),
         });
-
         const data = response.data;
 
-        const today = new Date().toISOString().split("T")[0];
-        const todaysQr = data.find((qr) => qr.date === today && qr.status === 1);
+        // Use the updated current day for checking today's QR code
+        const todaysQr = data.find((qr) => qr.date === currentDay);
+        console.log(currentDay);
+        
+        console.log(todaysQr);
 
         if (todaysQr) {
           setQrCodeImg(`data:image/png;base64,${todaysQr.image}`);
@@ -73,13 +90,19 @@ export default function UserQr() {
           setIsButtonDisabled(false);
         }
       } catch (error) {
+        if (error.response) {
+          setErrorMessage(error.response.data.message || t("fetch-error"));
+        } else if (error.request) {
+          setErrorMessage(t("network-error"));
+        } else {
+          setErrorMessage(t("unexpected-error"));
+        }
         console.error("Error fetching QR codes:", error);
-        setErrorMessage(t("fetch-error"));
       }
     };
 
     fetchQrCode();
-  }, [username, token, navigate, t]);
+  }, [username, token, navigate, t, currentDay]);
 
 
   const handleGenerateQR = async () => {
@@ -146,12 +169,18 @@ export default function UserQr() {
   useEffect(() => {
     window.history.replaceState(null, "", location.pathname);
   }, [location]);
-  
+
+
 
   return (
     <>
       <Header />
-      <main className={styles["user-page-main"]}>
+      <motion.main
+        initial={{ x: "-100%" }}
+        animate={{ x: 0 }}
+        exit={{ x: "100%" }}
+        transition={{ duration: 0.3 }}
+        className={styles["user-page-main"]}>
         <section className={styles["user-page-qr-section"]}>
           <div className={styles["user-page-qr-container"]}>
             <div className={styles["user-page-qr-img-container"]}>
@@ -163,7 +192,7 @@ export default function UserQr() {
                 />
               ) : (
                 // <p>{errorMessage || "Click the button to generate a QR code."}</p>
-                <div style={{display: "none"}}></div>
+                <div style={{ display: "none" }}></div>
               )}
             </div>
             {isButtonDisabled ? <div className={styles["countdown-timer"]}>
@@ -203,8 +232,8 @@ export default function UserQr() {
             )}
           </div>
         </section>
-        {window.innerWidth < 600 ? <BottomNavigation /> : null}
-      </main>
+        {window.innerWidth < 600 ? <BottomNavigation handleGenerateQr={handleGenerateQR} isButtonDisabled={isButtonDisabled} /> : null}
+      </motion.main>
     </>
   );
 }

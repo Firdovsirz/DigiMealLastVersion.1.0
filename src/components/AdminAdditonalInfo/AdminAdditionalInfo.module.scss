@@ -1,0 +1,55 @@
+@import "../../styles/variables";
+
+.admin-additional-info-main {
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    .admin-additonal-info-container{
+        position: relative;
+        border: 4px solid $primary-admin-green-color;
+        border-radius: 20px;
+        background: $primary-admin-color;
+        padding: 30px;
+        width: 400px;
+        height: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        flex-direction: column;
+        .adm-add-close-icon{
+            color: $primary-admin-green-color;
+            position: absolute;
+            top: -50px;
+            right: -60px;
+            font-size: 30px;
+            cursor: pointer;
+        }
+        h2{
+            margin-bottom: 20px;
+            color: $primary-admin-green-color;
+        }
+        .admin-additonal-info-list{
+            width: 100%;
+            height: 100%;
+            ul{
+                li{
+                    list-style-type: none;
+                    font-size: 17px;
+                    margin-block: 10px;
+                    color: #fff;
+                    span{
+                        color: $primary-admin-green-color;
+                        margin-right: 10px;
+                    }
+                }
+            }
+        }
+    }
+}

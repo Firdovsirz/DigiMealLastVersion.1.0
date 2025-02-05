@@ -9,7 +9,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import styles from "../BottomNavigation/BottomNavigation.module.scss";
 
-export default function BottomNavigation() {
+export default function BottomNavigation({ handleGenerateQr, isButtonDisabled }) {
     const location = useLocation();
     const [activeLink, setActiveLink] = useState('');
 
@@ -21,7 +21,7 @@ export default function BottomNavigation() {
         } else if (location.pathname === '/user-page/settings') {
             setActiveLink('/user/settings');
         } else if (location.pathname === '/user-page/about') {
-            setActiveLink('user/about');
+            setActiveLink('/user/about');
         }
     })
     return (
@@ -43,11 +43,11 @@ export default function BottomNavigation() {
                         <HistoryIcon className={styles['bottom-nav-history-icon']} />
                     </NavLink>
                 </div>
-                <div className={styles['bottom-nav-qr']}>
-                    <QrCode2Icon className={styles['bottom-nav-qr-icon']} />
-                    <div className={styles['bottom-nav-qr-pop-up']}>
+                <div className={styles['bottom-nav-qr']} onClick={handleGenerateQr}>
+                    <QrCode2Icon className={styles['bottom-nav-qr-icon']} style={isButtonDisabled ? { color: "rgb(24, 38, 98)" } : null} />
+                    {isButtonDisabled ? null : <div className={styles['bottom-nav-qr-pop-up']}>
                         <p>Click for generating qr code for today</p>
-                    </div>
+                    </div>}
                 </div>
                 <div className={styles['bottom-nav-about']}>
                     <NavLink

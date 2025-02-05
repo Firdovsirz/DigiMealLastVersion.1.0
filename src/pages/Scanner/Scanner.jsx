@@ -1,15 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
+import styles from "./Scanner.module.scss";
+import React, { useEffect, useRef, useState } from 'react';
 import ScannerHeader from "../../components/Header/ScannerHeader/ScannerHeader";
 import ScannerBottomNavigation from "../../components/BottomNavigation/ScannerBottomNavigation/ScannerBottomNavigation";
-import styles from "./Scanner.module.scss";
 
 export default function Scanner() {
   const [isReady, setIsReady] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
   const [scanResult, setScanResult] = useState(null);
-  const videoRef = useRef(null); // Reference to the video element
-  const canvasRef = useRef(null); // Reference to canvas to capture video frames
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
   const [cameraStream, setCameraStream] = useState(null);
 
   const handleScan = async (qrData) => {
@@ -18,7 +18,6 @@ export default function Scanner() {
       setIsReady(false);
   
       try {
-        // Send the scanned QR code data to the Flask app
         const response = await axios.post('http://127.0.0.1:5000/update-status', { qr_id: qrData });
         if (response.data.success) {
           alert(`QR Code processed: ${qrData}`);
@@ -30,7 +29,6 @@ export default function Scanner() {
         console.error(error);
       }
   
-      // Reset scanner after 15 seconds
       setTimeout(() => setIsReady(true), 15000);
     }
   };

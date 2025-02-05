@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
 import axios from 'axios';
+import React, { useState } from 'react';
 import styles from "./ScannerLogin.module.scss";
 import SchoolIcon from '@mui/icons-material/School';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import { useNavigate } from 'react-router-dom';
 
 export default function ScannerLogin() {
     const [username, setUsername] = useState("");
@@ -11,6 +12,7 @@ export default function ScannerLogin() {
     const [visibility, setVisibility] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [scannerDetails, setScannerDetails] = useState(null);
+    const navigate = useNavigate();
 
     const handleVisibility = () => {
         setVisibility(!visibility);
@@ -20,14 +22,12 @@ export default function ScannerLogin() {
         e.preventDefault();
         setErrorMessage("");
         try {
-            // Attempt login
             const loginResponse = await axios.post('http://127.0.0.1:5000/scanner/login', {
                 username,
                 password
             });
 
             if (loginResponse.data.success) {
-                // Fetch scanner details after successful login
                 const detailsResponse = await axios.post(
                     'http://127.0.0.1:5000/scanner/get_scanner_username',
                     { usernamesc: username }
@@ -35,6 +35,7 @@ export default function ScannerLogin() {
 
                 if (detailsResponse.data.success) {
                     setScannerDetails(detailsResponse.data.results[0]);
+                    navigate('/scanner-home');
                 } else {
                     setErrorMessage(detailsResponse.data.message);
                 }

@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Stack from '@mui/material/Stack';
 import Pagination from '@mui/material/Pagination';
+import React, { useEffect, useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AutorenewIcon from '@mui/icons-material/Autorenew';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import styles from "./SuperAdminApproved.module.scss";
+import styles from "./SuperAdminSessionEnded.module.scss";
 import SuperAdminAside from '../SuperAdminAside/SuperAdminAside';
 import AdminAdditionalInfo from '../../../../components/AdminAdditonalInfo/AdminAdditionalInfo';
 
@@ -21,7 +22,7 @@ export default function SuperAdminNotApproved() {
     useEffect(() => {
         const fetchStudents = async () => {
             try {
-                const response = await axios.get('http://127.0.0.1:5000/superadmin_approved/');
+                const response = await axios.get('http://127.0.0.1:5000/superadmin_session_ended/');
                 const data = response.data.results;
                 setStudents(data);
                 setPaginationCount(Math.ceil(data.length / itemsPerPage));
@@ -43,23 +44,22 @@ export default function SuperAdminNotApproved() {
         setAdditionalIndex(e);
     };
 
-    const handleDelete = async (digimealusername) => {
-        try {
-            const response = await axios.get(`http://127.0.0.1:5000/sesion_end/${digimealusername}`);
-            if (response.status === 200) {
-                setStudents(students.filter(student => student.digimealusername !== digimealusername));
-                alert('Session ended successfully.');
-            }
-        } catch (err) {
-            console.error('Failed to end session:', err);
-            alert('Error ending session.');
-        }
-    };
-
     const paginatedData = students.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
+    const handleRecover = async (digimealusername) => {
+        try {
+            const response = await axios.get(`http://127.0.0.1:5000/sesion_recover/${digimealusername}`);
+            if (response.status === 200) {
+                setStudents(students.filter(student => student.digimealusername !== digimealusername));
+                alert('Sessiya uğurla redaktə olundu');
+            }
+        } catch (err) {
+            console.error('Failed to end session:', err);
+            alert('Redaktə zamanı xəta baş verdi');
+        }
+    };
 
     return (
         <>
@@ -90,7 +90,7 @@ export default function SuperAdminNotApproved() {
                                         <div className={styles['sp-adm-wait-app-additional-info-txt']}>
                                             Əlavə məlumat
                                         </div>
-                                        <div>Sessiyanı bitir</div>
+                                        <div>Sessiyanı redaktə et</div>
                                     </div>
                                     <div className={styles['sp-not-apprv-student-details']}>
                                         <div>{student.ad}</div>
@@ -106,8 +106,8 @@ export default function SuperAdminNotApproved() {
                                             </div>
                                         </div>
                                         <div className={styles['sp-adm-wait-app-remove-btn-container']}>
-                                            <div onClick={() => handleDelete(student.digimealusername)}>
-                                                <DeleteIcon />
+                                            <div onClick={() => handleRecover(student.digimealusername)}>
+                                                <AutorenewIcon />
                                             </div>
                                         </div>
                                     </div>

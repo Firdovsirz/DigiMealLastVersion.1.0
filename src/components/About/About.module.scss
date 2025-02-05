@@ -131,6 +131,7 @@
                 border-radius: 30px;
                 display: flex;
                 align-items: center;
+                justify-content: flex-start;
                 margin-bottom: 20px;
 
                 .about-digimeal-breath-dot-container {
@@ -161,7 +162,7 @@
             h2 {
                 font-size: 30px;
                 font-weight: 400;
-                text-align: center;
+                text-align: start;
                 margin-bottom: 40px;
 
                 span {
@@ -209,30 +210,52 @@
 
             .about-our-team-front-end,
             .about-our-team-back-end {
-                width: 400px;
-                height: 500px;
-                background: url(../../assets/AboutPage/developer.jpg);
-                background-repeat: no-repeat;
-                background-size: cover;
-                border-radius: 20px;
-                padding: 20px;
-                position: relative;
-                // display: flex;
-                // align-items: center;
-                // justify-content: center;
+                .about-our-team-front-img-contact,
+                .about-our-team-back-img-contact{
+                    margin-bottom: 20px;
+                    img{
+                        width: 300px;
+                        height: 300px;
+                        border-radius: 50%;
+                    }
+                }
+                .about-front-name-details,
+                .about-back-name-details{
+                    h3{
+                        font-size: 25px;
+                        text-align: center;
+                    }
+                    p{
+                        font-size: 17px;
+                        text-align: center;
+                        margin-top: 10px;
+                    }
+                }
 
                 .about-our-team-front-contact,
                 .about-our-team-back-contact {
-                    position: absolute;
-                    bottom: 0;
-                    left: 50%;
-                    right: 50%;
-                    width: 100%;
-                    background: rgba(255, 255, 255, 0.7);
-                    width: 95%;
-                    border-radius: 10px;
-                    padding: 10px;
-                    transform: translate(-50%, -50%);
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+
+                    .about-front-social-media,
+                    .about-back-social-media{
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        div{
+                            border: 1px solid rgb(212, 212, 212);
+                            padding: 10px;
+                            border-radius: 10px;
+                            margin-top: 30px;
+                            margin-inline: 20px;
+                            cursor: pointer;
+                            *{
+                                color: rgb(87, 87, 215);
+                            }
+                        }
+                    }
                 }
             }
         }
