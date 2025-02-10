@@ -69,7 +69,8 @@ export default function UserHistory() {
       <>
         <Header />
         <main className={styles['user-history-main']}>
-          <p>Loading history...</p>
+          <p>Tarixçə Yüklənir...</p>
+          
         </main>
       </>
     );

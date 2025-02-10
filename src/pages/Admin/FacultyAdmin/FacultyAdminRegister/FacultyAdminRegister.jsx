@@ -232,10 +232,7 @@ export default function FacultyAdminRegister() {
             alert("An error occurred while submitting the form. Please try again.");
         }
     };
-
-    console.log(formData.fathername, formData.bilet, formData.fakulte, formData.fincode, formData.firstname, formData.lastname, formData.status, formData.groupnumber, formData.email);
-    console.log(formData);
-
+    
     const handleFacultyChange = (faculty) => {
         setFormData({
             ...formData,
@@ -243,7 +240,6 @@ export default function FacultyAdminRegister() {
         });
         setFacDropdown(false)
     };
-    console.log(formData.fakulte);
 
 
     return (

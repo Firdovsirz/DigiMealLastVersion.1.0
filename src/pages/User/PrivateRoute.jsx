@@ -1,21 +1,21 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Route, Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 const PrivateRoute = ({ element: Component, ...rest }) => {
   const isAuthenticated = useSelector((state) => state.token.isAuthenticated);
 
-  return (
-    <Route
-      {...rest}
-      element={
-        isAuthenticated ? (
-          Component
-        ) : (
-          <Navigate to="/" />
-        )
-      }
-    />
+  useEffect(() => {
+    // This ensures the route updates when the authentication state changes
+    if (!isAuthenticated) {
+      // Optionally, you can clear any token in localStorage or do other cleanup
+    }
+  }, [isAuthenticated]);
+
+  return isAuthenticated ? (
+    <Component {...rest} />
+  ) : (
+    null
   );
 };
 

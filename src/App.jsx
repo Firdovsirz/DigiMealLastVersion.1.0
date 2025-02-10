@@ -27,7 +27,7 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/user-page" element={<UserQr />} />
+        <Route path="/user-page" element={<PrivateRoute element={UserQr} />} />
         <Route path="/user-page/history" element={<UserHistory />} />
         <Route path="/user-page/settings" element={<UserSettings />} />
         <Route path="/user-page/about" element={<About />} />

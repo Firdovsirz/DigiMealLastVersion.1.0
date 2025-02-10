@@ -18,7 +18,7 @@ export default function Header() {
     const { t } = useTranslation();
     const globalUsername = useSelector((state) => state.auth.username);
     const token = useSelector((state) => state.token.token);
-    const [fullName, setFullName] = useState(globalUsername);
+    const [fullName, setFullName] = useState('');
     const dispatch = useDispatch();
     const location = useLocation();
     const navigate = useNavigate();
@@ -32,7 +32,7 @@ export default function Header() {
     const fetchFullName = async () => {
         if (!token) {
             console.warn('No token available. Using global username.');
-            setFullName(globalUsername);
+            setFullName('');
             return <Navigate to={"/"} replace />;
         }
 
@@ -46,11 +46,11 @@ export default function Header() {
                 setFullName(response.data.istifadeci_adi);
             } else {
                 console.warn('Failed to fetch full name. Using global username.');
-                setFullName(globalUsername);
+                setFullName('');
             }
         } catch (error) {
             console.error('Error fetching full name:', error);
-            setFullName(globalUsername);
+            setFullName('');
         }
     };
 

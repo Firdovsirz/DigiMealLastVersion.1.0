@@ -64,6 +64,20 @@ export default function UserQr() {
   });
 
   useEffect(() => {
+    const checkTokenExpiration = () => {
+      if (!token) {
+        navigate("/", { replace: true });
+        return;
+      }
+      const decodedToken = JSON.parse(atob(token.split('.')[1]));
+      const expirationTime = decodedToken.exp * 1000;
+      const currentTime = Date.now();
+      if (currentTime >= expirationTime) {
+        localStorage.removeItem("authToken");
+        navigate("/", { replace: true });
+      }
+    };
+    checkTokenExpiration();
     const fetchQrCode = async () => {
       if (!username || !token) {
         setErrorMessage(t("auth-required"));
@@ -191,7 +205,6 @@ export default function UserQr() {
                   className={styles["qr-code-img"]}
                 />
               ) : (
-                // <p>{errorMessage || "Click the button to generate a QR code."}</p>
                 <div style={{ display: "none" }}></div>
               )}
             </div>
@@ -215,13 +228,13 @@ export default function UserQr() {
                 <p className={styles['countdown-second-txt']}>{t('user-qr-second', { ns: 'user' })}</p>
               </div>
             </div> : null}
-            {!isButtonDisabled ? <button
+            {/* {!isButtonDisabled ? <button
               onClick={handleGenerateQR}
               className={styles["user-generate-qr-btn"]}
               disabled={isButtonDisabled}
             >
               Qr Kod Yarat
-            </button> : null}
+            </button> : null} */}
             {qrCodeImg && (
               <button
                 onClick={handleDownload}

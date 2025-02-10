@@ -1,7 +1,9 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Header from '../Header/Header';
 import styles from "./About.module.scss";
+import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { useNavigate} from 'react-router-dom';
 import Aztu from "../../assets/AboutPage/aztu.jpg";
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import TelegramIcon from '@mui/icons-material/Telegram';
@@ -11,6 +13,24 @@ import BottomNavigation from '../BottomNavigation/BottomNavigation';
 
 export default function About() {
   const { t } = useTranslation();
+  const token = useSelector((state) => state.token.token);
+  const navigate = useNavigate();
+  useEffect(() => {
+    const checkTokenExpiration = () => {
+      if (!token) {
+        navigate("/", { replace: true });
+        return;
+      }
+      const decodedToken = JSON.parse(atob(token.split('.')[1]));
+      const expirationTime = decodedToken.exp * 1000;
+      const currentTime = Date.now();
+      if (currentTime >= expirationTime) {
+        localStorage.removeItem("authToken");
+        navigate("/", { replace: true });
+      }
+    };
+    checkTokenExpiration();
+  });
   return (
     <>
       <Header />
@@ -83,7 +103,7 @@ export default function About() {
             </div>
             <div className={styles['about-our-team-back-end']}>
               <div className={styles['about-our-team-back-contact']}>
-              <div className={styles['about-our-team-back-img-contact']}>
+                <div className={styles['about-our-team-back-img-contact']}>
                   <img src={Developer} alt="back-developer" />
                 </div>
                 <div className={styles['about-back-name-details']}>
@@ -106,7 +126,7 @@ export default function About() {
           </div>
         </section>
       </main>
-      {window.innerWidth < 600 ? <BottomNavigation isButtonDisabled={true}/> : null}
+      {window.innerWidth < 600 ? <BottomNavigation isButtonDisabled={true} /> : null}
     </>
   )
 }

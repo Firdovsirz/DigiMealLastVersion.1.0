@@ -1,6 +1,7 @@
 import axios from 'axios';
 import Stack from '@mui/material/Stack';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import Pagination from '@mui/material/Pagination';
 import React, { useState, useEffect } from 'react';
 import apiClient from '../../../../redux/apiClient';
@@ -14,7 +15,7 @@ export default function FacultyadminNotApproved() {
     const [students, setStudents] = useState([]);
     const [error, setError] = useState('');
     const [faculty, setFaculty] = useState('');
-    const [searchTerm, setSearchTerm] = useState('');  // Added search term state
+    const [searchTerm, setSearchTerm] = useState('');
     const rowsPerPage = 4;
     const [currentPage, setCurrentPage] = useState(1);
     const [adminAsideName, setAdminAsideName] = useState('');
@@ -25,6 +26,20 @@ export default function FacultyadminNotApproved() {
     const [additonalIndex, setAdditionalIndex] = useState(0);
 
     useEffect(() => {
+        const checkTokenExpiration = () => {
+            if (!adminToken) {
+              navigate("/admin-login", { replace: true });
+              return;
+            }
+            const decodedToken = JSON.parse(atob(adminToken.split('.')[1]));
+            const expirationTime = decodedToken.exp * 1000;
+            const currentTime = Date.now();
+            if (currentTime >= expirationTime) {
+              localStorage.removeItem("authToken");
+              navigate("/admin-login", { replace: true });
+            }
+          };
+          checkTokenExpiration();
         if (!isAdminAuthenticated) {
             console.log('Admin is not authenticated!');
             return;

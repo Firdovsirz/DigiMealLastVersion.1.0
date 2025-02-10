@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom";
 import { useSelector } from 'react-redux';
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from 'react';
 import LogoutIcon from '@mui/icons-material/Logout';
 import apiClient from '../../../../redux/apiClient';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
+import { clearAdminAuth } from "../../../../redux/adminAuthSlice";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
@@ -12,9 +15,34 @@ import styles from "../FacultyAdminAside/FacultyAdminAside.module.scss";
 export default function FacultyAdmin({ facultyName }) {
   const [openedBurger, setOpenedBurger] = useState(true);
   const [faculty, setFaculty] = useState('');
+  const facAdminToken = useSelector((state) => state.adminAuth.token);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const handleBurgerMenu = () => {
     setOpenedBurger(!openedBurger);
   };
+  const handleLogout = () => {
+    dispatch(clearAdminAuth());
+    localStorage.removeItem("adminAuth");
+    localStorage.removeItem("username");
+    navigate("/admin-login", { replace: true });
+  };
+  useEffect(() => {
+    const checkTokenExpiration = () => {
+      if (!facAdminToken) {
+        navigate("/admin-login", { replace: true });
+        return;
+      }
+      const decodedToken = JSON.parse(atob(facAdminToken.split('.')[1]));
+      const expirationTime = decodedToken.exp * 1000;
+      const currentTime = Date.now();
+      if (currentTime >= expirationTime) {
+        localStorage.removeItem("adminAuth");
+        navigate("/admin-login", { replace: true });
+      }
+    };
+    checkTokenExpiration();
+  })
 
   return (
     <aside
@@ -70,7 +98,7 @@ export default function FacultyAdmin({ facultyName }) {
             </li></Link>
         </ul>
       </div>
-      <div className={styles['fac-adm-log-out-container']}>
+      <div className={styles['fac-adm-log-out-container']} onClick={handleLogout}>
         <LogoutIcon style={{ marginRight: 20, fontSize: 30 }} />
         Çıxış edin
       </div>
