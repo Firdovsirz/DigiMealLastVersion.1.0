@@ -9,6 +9,7 @@ import SuperAdminAside from '../SuperAdminAside/SuperAdminAside';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import AdminAdditionalInfo from '../../../../components/AdminAdditonalInfo/AdminAdditionalInfo';
 import SuperAdminConfirmUser from '../SuperAdminConfirmUser/SuperAdminConfirmUser';
+import SuperAdminWaitingApproveFilter from '../SuperAdminWaitingApproveFilter/SuperAdminWaitingApproveFilter';
 
 export default function SuperAdminNotApproved() {
     const [students, setStudents] = useState([]);
@@ -181,6 +182,7 @@ export default function SuperAdminNotApproved() {
                     confirmUser={confirm}
                     setConfirmUser={setConfirm}
                     email={confirmUserEmail}/>
+                <SuperAdminWaitingApproveFilter />
             </main>
         </>
     );
