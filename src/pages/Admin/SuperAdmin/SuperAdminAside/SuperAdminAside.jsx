@@ -1,15 +1,19 @@
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import React, { useState, useRef } from 'react';
 import LinkIcon from '@mui/icons-material/Link';
 import HomeIcon from '@mui/icons-material/Home';
 import ClassIcon from '@mui/icons-material/Class';
 import styles from "./SuperAdminAside.module.scss";
+import LogoutIcon from '@mui/icons-material/Logout';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
+import { clearSuperAdminAuth } from "../../../../redux/superAdminAuthSlice";
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 
 export default function SuperAdminAside({ setFaculty }) {
@@ -23,6 +27,20 @@ export default function SuperAdminAside({ setFaculty }) {
     const toggleDropdown = () => {
         setPagesDropdown(!pagesDropdown);
     }
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    // Logout function to clear authentication and navigate to login page
+    const handleLogout = () => {
+        // Clear the authentication state in Redux
+        dispatch(clearSuperAdminAuth());
+
+        // Optionally, remove the token from localStorage (if you store it there)
+        localStorage.removeItem('authToken'); // Optional if you store the token in localStorage
+
+        // Navigate to the super admin login page
+        navigate('/super-admin-login', { replace: true });
+    };
     return (
         <aside className={styles['super-admin-aside']} style={openedBurger ? { marginLeft: "-320px" } : { marginLeft: 0 }}>
             <div className={styles['super-admin-aside-head']}>
@@ -108,6 +126,19 @@ export default function SuperAdminAside({ setFaculty }) {
                         </Link>
                     </ul>
                 </div>
+            </div>
+            <div style={{
+                color: "rgb(109, 197, 168)",
+                fontSize: 20,
+                position: "absolute",
+                bottom: 100, left: 20,
+                display: "flex",
+                alignItems: "center",
+                cursor: "pointer"
+            }}
+            onClick={handleLogout}>
+                <LogoutIcon style={{ color: "rgb(109, 197, 168)", fontSize: 40, marginRight: 20 }} />
+                Çıxış edin
             </div>
         </aside>
     )

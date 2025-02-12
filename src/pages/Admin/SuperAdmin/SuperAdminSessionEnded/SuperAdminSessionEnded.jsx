@@ -1,5 +1,7 @@
 import axios from 'axios';
 import Stack from '@mui/material/Stack';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import Pagination from '@mui/material/Pagination';
 import React, { useEffect, useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -7,8 +9,9 @@ import AutorenewIcon from '@mui/icons-material/Autorenew';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import styles from "./SuperAdminSessionEnded.module.scss";
 import SuperAdminAside from '../SuperAdminAside/SuperAdminAside';
-import AdminAdditionalInfo from '../../../../components/AdminAdditonalInfo/AdminAdditionalInfo';
+import { clearSuperAdminAuth } from '../../../../redux/superAdminAuthSlice';
 import SuperAdminSessionFilter from '../SuperAdminSessionFilter/SuperAdminSessionFilter';
+import AdminAdditionalInfo from '../../../../components/AdminAdditonalInfo/AdminAdditionalInfo';
 
 export default function SuperAdminNotApproved() {
     const [students, setStudents] = useState([]);
@@ -24,8 +27,50 @@ export default function SuperAdminNotApproved() {
     const handleSessionFilterToggle = () => {
         setSessionFilter(prev => !prev);
     };
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    
+    const token = useSelector((state) => state.superAdminAuth.token);
 
     useEffect(() => {
+        const checkTokenExpiration = () => {
+                    if (!token) {
+                        // If there's no token, navigate to the login page
+                        navigate("/super-admin-login", { replace: true });
+                        return;
+                    }
+        
+                    try {
+                        // Decode the token
+                        const decodedToken = JSON.parse(atob(token.split('.')[1]));
+        
+                        // Get expiration time
+                        const expirationTime = decodedToken.exp * 1000; // Convert expiration time to milliseconds
+        
+                        // Get the current time
+                        const currentTime = Date.now();
+        
+                        // Check if the token is expired
+                        if (currentTime >= expirationTime) {
+                            // Token has expired, clear the authentication data in Redux
+                            dispatch(clearSuperAdminAuth());
+        
+                            // Optionally, clear the token from localStorage (if still storing it there)
+                            localStorage.removeItem('authToken');
+        
+                            // Redirect to login page
+                            navigate("/super-admin-login", { replace: true });
+                        }
+                    } catch (error) {
+                        console.error("Error decoding token:", error);
+                        dispatch(clearSuperAdminAuth()); // Clear auth state if token is invalid or any error occurs
+                        navigate("/super-admin-login", { replace: true });
+                    }
+                };
+        
+                // Call the expiration check
+                checkTokenExpiration();
         const fetchStudents = async () => {
             try {
                 const response = await axios.get('http://127.0.0.1:5000/superadmin_session_ended/');

@@ -5,19 +5,21 @@ import adminAuthSlice from './adminAuthSlice';
 import storage from 'redux-persist/lib/storage';
 import scannerAuthSlice from "./scannerAuthSlice";
 import { configureStore } from '@reduxjs/toolkit';
+import superAdminAuthSlice from "./superAdminAuthSlice";
 import { persistStore, persistReducer } from 'redux-persist';
 
 const persistConfig = {
     key: 'root',
     storage,
-    whitelist: ['auth', 'token', 'adminAuth', 'scannerAuth'],
+    whitelist: ['auth', 'token', 'adminAuth', 'scannerAuth', 'superAdminAuth'],
 };
 
 const rootReducer = combineReducers({
     auth: authReducer,
     token: tokenReducer,
     adminAuth: adminAuthSlice,
-    scannerAuth: scannerAuthSlice
+    scannerAuth: scannerAuthSlice,
+    superAdminAuth: superAdminAuthSlice
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

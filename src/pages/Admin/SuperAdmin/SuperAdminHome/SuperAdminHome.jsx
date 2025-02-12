@@ -1,18 +1,88 @@
-import React from 'react';
 import {
     CircularProgressbar,
     CircularProgressbarWithChildren,
     buildStyles
 } from "react-circular-progressbar";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { ResponsiveLine } from '@nivo/line';
+import { useNavigate } from "react-router-dom";
 import styles from "./SuperAdminHome.module.scss";
+import React, { useState, useEffect } from 'react';
+import apiClient from '../../../../redux/apiClient';
 import "react-circular-progressbar/dist/styles.css";
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import SuperAdminAside from "../SuperAdminAside/SuperAdminAside";
+import { clearSuperAdminAuth } from "../../../../redux/superAdminAuthSlice";
 
 export default function SuperAdminHome() {
+    // State to store the last 5 QR code data
+    const [lastOperations, setLastOperations] = useState([]);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const token = useSelector((state) => state.superAdminAuth.token);
+    // Fetch data from the Flask API using apiClient when the component mounts
+    useEffect(() => {
+        // Function to check token expiration
+        const checkTokenExpiration = () => {
+            if (!token) {
+                // If there's no token, navigate to the login page
+                navigate("/super-admin-login", { replace: true });
+                return;
+            }
+
+            try {
+                // Decode the token
+                const decodedToken = JSON.parse(atob(token.split('.')[1]));
+
+                // Get expiration time
+                const expirationTime = decodedToken.exp * 1000; // Convert expiration time to milliseconds
+
+                // Get the current time
+                const currentTime = Date.now();
+
+                // Check if the token is expired
+                if (currentTime >= expirationTime) {
+                    // Token has expired, clear the authentication data in Redux
+                    dispatch(clearSuperAdminAuth());
+
+                    // Optionally, clear the token from localStorage (if still storing it there)
+                    localStorage.removeItem('authToken');
+
+                    // Redirect to login page
+                    navigate("/super-admin-login", { replace: true });
+                }
+            } catch (error) {
+                console.error("Error decoding token:", error);
+                dispatch(clearSuperAdminAuth()); // Clear auth state if token is invalid or any error occurs
+                navigate("/super-admin-login", { replace: true });
+            }
+        };
+
+        // Call the expiration check
+        checkTokenExpiration();
+
+        // Function to fetch data
+        const fetchData = async () => {
+            try {
+                const response = await apiClient.get('/get_last_5_qr_codes');
+                setLastOperations(response.data); // Update state with fetched data
+            } catch (error) {
+                console.error("Error fetching the data:", error);
+            }
+        };
+
+        // Fetch data after token validation
+        if (token) {
+            fetchData();
+        }
+
+    }, [dispatch, navigate, token]);
+    console.log(lastOperations);
+
+
     const data = [
         {
             id: "Series 1",
@@ -32,45 +102,7 @@ export default function SuperAdminHome() {
             ],
         }
     ];
-    const lastOperations = [
-        {
-            name: "Firdovsi",
-            surname: "Rzaev",
-            date: "2024-3-15",
-            amount: 5,
-            faculty: "ITT"
-        }, {
-            name: "Karam",
-            surname: "Shukurlu",
-            date: "2024-3-15",
-            amount: 5,
-            faculty: "ITT"
-        }, {
-            name: "Firdovsi",
-            surname: "Rzaev",
-            date: "2024-3-15",
-            amount: 5,
-            faculty: "ITT"
-        }, {
-            name: "Karam",
-            surname: "Shukurlu",
-            date: "2024-3-15",
-            amount: 5,
-            faculty: "ITT"
-        }, {
-            name: "Firdovsi",
-            surname: "Rzaev",
-            date: "2024-3-15",
-            amount: 5,
-            faculty: "ITT"
-        }, {
-            name: "Karam",
-            surname: "Shukurlu",
-            date: "2024-3-15",
-            amount: 5,
-            faculty: "ITT"
-        }
-    ];
+
     return (
         <>
             <main className={styles['super-admin-home-main']}>
@@ -173,89 +205,59 @@ export default function SuperAdminHome() {
                                 pointBorderColor={{ from: "serieColor" }}
                                 pointLabelYOffset={-12}
                                 useMesh={true}
-                                // legends={[
-                                //     {
-                                //         anchor: "bottom-right",
-                                //         direction: "column",
-                                //         justify: false,
-                                //         translateX: 100,
-                                //         translateY: 0,
-                                //         itemsSpacing: 0,
-                                //         itemDirection: "left-to-right",
-                                //         itemWidth: 80,
-                                //         itemHeight: 20,
-                                //         itemOpacity: 0.75,
-                                //         symbolSize: 12,
-                                //         symbolShape: "circle",
-                                //         symbolBorderColor: "rgba(0, 0, 0, .5)",
-                                //         effects: [
-                                //             {
-                                //                 on: "hover",
-                                //                 style: {
-                                //                     itemOpacity: 1,
-                                //                 },
-                                //             },
-                                //         ],
-                                //     },
-                                // ]}
-                                // for removing the id text
                                 theme={{
-                                    textColor: "rgb(109, 197, 168)", // Default text color
+                                    textColor: "rgb(109, 197, 168)",
                                     fontSize: 12,
                                     axis: {
                                         legend: {
                                             text: {
-                                                fill: "rgb(109, 197, 168)", // Axis legend text color
+                                                fill: "rgb(109, 197, 168)",
                                             },
                                         },
                                         ticks: {
                                             text: {
-                                                fill: "rgb(109, 197, 168)", // Axis tick text color
+                                                fill: "rgb(109, 197, 168)",
                                             },
                                         },
                                     },
                                     legends: {
                                         text: {
-                                            fill: "rgb(109, 197, 168)", // Legend text color
+                                            fill: "rgb(109, 197, 168)",
                                         },
                                     },
                                     tooltip: {
                                         container: {
-                                            color: "rgb(109, 197, 168)", // Tooltip text color
+                                            color: "rgb(109, 197, 168)",
                                         },
                                     },
                                     grid: {
                                         line: {
-                                            stroke: "rgb(24, 38, 98)", // Grid line color
-                                            strokeWidth: 1, // Adjust the thickness of the grid lines
+                                            stroke: "rgb(24, 38, 98)",
+                                            strokeWidth: 1,
                                         },
                                     },
                                 }}
-                                enableGridX={true} // Ensure grid lines on X-axis are enabled
+                                enableGridX={true}
                                 enableGridY={true}
                             />
                         </div>
                         <div className={styles['sp-adm-last-operation']}>
                             <h3>Sonuncu Əməliyyatlar</h3>
                             <div className={styles['sp-adm-lst-op-container']}>
-                                {lastOperations.map((item, index)=>{
-                                    return(
+                                {lastOperations.map((item, index) => {
+                                    return (
                                         <div className={styles['sp-adm-lst-op-item']} key={index}>
                                             <div className={styles['sp-adm-lst-op-item-name']}>
-                                                <p>{item.name}</p>
-                                                <p>{item.surname}</p>
+                                                <p>{item.username}</p>
                                             </div>
                                             <div className={styles['sp-adm-lst-op-item-fact']}>
-                                                <p>{item.faculty}</p>
-                                            </div>
-                                            <div className={styles['sp-adm-lst-op-item-date']}>
                                                 <p>{item.date}</p>
                                             </div>
                                             <div className={styles['sp-adm-lst-op-item-amount']}>
-                                                <p>{item.amount}</p>
+                                                <p>{item.qiymet}</p>
                                             </div>
                                         </div>
-                                    )
+                                    );
                                 })}
                             </div>
                         </div>
@@ -263,5 +265,5 @@ export default function SuperAdminHome() {
                 </div>
             </main>
         </>
-    )
+    );
 }

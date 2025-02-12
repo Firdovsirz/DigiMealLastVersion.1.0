@@ -1,7 +1,10 @@
+import { useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import apiClient from "../../../../redux/apiClient";
 import styles from "./SuperAdminAccount.module.scss";
+import { useSelector, useDispatch } from "react-redux";
 import SuperAdminAside from '../SuperAdminAside/SuperAdminAside';
+import { clearSuperAdminAuth } from "../../../../redux/superAdminAuthSlice";
 import SuperAdminAccountFilter from "../SuperAdminAccountFilter/SuperAdminAccountFilter";
 
 const SuperAdminAccount = () => {
@@ -16,6 +19,9 @@ const SuperAdminAccount = () => {
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
     const currentMonth = currentDate.getMonth() + 1; // getMonth() is 0-indexed, so add 1
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const token = useSelector((state) => state.superAdminAuth.token);
 
     // Fetch QR codes from the backend
     const fetchQrCodes = async () => {
@@ -98,6 +104,43 @@ const SuperAdminAccount = () => {
 
     // When qrCodes, year, month, or week changes, apply the filter
     useEffect(() => {
+        const checkTokenExpiration = () => {
+            if (!token) {
+                // If there's no token, navigate to the login page
+                navigate("/super-admin-login", { replace: true });
+                return;
+            }
+
+            try {
+                // Decode the token
+                const decodedToken = JSON.parse(atob(token.split('.')[1]));
+
+                // Get expiration time
+                const expirationTime = decodedToken.exp * 1000; // Convert expiration time to milliseconds
+
+                // Get the current time
+                const currentTime = Date.now();
+
+                // Check if the token is expired
+                if (currentTime >= expirationTime) {
+                    // Token has expired, clear the authentication data in Redux
+                    dispatch(clearSuperAdminAuth());
+
+                    // Optionally, clear the token from localStorage (if still storing it there)
+                    localStorage.removeItem('authToken');
+
+                    // Redirect to login page
+                    navigate("/super-admin-login", { replace: true });
+                }
+            } catch (error) {
+                console.error("Error decoding token:", error);
+                dispatch(clearSuperAdminAuth()); // Clear auth state if token is invalid or any error occurs
+                navigate("/super-admin-login", { replace: true });
+            }
+        };
+
+        // Call the expiration check
+        checkTokenExpiration();
         fetchQrCodes();
     }, []); // Fetch QR codes only once on mount
 
@@ -133,7 +176,7 @@ const SuperAdminAccount = () => {
     const [thirdKorpusPrice, setThirdKorpusPrice] = useState(0);
     const [fourthKorpusPrice, setFourthKorpusPrice] = useState(0);
     const [totalPrice, setTotalPrice] = useState(0);
-    
+
     useEffect(() => {
         // Calculate the price of Korpus1 whenever qrCodes change
         const price1 = qrCodes.filter(item => item.bufet === 'Korpus1');
@@ -141,29 +184,29 @@ const SuperAdminAccount = () => {
         setFirstKorpusPrice(totalPrice1);
     }, [qrCodes]);
     console.log(firstKorpusPrice);
-    
+
     useEffect(() => {
         // Calculate the price of Korpus1 whenever qrCodes change
         const price2 = qrCodes.filter(item => item.bufet === 'Korpus2');
         const totalPrice2 = price2.reduce((acc, item) => acc + item.qiymet, 0);
         setSecondKorpusPrice(totalPrice2);
-    }, [qrCodes]); 
+    }, [qrCodes]);
     console.log(secondKorpusPrice);
     useEffect(() => {
         // Calculate the price of Korpus1 whenever qrCodes change
         const price3 = qrCodes.filter(item => item.bufet === 'Korpus3');
         const totalPrice3 = price3.reduce((acc, item) => acc + item.qiymet, 0);
         setThirdKorpusPrice(totalPrice3);
-    }, [qrCodes]); 
+    }, [qrCodes]);
     console.log(thirdKorpusPrice);
     useEffect(() => {
         // Calculate the price of Korpus1 whenever qrCodes change
         const price4 = qrCodes.filter(item => item.bufet === 'Korpus4');
         const totalPrice4 = price4.reduce((acc, item) => acc + item.qiymet, 0);
         setFourthKorpusPrice(totalPrice4);
-    }, [qrCodes]); 
+    }, [qrCodes]);
     console.log(fourthKorpusPrice);
-    useEffect(()=>{
+    useEffect(() => {
         const totalPrice = firstKorpusPrice + secondKorpusPrice + thirdKorpusPrice + fourthKorpusPrice;
         setTotalPrice(totalPrice);
     }, [firstKorpusPrice, secondKorpusPrice, thirdKorpusPrice, fourthKorpusPrice])

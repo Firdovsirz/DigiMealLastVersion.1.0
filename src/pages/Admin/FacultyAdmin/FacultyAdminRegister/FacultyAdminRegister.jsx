@@ -28,7 +28,7 @@ export default function FacultyAdminRegister() {
             console.log('Admin is not authenticated!');
             return;
         }
-    
+
         const fetchFacultyName = async () => {
             try {
                 const response = await apiClient.post(
@@ -40,12 +40,12 @@ export default function FacultyAdminRegister() {
                         },
                     }
                 );
-    
+
                 if (response.data.success) {
                     setAdminAsideName(response.data.results[0].istifadeciadi);
                     const facultyName = response.data.results[0].faculty;
                     setFacultyName(facultyName);
-                    
+
                     // Set the formData's fakulte to the fetched faculty name
                     setFormData((prevData) => ({
                         ...prevData,
@@ -58,7 +58,7 @@ export default function FacultyAdminRegister() {
                 console.error('Error:', error);
             }
         };
-    
+
         if (adminUsername) {
             fetchFacultyName();
         }
@@ -75,7 +75,8 @@ export default function FacultyAdminRegister() {
         groupnumber: "",
         status: "",
         bilet: "",
-        email: ""
+        email: "",
+        document: null
     });
 
     const handlePrefix = (selectedPrefix) => {
@@ -94,16 +95,16 @@ export default function FacultyAdminRegister() {
         const lastKey = e.nativeEvent.inputType; // Detect key pressed
         const numericInput = input.replace(/[^0-9]/g, ""); // Remove non-numeric characters
         const prefixLength = prefix ? prefix.length : 0;
-    
+
         let digits = numericInput.slice(3 + prefixLength); // Extract digits after the prefix
         if (lastKey === "deleteContentBackward" && digits.length > 0) {
             // Remove the last digit when backspace is pressed
             digits = digits.slice(0, -1);
         }
-    
+
         const formattedPhoneNumber = formatPhoneNumber(digits, prefix);
         setPhoneNumber(formattedPhoneNumber);
-    
+
         // Update formData with the new phone number
         setFormData((prevData) => ({
             ...prevData,
@@ -139,6 +140,7 @@ export default function FacultyAdminRegister() {
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
         accept: "application/pdf, image/*",
+        maxSize: 5 * 1024 * 1024,
         multiple: true,
     });
 
@@ -150,7 +152,7 @@ export default function FacultyAdminRegister() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-    
+
         if (name === "fincode") {
             const uppercaseValue = value.toUpperCase().slice(0, 7);
             setFormData((prevData) => ({
@@ -175,7 +177,7 @@ export default function FacultyAdminRegister() {
         // Debug: log payload for development purposes
         console.log("Submitting form data:", payload);
         console.log(`Number is ${formData.phonenumber}`);
-        
+
 
         try {
             // Make POST request to the backendå
@@ -200,7 +202,8 @@ export default function FacultyAdminRegister() {
                     groupnumber: "",
                     status: "",
                     bilet: "",
-                    email: ""
+                    email: "",
+                    document: null
                 });
 
                 setPhoneNumber("+994 (__) ___ __ __");
@@ -216,7 +219,8 @@ export default function FacultyAdminRegister() {
                         groupnumber: "",
                         status: "",
                         bilet: "",
-                        email: ""
+                        email: "",
+                        document: null
                     },
                     phonenumber: "+994 (__) ___ __ __",
                     uploadedFiles: [],
@@ -232,7 +236,7 @@ export default function FacultyAdminRegister() {
             alert("An error occurred while submitting the form. Please try again.");
         }
     };
-    
+
     const handleFacultyChange = (faculty) => {
         setFormData({
             ...formData,
@@ -355,10 +359,10 @@ export default function FacultyAdminRegister() {
                                             <p>Nəqliyyat və logistika fakültəsi</p>
                                         </li>
                                         <li onClick={() => handleFacultyChange("Energetika")}>
-                                           <p> Energetika və avtomatika fakültəsi</p>
+                                            <p> Energetika və avtomatika fakültəsi</p>
                                         </li>
                                         <li onClick={() => handleFacultyChange("Metallurgiya")}>
-                                           <p>Metallurgiya və materialşunaslıq fakültəsi</p>
+                                            <p>Metallurgiya və materialşunaslıq fakültəsi</p>
                                         </li>
                                         <li onClick={() => handleFacultyChange("Masinqayirma")}>
                                             <p>Maşınqayırma və robototexnika fakültəsi</p>
@@ -379,8 +383,8 @@ export default function FacultyAdminRegister() {
                                             <p>Sabah</p>
                                         </li>
                                     </ul>
-                                </div> 
-                            : null}
+                                </div>
+                                : null}
                         </div>
                         <div className={styles["fac-adm-reg-group-label"]}>
                             <input
