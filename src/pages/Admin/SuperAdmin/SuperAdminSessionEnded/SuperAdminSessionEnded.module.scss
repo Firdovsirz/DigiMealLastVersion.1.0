@@ -48,17 +48,19 @@
             align-items: center;
             flex-direction: column;
             justify-content: center;
+            width: 100%;
             .student-card{
                 border: 1px solid $primary-admin-green-color;
                 margin-block: 20px;
                 border-radius: 10px;
+                width: 80%;
                 .sp-not-apprv-student-head{
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
                     border-bottom: 1px solid $primary-admin-green-color;
                     div{
-                        width: 140px;
+                        width: calc(100% / 7);
                         height: 80px;
                         padding: 20px;
                         display: flex;
@@ -76,7 +78,7 @@
                     align-items: center;
                     justify-content: space-between;
                     div{
-                        width: 140px;
+                        width: calc(100% / 7);
                         height: 60px;
                         padding: 20px;
                         display: flex;

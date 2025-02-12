@@ -8,6 +8,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import styles from "./SuperAdminSessionEnded.module.scss";
 import SuperAdminAside from '../SuperAdminAside/SuperAdminAside';
 import AdminAdditionalInfo from '../../../../components/AdminAdditonalInfo/AdminAdditionalInfo';
+import SuperAdminSessionFilter from '../SuperAdminSessionFilter/SuperAdminSessionFilter';
 
 export default function SuperAdminNotApproved() {
     const [students, setStudents] = useState([]);
@@ -17,7 +18,12 @@ export default function SuperAdminNotApproved() {
     const [additonalInfo, setAdditionalInfo] = useState(false);
     const [additonalIndex, setAdditionalIndex] = useState(0);
     const [searchTerm, setSearchTerm] = useState('');
+    const [sessionFaculty, setSessionFaculty] = useState('');
+    const [sessionFilter, setSessionFilter] = useState('');
     const itemsPerPage = 4;
+    const handleSessionFilterToggle = () => {
+        setSessionFilter(prev => !prev);
+    };
 
     useEffect(() => {
         const fetchStudents = async () => {
@@ -43,8 +49,25 @@ export default function SuperAdminNotApproved() {
         setAdditionalInfo(true);
         setAdditionalIndex(e);
     };
+    const filteredStudents = students
+        .filter((student) => {
+            // If faculty is selected, filter by faculty
+            if (sessionFaculty) {
+                return student.fakulte === sessionFaculty;
+            }
+            return true; // If no faculty is selected, include all students
+        })
+        .filter((student) => {
+            // Filter by search term
+            return (
+                student.ad.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                student.soyad.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                student.ata_adi.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                student.fakulte.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        });
 
-    const paginatedData = students.slice(
+    const paginatedData = filteredStudents.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
@@ -60,19 +83,23 @@ export default function SuperAdminNotApproved() {
             alert('Redaktə zamanı xəta baş verdi');
         }
     };
+    const handleSearchChange = (event) => {
+        setSearchTerm(event.target.value);
+    };
 
     return (
         <>
             <main className={styles['sp-adm-not-approved-main']}>
                 <SuperAdminAside />
                 <section className={styles['sp-not-approved-students-section']}>
-                    <h1>Təsdiqlənmiş istifadəçilər</h1>
+                    <h1>Sessiyası bitmiş istifadəçilər</h1>
                     <form action="">
                         <input
                             type="text"
                             required
                             placeholder="Search..."
                             value={searchTerm}
+                            onChange={handleSearchChange}
                         />
                     </form>
                     <div className={styles['sp-not-approved-students-container']}>
@@ -84,8 +111,8 @@ export default function SuperAdminNotApproved() {
                                         <div>Soyad</div>
                                         <div>Ata adı</div>
                                         <div>Fakültə</div>
-                                        <div>Status</div>
-                                        <div>Bilet</div>
+                                        {/* <div>Status</div> */}
+                                        {/* <div>Bilet</div> */}
                                         <div>Istifaçi adı</div>
                                         <div className={styles['sp-adm-wait-app-additional-info-txt']}>
                                             Əlavə məlumat
@@ -97,8 +124,8 @@ export default function SuperAdminNotApproved() {
                                         <div>{student.soyad}</div>
                                         <div>{student.ata_adi}</div>
                                         <div>{student.fakulte}</div>
-                                        <div>{student.status}</div>
-                                        <div>{student.bilet}</div>
+                                        {/* <div>{student.status}</div> */}
+                                        {/* <div>{student.bilet}</div> */}
                                         <div>{student.digimealusername}</div>
                                         <div className={styles['sp-adm-wait-app-additional-info-container']}>
                                             <div onClick={() => handleAdditonalInfo(index)}>
@@ -132,6 +159,11 @@ export default function SuperAdminNotApproved() {
                     object={students[additonalIndex]}
                     additionalInfo={additonalInfo}
                     setAdditionalInfo={setAdditionalInfo} />
+                <SuperAdminSessionFilter
+                    handleSessionOpen={handleSessionFilterToggle}
+                    sessionFaculty={sessionFaculty}
+                    setSessionFaculty={setSessionFaculty}
+                    sessionFilter={sessionFilter} />
             </main>
         </>
     );

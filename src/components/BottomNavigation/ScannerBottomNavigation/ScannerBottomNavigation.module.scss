@@ -19,10 +19,9 @@
         align-items: center;
         justify-content: space-between;
         .sc-btm-nav-home,
-        .sc-btm-nav-history,
         .sc-btm-nav-log-out{
             height: 100%;
-            width: calc(100%/3);
+            width: calc(100%/2);
             display: flex;
             align-items: center;
             justify-content: center;

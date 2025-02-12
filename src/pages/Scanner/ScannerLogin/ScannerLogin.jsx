@@ -1,18 +1,20 @@
-import axios from 'axios';
 import React, { useState } from 'react';
 import styles from "./ScannerLogin.module.scss";
 import SchoolIcon from '@mui/icons-material/School';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setScannerToken, clearScannerToken } from '../../../redux/scannerAuthSlice'; // Import the actions
+import apiClient from '../../../redux/apiClient'; // Import the apiClient
 
 export default function ScannerLogin() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [visibility, setVisibility] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
-    const [scannerDetails, setScannerDetails] = useState(null);
     const navigate = useNavigate();
+    const dispatch = useDispatch(); // Initialize dispatch
 
     const handleVisibility = () => {
         setVisibility(!visibility);
@@ -21,26 +23,20 @@ export default function ScannerLogin() {
     const handleLogin = async (e) => {
         e.preventDefault();
         setErrorMessage("");
+
         try {
-            const loginResponse = await axios.post('http://127.0.0.1:5000/scanner/login', {
-                username,
-                password
-            });
+            // Use the apiClient for making the login request
+            const response = await apiClient.post('/scanner/login', { username, password });
 
-            if (loginResponse.data.success) {
-                const detailsResponse = await axios.post(
-                    'http://127.0.0.1:5000/scanner/get_scanner_username',
-                    { usernamesc: username }
-                );
+            if (response.data.token) {
+                // Dispatch the action to store the token in Redux state
+                dispatch(setScannerToken(response.data.token));
 
-                if (detailsResponse.data.success) {
-                    setScannerDetails(detailsResponse.data.results[0]);
-                    navigate('/scanner-home');
-                } else {
-                    setErrorMessage(detailsResponse.data.message);
-                }
+                // If login is successful, navigate to the scanner home
+                navigate('/scanner-home');
             } else {
-                setErrorMessage(loginResponse.data.message);
+                // If login fails, set the error message
+                setErrorMessage("Invalid username or password.");
             }
         } catch (err) {
             setErrorMessage("An error occurred while logging in.");
@@ -86,15 +82,8 @@ export default function ScannerLogin() {
                     </div>
                     <button type="submit">Daxil Ol</button>
                 </form>
-
             </section>
             {errorMessage && <p className={styles['error-message']}>{errorMessage}</p>}
-            {scannerDetails && (
-                <div className={styles['scanner-details']}>
-                    <p><strong>Ad:</strong> {scannerDetails.istifadeciadi}</p>
-                    <p><strong>Fakültə:</strong> {scannerDetails.faculty}</p>
-                </div>
-            )}
         </main>
     );
 }

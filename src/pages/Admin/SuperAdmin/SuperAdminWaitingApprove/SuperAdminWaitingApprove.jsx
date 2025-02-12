@@ -22,10 +22,15 @@ export default function SuperAdminNotApproved() {
     const itemsPerPage = 4;
     const [confirm, setConfirm] = useState(false);
     const [confirmUserEmail, setConfirmUserEmail] = useState('');
+    const [faculty, setFaculty] = useState('');
     const handleConfirmUserContainer = (e) => {
         setConfirm(true);
         setConfirmUserEmail(e)
     }
+    const [filter, setFilter] = useState(false);
+    const handleFilterToggle = () => {
+        setFilter(prev => !prev); // Toggle the filter visibility
+    };
     const requestOtp = async (email) => {
         try {
             const response = await axios.post(`/request-otp/${email}`);
@@ -65,12 +70,23 @@ export default function SuperAdminNotApproved() {
         setCurrentPage(1);
     };
 
-    const filteredStudents = students.filter((student) =>
-        student.ad.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        student.soyad.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        student.ata_adi.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        student.fakulte.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredStudents = students
+        .filter((student) => {
+            // If faculty is selected, filter by faculty
+            if (faculty) {
+                return student.fakulte === faculty;
+            }
+            return true; // If no faculty is selected, include all students
+        })
+        .filter((student) => {
+            // Filter by search term
+            return (
+                student.ad.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                student.soyad.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                student.ata_adi.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                student.fakulte.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        });
 
     const paginatedData = filteredStudents.slice(
         (currentPage - 1) * itemsPerPage,
@@ -118,16 +134,16 @@ export default function SuperAdminNotApproved() {
                         />
                     </form>
                     <div className={styles['sp-not-approved-students-container']}>
-                        {paginatedData.length > 0 ? (
-                            paginatedData.map((student, index) => (
+                        {filteredStudents.length > 0 ? (
+                            filteredStudents.map((student, index) => (
                                 <div key={index} className={styles['student-card']}>
                                     <div className={styles['sp-not-apprv-student-head']}>
                                         <div>Ad</div>
                                         <div>Soyad</div>
                                         <div>Ata adı</div>
                                         <div>Fakültə</div>
-                                        <div>Status</div>
-                                        <div>Bilet</div>
+                                        {/* <div>Status</div> */}
+                                        {/* <div>Bilet</div> */}
                                         <div className={styles['sp-adm-wait-app-additional-info-txt']}>
                                             Əlavə məlumat
                                         </div>
@@ -139,8 +155,8 @@ export default function SuperAdminNotApproved() {
                                         <div>{student.soyad}</div>
                                         <div>{student.ata_adi}</div>
                                         <div>{student.fakulte}</div>
-                                        <div>{student.status}</div>
-                                        <div>{student.bilet}</div>
+                                        {/* <div>{student.status}</div> */}
+                                        {/* <div>{student.bilet}</div> */}
                                         <div className={styles['sp-adm-wait-app-additional-info-container']}>
                                             <div onClick={() => handleAdditonalInfo(index)}>
                                                 <MoreHorizIcon />
@@ -182,7 +198,12 @@ export default function SuperAdminNotApproved() {
                     confirmUser={confirm}
                     setConfirmUser={setConfirm}
                     email={confirmUserEmail}/>
-                <SuperAdminWaitingApproveFilter />
+                <SuperAdminWaitingApproveFilter 
+                    handleOpen={handleFilterToggle} 
+                    filter={filter} 
+                    setFilter={setFilter}
+                    faculty={faculty}
+                    setFaculty={setFaculty}/>
             </main>
         </>
     );

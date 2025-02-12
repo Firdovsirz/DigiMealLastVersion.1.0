@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import { useSelector } from "react-redux";
 import styles from "./ScannerHome.module.scss";
+import { useNavigate } from 'react-router-dom';
+import apiClient from "../../../redux/apiClient";
+import { Html5QrcodeScanner } from 'html5-qrcode';
+import React, { useEffect, useState } from 'react';
 import ScannerHeader from '../../../components/Header/ScannerHeader/ScannerHeader';
 import ScannerBottomNavigation from '../../../components/BottomNavigation/ScannerBottomNavigation/ScannerBottomNavigation';
 
@@ -9,11 +12,85 @@ export default function ScannerHome() {
     const [qrId, setQrId] = useState('');
     const [isScanning, setIsScanning] = useState(true);  // Track scanning state
     const [counter, setCounter] = useState(0);  // Counter for 5 seconds delay
+    const [bufet, setBufet] = useState('');
+    const navigate = useNavigate();
+    const [usernamesc, setUsername] = useState('');
+
+    // Function to check token expiration
+
+    const getUsernameFromToken = (token) => {
+        if (!token) return null;
+
+        try {
+            // JWT token format is "header.payload.signature", we split it by dot
+            const payload = token.split('.')[1];
+            const decodedPayload = JSON.parse(atob(payload));
+            return decodedPayload.username;  // Assuming 'username' is stored in the token
+        } catch (error) {
+            console.error("Error decoding token:", error);
+            return null;
+        }
+    };
+
+    // Fetch the username from the token when the component mounts
+    useEffect(() => {
+        const token = localStorage.getItem('scannerToken'); // Assuming the token is in localStorage
+
+        // If a token exists, extract the username and set it to the 'bufet' state
+        if (token) {
+            setUsername(getUsernameFromToken(token))
+        } else {
+            navigate('/scanner-login');
+        }
+        const fetchUsernameFromBackend = async (usernamesc) => {
+            try {
+                const response = await apiClient.post('/scanner/get_scanner_username', {
+                    usernamesc,
+                });
+
+                if (response.data.success) {
+                    // Assuming the first result contains the required data
+                    setBufet(response.data.results[0].istifadeciadi);
+                } else {
+                    setError('Username not found');
+                }
+            } catch (error) {
+                console.error('Error fetching username:', error);
+            }
+        };
+        fetchUsernameFromBackend(getUsernameFromToken(token))
+    }, [navigate]);
+
 
     useEffect(() => {
-        // Initialize the scanner manually without the scan button
-        const scanner = new Html5QrcodeScanner("qr-reader", { 
-            fps: 10, 
+        const checkTokenExpiration = () => {
+            const token = localStorage.getItem("scannerToken");
+            if (!token) {
+                navigate("/scanner-login", { replace: true });
+                return;
+            }
+
+            try {
+                const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decode JWT token
+                const expirationTime = decodedToken.exp * 1000;  // Expiration time in milliseconds
+                const currentTime = Date.now();  // Current time in milliseconds
+
+                if (currentTime >= expirationTime) {
+                    localStorage.removeItem("scannerToken");  // Clear expired token from localStorage
+                    navigate("/scanner-login", { replace: true });
+                }
+            } catch (error) {
+                console.error("Invalid token format", error);
+                localStorage.removeItem("authToken");  // Clear invalid token
+                navigate("/scanner-login", { replace: true });
+            }
+        };
+        // Check for token expiration when the component mounts
+        checkTokenExpiration();
+
+        // Initialize the QR scanner
+        const scanner = new Html5QrcodeScanner("qr-reader", {
+            fps: 10,
             qrbox: 250,
             rememberLastUsedCamera: true, // Optional: Remember the last used camera
             hideScanButton: true, // Hide the scan button (this should automatically hide the button)
@@ -66,10 +143,13 @@ export default function ScannerHome() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ qr_id: data }),
+                body: JSON.stringify({ 
+                    qr_id: data,
+                    bufet: bufet 
+                }),
             });
             console.log(data);
-            
+
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
@@ -86,9 +166,9 @@ export default function ScannerHome() {
         <>
             <ScannerHeader />
             <main className={styles['scanner-home']}>
-                <section className={styles['scanner-container']} style={{display: "flex", flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '90%'}}>
-                    <div id="qr-reader" style={{ width: '100%', height: "400px" }}></div>
-                    {!isScanning && <p>Skan {counter} saniyə ərzində davam edəcək...</p>}  {/* Display countdown */}
+                <section className={styles['scanner-container']}>
+                    <div id="qr-reader" className={styles['qr-reader']}></div>
+                    {!isScanning && <p>Skan {counter} saniyə ərzində davam edəcək...</p>}
                 </section>
             </main>
             <ScannerBottomNavigation />

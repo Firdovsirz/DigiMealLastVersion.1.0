@@ -1,25 +1,24 @@
 import React, { useState } from 'react';
 import TuneIcon from '@mui/icons-material/Tune';
-import styles from "./SuperAdminWaitingApproveFilter.module.scss";
+import styles from "./SuperAdminSessionFilter.module.scss";
 
-export default function SuperAdminWaitingApproveFilter({handleOpen, filter, setFilter, faculty, setFaculty}) {
-    const handleFaculty = (e) => {
-        setFaculty(e.target.value)
-        handleOpen()
+export default function SuperAdminSessionFilter({handleSessionOpen, sessionFilter, setSessionFilter, sessionFaculty, setSessionFaculty}) {
+    const handleSessionFaculty = (e) => {
+        setSessionFaculty(e.target.value)
+        handleSessionOpen()
     }
-    console.log(faculty);
     
     return (
         <div className={styles['sp-adm-wt-app-filter-container']}>
-            <div className={styles['sp-adm-wt-app-filter-icon-container']} onClick={handleOpen}>
+            <div className={styles['sp-adm-wt-app-filter-icon-container']} onClick={handleSessionOpen}>
                 <TuneIcon className={styles['sp-adm-wt-app-filter-icon']}/>
             </div>
-            {filter ? (
+            {sessionFilter ? (
                 <div className={styles['sp-adm-wt-app-fiter-form-container']}>
                     <form action="">
                         <div>
                             <p>Fakültə</p>
-                            <select name="faculty" id="faculty" value={faculty} onChange={handleFaculty}>
+                            <select name="faculty" id="faculty" value={sessionFaculty} onChange={handleSessionFaculty}>
                                 <option value="">Fakültə</option>
                                 <option value="ITT">ITT</option>
                                 <option value="Neqliyyat">Nəqliyyat və logistika fakültəsi</option>

@@ -14,7 +14,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 20px 50px;
+        padding: 20px 10px;
 
         .scanner-header-logo {
             display: flex;
@@ -28,8 +28,9 @@
             justify-content: center;
 
             h3 {
-                margin-right: 10px;
+                margin-right: 2px;
                 color: $primary-color;
+                font-size: 18px;
             }
         }
     }

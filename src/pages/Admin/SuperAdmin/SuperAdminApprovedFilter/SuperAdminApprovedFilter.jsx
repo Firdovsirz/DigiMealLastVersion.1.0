@@ -1,25 +1,24 @@
 import React, { useState } from 'react';
 import TuneIcon from '@mui/icons-material/Tune';
-import styles from "./SuperAdminWaitingApproveFilter.module.scss";
+import styles from "./SuperAdminApprovedFilter.module.scss";
 
-export default function SuperAdminWaitingApproveFilter({handleOpen, filter, setFilter, faculty, setFaculty}) {
-    const handleFaculty = (e) => {
-        setFaculty(e.target.value)
-        handleOpen()
+export default function SuperAdminApprovedFilter({handleApprovedOpen, approvedFilter, setApprovedFilter, approvedFaculty, setApprovedFaculty}) {
+    const handleApprovedFaculty = (e) => {
+        setApprovedFaculty(e.target.value)
+        handleApprovedOpen()
     }
-    console.log(faculty);
     
     return (
         <div className={styles['sp-adm-wt-app-filter-container']}>
-            <div className={styles['sp-adm-wt-app-filter-icon-container']} onClick={handleOpen}>
+            <div className={styles['sp-adm-wt-app-filter-icon-container']} onClick={handleApprovedOpen}>
                 <TuneIcon className={styles['sp-adm-wt-app-filter-icon']}/>
             </div>
-            {filter ? (
+            {approvedFilter ? (
                 <div className={styles['sp-adm-wt-app-fiter-form-container']}>
                     <form action="">
                         <div>
                             <p>Fakültə</p>
-                            <select name="faculty" id="faculty" value={faculty} onChange={handleFaculty}>
+                            <select name="faculty" id="faculty" value={approvedFaculty} onChange={handleApprovedFaculty}>
                                 <option value="">Fakültə</option>
                                 <option value="ITT">ITT</option>
                                 <option value="Neqliyyat">Nəqliyyat və logistika fakültəsi</option>
