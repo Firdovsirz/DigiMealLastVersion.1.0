@@ -9,7 +9,6 @@ import UserSettings from './pages/User/UserSettings/UserSettings';
 import ScannerHome from './pages/Scanner/ScannerHome/ScannerHome';
 import ScannerLogin from './pages/Scanner/ScannerLogin/ScannerLogin';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import ScannerHistory from './pages/Scanner/ScannerHistory/ScannerHistory';
 import SuperAdminHome from './pages/Admin/SuperAdmin/SuperAdminHome/SuperAdminHome';
 import AdminAdditionalInfo from './components/AdminAdditonalInfo/AdminAdditionalInfo';
 import SuperAdminLogin from "./pages/Admin/SuperAdmin/SuperAdminLogin/SuperAdminLogin";
@@ -20,8 +19,8 @@ import FacultyAdminRegister from './pages/Admin/FacultyAdmin/FacultyAdminRegiste
 import SuperAdminConfirmUser from './pages/Admin/SuperAdmin/SuperAdminConfirmUser/SuperAdminConfirmUser';
 import SuperAdminSessionEnded from "./pages/Admin/SuperAdmin/SuperAdminSessionEnded/SuperAdminSessionEnded";
 import SuperAdminWaitingApproved from "./pages/Admin/SuperAdmin/SuperAdminWaitingApprove/SuperAdminWaitingApprove";
+import SuperAdminAllUsersAccount from "./pages/Admin/SuperAdmin/SuperAdminAllUsersAccount/SuperAdminAllUsersAccount";
 import FacultyAdminWaitingApproved from './pages/Admin/FacultyAdmin/FacultyAdminNotApproved/FacultyAdminWaitingApproved';
-import SuperAdminFacultyApprovedContainer from './pages/Admin/SuperAdmin/SuperAdminFacultyApproved/SuperAdminFacultyApprovedContainer';
 
 function App() {
   return (
@@ -43,6 +42,7 @@ function App() {
         <Route path="/super-admin-waiting-approve" element={<SuperAdminWaitingApproved />} />
         <Route path="/super-admin-approved" element={<SuperAdminApproved />} />
         <Route path="/super-admin-session-ended" element={<SuperAdminSessionEnded />} />
+        <Route path='/super-admin-all-users-account' element={<SuperAdminAllUsersAccount />} />
         <Route path='/super-admin-account' element={<SuperAdminAccount />} />
         <Route
           path="/"

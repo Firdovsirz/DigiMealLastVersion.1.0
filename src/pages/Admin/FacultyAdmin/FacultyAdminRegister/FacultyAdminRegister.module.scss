@@ -4,6 +4,7 @@
     display: flex;
     align-items: center;
     height: 100vh;
+    overflow: scroll;
 
     .fac-adm-register-section {
         background: rgb(21, 27, 44);
@@ -53,7 +54,8 @@
                     .fac-adm-reg-name-label,
                     .fac-adm-reg-surname-label,
                     .fac-adm-reg-father-label,
-                    .fac-adm-reg-group-label {
+                    .fac-adm-reg-group-label,
+                    .fac-adm-reg-date-label {
                         width: calc((100% / 3) - 10px);
                         position: relative;
 
@@ -79,6 +81,7 @@
                             &:focus+.fac-adm-reg-name-placeholder,
                             &:focus+.fac-adm-reg-surname-placeholder,
                             &:focus+.fac-adm-reg-father-name-placeholder,
+                            &:focus+.fac-adm-reg-note-placeholder,
                             &:valid+.fac-adm-reg-name-placeholder,
                             &:valid+.fac-adm-reg-surname-placeholder,
                             &:valid+.fac-adm-reg-father-name-placeholder {
@@ -177,7 +180,8 @@
                 .fac-adm-reg-status-label,
                 .fac-adm-reg-ticket-label,
                 .fac-adm-reg-group-label,
-                .fac-adm-reg-email-label {
+                .fac-adm-reg-email-label,
+                .fac-adm-reg-date-label {
                     width: 100%;
                     margin-block: 10px;
                     position: relative;
@@ -208,13 +212,15 @@
                         &:focus+.fac-adm-reg-ticket-placeholder,
                         &:focus+.fac-adm-reg-group-placeholder,
                         &:focus+.fac-adm-reg-email-placeholder,
+                        &:focus+.fac-adm-reg-note-placeholder,
                         &:valid+.fac-adm-reg-fin-placeholder,
                         &:valid+.fac-adm-reg-id-placeholder,
                         &:valid+.fac-adm-reg-fac-placeholder,
                         &:valid+.fac-adm-reg-group-placeholder,
                         &:valid+.fac-adm-reg-status-placeholder,
                         &:valid+.fac-adm-reg-ticket-placeholder,
-                        &:valid+.fac-adm-reg-email-placeholder {
+                        &:valid+.fac-adm-reg-email-placeholder,
+                        &:valid+.fac-adm-reg-note-placeholder {
                             color: #fff;
                             padding: 2px 10px;
                             transform: translate(10px, -28px);
@@ -230,7 +236,51 @@
                     .fac-adm-reg-status-placeholder,
                     .fac-adm-reg-ticket-placeholder,
                     .fac-adm-reg-group-placeholder,
-                    .fac-adm-reg-email-placeholder {
+                    .fac-adm-reg-email-placeholder,
+                    .fac-adm-reg-note-placeholder {
+                        position: absolute;
+                        top: 15px;
+                        left: 10px;
+                        color: #fff;
+                        transition: all 400ms;
+                    }
+                }
+                .fac-adm-reg-note-label{
+                    width: 100%;
+                    margin-block: 10px;
+                    position: relative;
+
+                    textarea {
+                        width: 100%;
+                        // overflow: scroll;
+                        height: 100px;
+                        background: rgb(48, 53, 66);
+                        border-top: none;
+                        border-right: none;
+                        border-left: none;
+                        border-radius: 10px 10px 0 0;
+                        border-bottom: 1px solid rgb(107, 110, 119);
+                        color: #fff;
+                        font-size: 18px;
+                        outline: none;
+                        padding: 10px;
+
+                        &:focus,
+                        &:valid {
+                            color: #fff;
+                        }
+
+                        &:focus+.fac-adm-reg-note-placeholder,
+                        &:valid+.fac-adm-reg-note-placeholder {
+                            color: #fff;
+                            padding: 2px 10px;
+                            transform: translate(10px, -28px);
+                            font-size: 16px;
+                            background: $primary-admin-green-color;
+                            border-radius: 5px;
+                        }
+                    }
+                    .fac-adm-reg-note-placeholder {
                         position: absolute;
                         top: 15px;
                         left: 10px;

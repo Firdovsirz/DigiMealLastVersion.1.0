@@ -1,10 +1,10 @@
 import axios from 'axios';
 import Stack from '@mui/material/Stack';
-import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Pagination from '@mui/material/Pagination';
 import React, { useEffect, useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useSelector, useDispatch } from 'react-redux';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import styles from "./SuperAdminSessionEnded.module.scss";
@@ -24,9 +24,11 @@ export default function SuperAdminNotApproved() {
     const [sessionFaculty, setSessionFaculty] = useState('');
     const [sessionFilter, setSessionFilter] = useState('');
     const itemsPerPage = 4;
+
     const handleSessionFilterToggle = () => {
         setSessionFilter(prev => !prev);
     };
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -36,7 +38,6 @@ export default function SuperAdminNotApproved() {
     useEffect(() => {
         const checkTokenExpiration = () => {
                     if (!token) {
-                        // If there's no token, navigate to the login page
                         navigate("/super-admin-login", { replace: true });
                         return;
                     }
@@ -96,11 +97,10 @@ export default function SuperAdminNotApproved() {
     };
     const filteredStudents = students
         .filter((student) => {
-            // If faculty is selected, filter by faculty
             if (sessionFaculty) {
                 return student.fakulte === sessionFaculty;
             }
-            return true; // If no faculty is selected, include all students
+            return true;
         })
         .filter((student) => {
             // Filter by search term

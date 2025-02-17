@@ -179,7 +179,7 @@ const SuperAdminAccount = () => {
 
     useEffect(() => {
         // Calculate the price of Korpus1 whenever qrCodes change
-        const price1 = qrCodes.filter(item => item.bufet === 'Korpus1');
+        const price1 = qrCodes.filter(item => item.bufet === 'Korpus 1');
         const totalPrice1 = price1.reduce((acc, item) => acc + item.qiymet, 0);
         setFirstKorpusPrice(totalPrice1);
     }, [qrCodes]);
@@ -187,21 +187,21 @@ const SuperAdminAccount = () => {
 
     useEffect(() => {
         // Calculate the price of Korpus1 whenever qrCodes change
-        const price2 = qrCodes.filter(item => item.bufet === 'Korpus2');
+        const price2 = qrCodes.filter(item => item.bufet === 'Korpus 2');
         const totalPrice2 = price2.reduce((acc, item) => acc + item.qiymet, 0);
         setSecondKorpusPrice(totalPrice2);
     }, [qrCodes]);
     console.log(secondKorpusPrice);
     useEffect(() => {
         // Calculate the price of Korpus1 whenever qrCodes change
-        const price3 = qrCodes.filter(item => item.bufet === 'Korpus3');
+        const price3 = qrCodes.filter(item => item.bufet === 'Korpus 3');
         const totalPrice3 = price3.reduce((acc, item) => acc + item.qiymet, 0);
         setThirdKorpusPrice(totalPrice3);
     }, [qrCodes]);
     console.log(thirdKorpusPrice);
     useEffect(() => {
         // Calculate the price of Korpus1 whenever qrCodes change
-        const price4 = qrCodes.filter(item => item.bufet === 'Korpus4');
+        const price4 = qrCodes.filter(item => item.bufet === 'Korpus 4');
         const totalPrice4 = price4.reduce((acc, item) => acc + item.qiymet, 0);
         setFourthKorpusPrice(totalPrice4);
     }, [qrCodes]);

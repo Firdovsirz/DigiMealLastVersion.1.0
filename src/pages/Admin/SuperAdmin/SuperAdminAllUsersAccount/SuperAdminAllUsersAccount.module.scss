@@ -1,0 +1,149 @@
+@import "../../../../styles/variables";
+
+.sp-adm-not-approved-main {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: $primary-admin-color;
+
+
+    .sp-not-approved-students-section {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: flex-start;
+        padding: 50px;
+        position: relative;
+        h1{
+            color: $primary-admin-green-color;
+            font-size: 25px;
+            margin-bottom: 20px;
+        }
+        form{
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            input{
+                height: 40px;
+                width: 200px;
+                font-size: 17px;
+                padding: 2px 10px;
+                outline: none;
+                background: transparent;
+                border: 1px solid $primary-admin-green-color;
+                color: $primary-admin-green-color;
+                border-radius: 10px;
+                &::placeholder{
+                    font-size: 17px;
+                }
+            }
+        }
+
+        .sp-not-approved-students-container {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            justify-content: center;
+            width: 80%;
+            .student-card{
+                border: 1px solid $primary-admin-green-color;
+                margin-block: 20px;
+                border-radius: 10px;
+                width: 100%;
+                .sp-not-apprv-student-head{
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    border-bottom: 1px solid $primary-admin-green-color;
+                    div{
+                        width: calc(100% / 8);
+                        height: 80px;
+                        padding: 20px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        text-align: center;
+                        color: $primary-admin-green-color;
+                        &:not(:last-child){
+                            border-right: 1px solid $primary-admin-green-color;
+                        }
+                    }
+                }
+                .sp-not-apprv-student-details{
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    div{
+                        width: calc(100% / 8);
+                        height: 60px;
+                        padding: 20px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        text-align: center;
+                        color: #fff;
+                        &:not(:last-child){
+                            border-right: 1px solid rgb(183, 183, 183);
+                        }
+                        &.sp-adm-wait-app-additional-info-container{
+                            div{
+                                background: $primary-admin-green-color;
+                                padding: 10px;
+                                width: 40px;
+                                height: 40px;
+                                border-radius: 10px;
+                                cursor: pointer;
+                            }
+                        }
+                        &.sp-adm-wait-app-remove-btn-container{
+                            div{
+                                background: rgb(209, 0, 0);
+                                padding: 10px;
+                                width: 40px;
+                                height: 40px;
+                                border-radius: 10px;
+                                cursor: pointer;
+                                *{
+                                    color: #fff;
+                                }
+                            }
+                        }
+                        &.sp-adm-wait-app-approve-btn-container{
+                            div{
+                                background: $primary-admin-green-color;
+                                padding: 10px;
+                                width: 40px;
+                                height: 40px;
+                                border-radius: 10px;
+                                cursor: pointer;
+                                *{
+                                    color: #fff;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .sp-adm-waiting-approve-pagination{
+            position: fixed;
+            bottom: 20px;
+            transform: translate(-50%, -50%);
+            div{
+                nav{
+                    ul{
+                        li{
+                            button{
+                                background: $primary-admin-green-color;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

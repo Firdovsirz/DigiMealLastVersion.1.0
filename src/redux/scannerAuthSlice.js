@@ -11,7 +11,6 @@ const scannerAuthSlice = createSlice({
     initialState,
     reducers: {
         setScannerToken: (state, action) => {
-            // Set the token in the Redux state and localStorage
             state.scannerToken = action.payload;
             state.isScannerAuthenticated = !!action.payload;
             if (action.payload) {

@@ -57,6 +57,8 @@ export default function FacultyApproved() {
             fetchFacultyName();
         }
     }, [adminUsername, adminToken, isAdminAuthenticated, faculty]);
+    console.log(faculty);
+    
 
     const fetchNotApprovedStudents = async () => {
         try {

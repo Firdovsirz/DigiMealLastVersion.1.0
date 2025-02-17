@@ -18,6 +18,21 @@ export default function UserQr() {
   const token = useSelector((state) => state.token.token);
   const displayName = username || "Anonymous";
   const [currentDay, setCurrentDay] = useState(new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Baku" }));
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    // Update window width on resize
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup the event listener when the component unmounts
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
   useEffect(() => {
     const intervalId = setInterval(() => {
       const now = new Date();
@@ -245,7 +260,7 @@ export default function UserQr() {
             )}
           </div>
         </section>
-        {window.innerWidth < 600 ? <BottomNavigation handleGenerateQr={handleGenerateQR} isButtonDisabled={isButtonDisabled} /> : null}
+        {windowWidth < 600 ? <BottomNavigation handleGenerateQr={handleGenerateQR} isButtonDisabled={isButtonDisabled} /> : null}
       </motion.main>
     </>
   );

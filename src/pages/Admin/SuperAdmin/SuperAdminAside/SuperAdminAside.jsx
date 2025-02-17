@@ -118,10 +118,16 @@ export default function SuperAdminAside({ setFaculty }) {
                             <AccountBalanceWalletIcon className={styles['sp-adm-link-icon']} />
                             Balans
                         </li> */}
+                        <Link to={'/super-admin-all-users-account'}>
+                            <li className={styles['sp-adm-app-wait-container']}>
+                                <AssessmentIcon className={styles['sp-adm-link-icon']} />
+                                İstifadəçi hesabatı
+                            </li>
+                        </Link>
                         <Link to={'/super-admin-account'}>
                             <li className={styles['sp-adm-app-wait-container']}>
                                 <AssessmentIcon className={styles['sp-adm-link-icon']} />
-                                Hesabat
+                                Bufet Hesabatı
                             </li>
                         </Link>
                     </ul>

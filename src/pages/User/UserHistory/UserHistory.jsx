@@ -19,6 +19,21 @@ export default function UserHistory() {
   const rowsPerPage = 4;
   const token = useSelector((state) => state.token.token);
   const username = useSelector((state) => state.auth.username);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    // Update window width on resize
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup the event listener when the component unmounts
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     const checkTokenExpiration = () => {
@@ -99,8 +114,8 @@ export default function UserHistory() {
               <thead className={styles['history-table-head']}>
                 <tr>
                   <th>Qr Id</th>
-                  <th>Date</th>
-                  <th>Status Scanner</th>
+                  <th>Tarix</th>
+                  <th>Skan Statusu</th>
                 </tr>
               </thead>
               <tbody className={styles['history-table-body']}>
@@ -108,7 +123,9 @@ export default function UserHistory() {
                   <tr key={index}>
                     <td>{item.id}</td>
                     <td>{item.date}</td>
-                    <td>{item.status_scanner}</td>
+                    <td>
+                      {item.status === 0 ? "Skan edilib" : "Skan edilməyib"}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -127,7 +144,7 @@ export default function UserHistory() {
           </Stack>
         </section>
       </motion.main>
-      {window.innerWidth < 600 ? <BottomNavigation isButtonDisabled={true} /> : null}
+      {windowWidth < 600 ? <BottomNavigation isButtonDisabled={true} /> : null}
     </>
   );
 }

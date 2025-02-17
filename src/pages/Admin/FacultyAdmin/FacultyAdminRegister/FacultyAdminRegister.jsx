@@ -22,6 +22,10 @@ export default function FacultyAdminRegister() {
     const handleFacDropdown = () => {
         setFacDropdown(!facDropdown);
     }
+    const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+    useEffect(()=>{
+        setWindowHeight(window.innerHeight);
+    }, [window.innerHeight]);
 
     useEffect(() => {
         if (!isAdminAuthenticated) {
@@ -64,6 +68,24 @@ export default function FacultyAdminRegister() {
         }
     }, [adminUsername, adminToken, isAdminAuthenticated]);
     console.log(adminUsername, faculty);
+    const [currentDay, setCurrentDay] = useState('');
+
+    useEffect(() => {
+        // Function to get current date in YYYY-MM-DD format
+        const getCurrentDate = () => {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = (today.getMonth() + 1).toString().padStart(2, '0'); // Ensure two digits for the month
+            const day = today.getDate().toString().padStart(2, '0'); // Ensure two digits for the day
+            
+            return `${year}-${month}-${day}`; // Format as YYYY-MM-DD
+        };
+    
+        // Set the current date in the state
+        setCurrentDay(getCurrentDate());
+    }, []);
+    // console.log(currentDay);
+    
 
     const [formData, setFormData] = useState({
         firstname: "",
@@ -76,8 +98,20 @@ export default function FacultyAdminRegister() {
         status: "",
         bilet: "",
         email: "",
-        document: null
+        registrationDate: "",
+        note: "",
+        document: []
     });
+    useEffect(() => {
+        // Update registrationDate once currentDay is set
+        if (currentDay) {
+            setFormData((prevData) => ({
+                ...prevData,
+                registrationDate: currentDay, // Update registrationDate dynamically
+            }));
+        }
+    }, [currentDay]);
+    
 
     const handlePrefix = (selectedPrefix) => {
         setPrefix(selectedPrefix);
@@ -203,28 +237,13 @@ export default function FacultyAdminRegister() {
                     status: "",
                     bilet: "",
                     email: "",
-                    document: null
+                    registrationDate: "",
+                    note: "",
+                    document: []
                 });
 
                 setPhoneNumber("+994 (__) ___ __ __");
                 setUploadedFiles([]);
-
-                console.log("Form reset to:", {
-                    formData: {
-                        firstname: "",
-                        lastname: "",
-                        fathername: "",
-                        fincode: "",
-                        fakulte: "",
-                        groupnumber: "",
-                        status: "",
-                        bilet: "",
-                        email: "",
-                        document: null
-                    },
-                    phonenumber: "+994 (__) ___ __ __",
-                    uploadedFiles: [],
-                });
             } else {
                 // Handle failure response
                 alert(`Error: ${response.data.message}`);
@@ -244,7 +263,8 @@ export default function FacultyAdminRegister() {
         });
         setFacDropdown(false)
     };
-
+    console.log(formData);
+    
 
     return (
         <main className={styles["faculty-admin-main"]}>
@@ -345,46 +365,11 @@ export default function FacultyAdminRegister() {
                                 type="text"
                                 name="fakulte"
                                 value={formData.fakulte}
-                                onChange={handleChange}
                                 required
                                 readOnly
                                 disabled
                                 placeholder="Fakültə"
                             />
-                            {/* <div className={styles["fac-adm-reg-fac-placeholder"]}>Fakültə</div> */}
-                            {facDropdown ?
-                                <div className={styles['fac-adm-reg-fac-dropdown']}>
-                                    <ul>
-                                        <li onClick={() => handleFacultyChange("Neqliyyat")}>
-                                            <p>Nəqliyyat və logistika fakültəsi</p>
-                                        </li>
-                                        <li onClick={() => handleFacultyChange("Energetika")}>
-                                            <p> Energetika və avtomatika fakültəsi</p>
-                                        </li>
-                                        <li onClick={() => handleFacultyChange("Metallurgiya")}>
-                                            <p>Metallurgiya və materialşunaslıq fakültəsi</p>
-                                        </li>
-                                        <li onClick={() => handleFacultyChange("Masinqayirma")}>
-                                            <p>Maşınqayırma və robototexnika fakültəsi</p>
-                                        </li>
-                                        <li onClick={() => handleFacultyChange("ITT")}>
-                                            <p>İnformasiya və telekommunikasiya texnologiyalar fakültəsi</p>
-                                        </li>
-                                        <li onClick={() => handleFacultyChange("XTT")}>
-                                            <p>Xüsusi texnika və texnologiyaları fakültəsi</p>
-                                        </li>
-                                        <li onClick={() => handleFacultyChange("Alman")}>
-                                            <p>Alman mühəndislik fakültəsi</p>
-                                        </li>
-                                        <li onClick={() => handleFacultyChange("Iqtisadiyyat")}>
-                                            <p>İqtisadiyyat və idarəetmə fakültəsi</p>
-                                        </li>
-                                        <li onClick={() => handleFacultyChange("Sabah")}>
-                                            <p>Sabah</p>
-                                        </li>
-                                    </ul>
-                                </div>
-                                : null}
                         </div>
                         <div className={styles["fac-adm-reg-group-label"]}>
                             <input
@@ -425,6 +410,24 @@ export default function FacultyAdminRegister() {
                                 required
                             />
                             <div className={styles["fac-adm-reg-email-placeholder"]}>E-mail</div>
+                        </div>
+                        <div className={styles["fac-adm-reg-date-label"]}>
+                            <input
+                                type="text"
+                                name="reg-date"
+                                value={formData.registrationDate}
+                                required
+                                disabled
+                            />
+                        </div>
+                        <div className={styles["fac-adm-reg-note-label"]}>
+                            <textarea
+                                name="note"
+                                value={formData.note}
+                                onChange={handleChange}
+                                required
+                            />
+                            <div className={styles["fac-adm-reg-note-placeholder"]}>Qeyd</div>
                         </div>
                         <div {...getRootProps()} className={styles["fac-adm-dropzone-container"]}>
                             <input {...getInputProps()} />
