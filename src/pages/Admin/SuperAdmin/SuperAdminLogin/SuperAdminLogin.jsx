@@ -56,7 +56,7 @@ export default function AdminLogin() {
                         }} />
                         <h3>DigiMeal</h3>
                     </div>
-                    <h2>Admin</h2>
+                    <h2>Super Admin</h2>
                 </div>
                 <form onSubmit={handleLogin} className={styles['admin-login-form']}>
                     <div className={styles['admin-login-username-container']}>

@@ -60,10 +60,10 @@ export default function SuperAdminAllUsersAccount() {
         fetchStudents();
     }, [token, navigate, dispatch]);
 
-    const fetchQRCodeData = async (username, month) => {
+    const fetchQRCodeData = async (username, month, year) => {
         try {
             const response = await apiClient.get('/get_qr_code_by_username', {
-                params: { username, month },
+                params: { username, month, year },
 
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -71,9 +71,9 @@ export default function SuperAdminAllUsersAccount() {
 
             });
             if (response.data.success) {
-                return response.data.total_qiymet; // Return the total QR Code data
+                return response.data.total_qiymet;
             } else {
-                return 0; // Return 0 if no data
+                return 0;
             }
         } catch (err) {
             console.error('Failed to fetch QR code data:', err);
@@ -91,15 +91,14 @@ export default function SuperAdminAllUsersAccount() {
             if (response.data.success) {
                 const studentsData = response.data.data;
 
-                // Fetch QR code data for each student
                 const studentsWithQRCode = await Promise.all(
                     studentsData.map(async (student) => {
-                        const qrCodeData = await fetchQRCodeData(student.digimealusername, month);
-                        return { ...student, qrCodeData }; // Add qrCodeData to each student
+                        const qrCodeData = await fetchQRCodeData(student.digimealusername, month, year);
+                        return { ...student, qrCodeData };
                     })
                 );
 
-                setStudents(studentsWithQRCode); // Set students with QR code data
+                setStudents(studentsWithQRCode);
                 setPaginationCount(Math.ceil(studentsWithQRCode.length / itemsPerPage)); // Set pagination count
             } else {
                 setError(response.data.message || 'Failed to fetch data.');
@@ -109,7 +108,6 @@ export default function SuperAdminAllUsersAccount() {
             console.error(err);
         }
     };
-    console.log(students);
 
 
     const handleSearchChange = (e) => {
@@ -158,13 +156,17 @@ export default function SuperAdminAllUsersAccount() {
         Ad: item.ad,
         Soyad: item.soyad,
         Ata_adı: item.ata_adi,
-        Yemək_xərci: item.qrCodeData
+        Fin_kod: item.fin_kod,
+        Vəzifəsi: item.status,
+        Yemək_xərci: item.qrCodeData,
+        Qeyd: item.qyed
     }))
+    
     const exportToExcel = () => {
         const wb = XLSX.utils.book_new();
         const ws = XLSX.utils.json_to_sheet(exportedData);
         XLSX.utils.book_append_sheet(wb, ws, 'Students');
-        XLSX.writeFile(wb, 'students_data.xlsx');
+        XLSX.writeFile(wb, `${year}-${month}.xlsx`);
     };
 
 
