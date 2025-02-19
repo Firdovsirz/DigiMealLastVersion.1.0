@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import styles from "./ScannerLogin.module.scss";
+import apiClient from '../../../redux/apiClient';
 import SchoolIcon from '@mui/icons-material/School';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { setScannerToken, clearScannerToken } from '../../../redux/scannerAuthSlice'; // Import the actions
-import apiClient from '../../../redux/apiClient'; // Import the apiClient
+import { setScannerToken, clearScannerToken } from '../../../redux/scannerAuthSlice';
 
 export default function ScannerLogin() {
     const [username, setUsername] = useState("");

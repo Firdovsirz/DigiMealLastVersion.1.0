@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useSelector } from "react-redux";
 import { useDropzone } from "react-dropzone";
 import React, { useState, useEffect } from "react";
@@ -29,7 +28,6 @@ export default function FacultyAdminRegister() {
 
     useEffect(() => {
         if (!isAdminAuthenticated) {
-            console.log('Admin is not authenticated!');
             return;
         }
 
@@ -67,7 +65,6 @@ export default function FacultyAdminRegister() {
             fetchFacultyName();
         }
     }, [adminUsername, adminToken, isAdminAuthenticated]);
-    console.log(adminUsername, faculty);
     const [currentDay, setCurrentDay] = useState('');
 
     useEffect(() => {
@@ -84,7 +81,6 @@ export default function FacultyAdminRegister() {
         // Set the current date in the state
         setCurrentDay(getCurrentDate());
     }, []);
-    // console.log(currentDay);
     
 
     const [formData, setFormData] = useState({
@@ -115,8 +111,8 @@ export default function FacultyAdminRegister() {
 
     const handlePrefix = (selectedPrefix) => {
         setPrefix(selectedPrefix);
-        const digits = phoneNumber.replace(/[^0-9]/g, "").slice(5); // Extract digits after "+994 (XX)"
-        setPhoneNumber(formatPhoneNumber(digits, selectedPrefix)); // Update the phone number with the new prefix
+        const digits = phoneNumber.replace(/[^0-9]/g, "").slice(5);
+        setPhoneNumber(formatPhoneNumber(digits, selectedPrefix));
         setPrefixDropdown(false); // Close the dropdown
     };
 
@@ -163,9 +159,6 @@ export default function FacultyAdminRegister() {
 
         return formatted;
     };
-    useEffect(() => {
-        console.log(phoneNumber);
-    }, [phoneNumber]);
 
     const onDrop = (acceptedFiles) => {
         setUploadedFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
@@ -208,22 +201,19 @@ export default function FacultyAdminRegister() {
             ...formData,
         };
 
-        // Debug: log payload for development purposes
-        console.log("Submitting form data:", payload);
-        console.log(`Number is ${formData.phonenumber}`);
-
-
         try {
             // Make POST request to the backendå
-            const response = await axios.post("http://127.0.0.1:5000/add", payload, {
+            const response = await apiClient.post(
+                "http://127.0.0.1:5000/add", 
+                payload, {
                 headers: {
-                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${adminToken}`,
                 },
             });
 
             if (response.data.success) {
                 // Handle successful registration
-                alert("User registered successfully!");
+                alert("İstifadəçi uğurla qeydiyyata alındı.");
 
                 // Reset form state after successful submission
                 setFormData({
@@ -247,12 +237,9 @@ export default function FacultyAdminRegister() {
             } else {
                 // Handle failure response
                 alert(`Error: ${response.data.message}`);
-                console.error("Submission error:", response.data);
             }
         } catch (error) {
-            // Log error and show user-friendly message
-            console.error("Error during form submission:", error);
-            alert("An error occurred while submitting the form. Please try again.");
+            alert("Xəta baş verdi.");
         }
     };
 
@@ -263,8 +250,6 @@ export default function FacultyAdminRegister() {
         });
         setFacDropdown(false)
     };
-    console.log(formData);
-    
 
     return (
         <main className={styles["faculty-admin-main"]}>

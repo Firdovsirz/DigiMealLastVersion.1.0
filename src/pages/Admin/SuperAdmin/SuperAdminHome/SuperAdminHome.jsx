@@ -67,7 +67,11 @@ export default function SuperAdminHome() {
         // Function to fetch data
         const fetchData = async () => {
             try {
-                const response = await apiClient.get('/get_last_5_qr_codes');
+                const response = await apiClient.get('/get_last_5_qr_codes',{
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
                 setLastOperations(response.data); // Update state with fetched data
             } catch (error) {
                 console.error("Error fetching the data:", error);

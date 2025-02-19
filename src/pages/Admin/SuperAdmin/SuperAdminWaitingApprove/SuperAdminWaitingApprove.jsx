@@ -1,4 +1,3 @@
-import axios from 'axios';
 import Stack from '@mui/material/Stack';
 import { useNavigate } from 'react-router-dom';
 import Pagination from '@mui/material/Pagination';
@@ -13,6 +12,7 @@ import { clearSuperAdminAuth } from '../../../../redux/superAdminAuthSlice';
 import SuperAdminConfirmUser from '../SuperAdminConfirmUser/SuperAdminConfirmUser';
 import AdminAdditionalInfo from '../../../../components/AdminAdditonalInfo/AdminAdditionalInfo';
 import SuperAdminWaitingApproveFilter from '../SuperAdminWaitingApproveFilter/SuperAdminWaitingApproveFilter';
+import apiClient from '../../../../redux/apiClient';
 
 export default function SuperAdminNotApproved() {
     const [students, setStudents] = useState([]);
@@ -26,6 +26,7 @@ export default function SuperAdminNotApproved() {
     const [confirm, setConfirm] = useState(false);
     const [confirmUserEmail, setConfirmUserEmail] = useState('');
     const [faculty, setFaculty] = useState('');
+    const token = useSelector((state) => state.superAdminAuth.token);
     const handleConfirmUserContainer = (e) => {
         setConfirm(true);
         setConfirmUserEmail(e)
@@ -34,29 +35,33 @@ export default function SuperAdminNotApproved() {
     const handleFilterToggle = () => {
         setFilter(prev => !prev);
     };
-    const requestOtp = async (email) => {
-        try {
-            const response = await axios.post(`/request-otp/${email}`);
-            if (response.status === 200) {
-                setSuccessMessage('OTP başarıyla gönderildi!');
-                setErrorMessage('');
-                setIsOtpRequested(true);
-            } else {
-                setErrorMessage('OTP gönderilemedi. Lütfen tekrar deneyin.');
-                setSuccessMessage('');
-            }
-        } catch (error) {
-            setErrorMessage(
-                error.response?.data?.message || 'Bir hata oluştu. Lütfen tekrar deneyin.'
-            );
-            setSuccessMessage('');
-        }
-    };
+    // const requestOtp = async (email) => {
+    //     try {
+    //         const response = await axios.post(`/request-otp/${email}`,{
+    //             headers: {
+    //                 Authorization: `Bearer ${token}`,
+    //             },
+    //         });
+    //         if (response.status === 200) {
+    //             setSuccessMessage('OTP başarıyla gönderildi!');
+    //             setErrorMessage('');
+    //             setIsOtpRequested(true);
+    //         } else {
+    //             setErrorMessage('OTP gönderilemedi. Lütfen tekrar deneyin.');
+    //             setSuccessMessage('');
+    //         }
+    //     } catch (error) {
+    //         setErrorMessage(
+    //             error.response?.data?.message || 'Bir hata oluştu. Lütfen tekrar deneyin.'
+    //         );
+    //         setSuccessMessage('');
+    //     }
+    // };
     const dispatch = useDispatch();
         const navigate = useNavigate();
     
         
-        const token = useSelector((state) => state.superAdminAuth.token);
+        
     useEffect(() => {
         const checkTokenExpiration = () => {
                     if (!token) {
@@ -83,7 +88,7 @@ export default function SuperAdminNotApproved() {
                 checkTokenExpiration();
         const fetchStudents = async () => {
             try {
-                const response = await axios.get('http://127.0.0.1:5000/superadmin_notapproved/', {
+                const response = await apiClient.get('/superadmin_notapproved/', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -138,7 +143,11 @@ export default function SuperAdminNotApproved() {
     const handleDelete = async (finKod) => {
         if (window.confirm(`Istifadəçini təsdiq etməməyə əminsiniz? FIN kod: ${finKod}?`)) {
             try {
-                const response = await axios.delete(`http://127.0.0.1:5000/delete_user/${finKod}`);
+                const response = await apiClient.delete(`/delete_user/${finKod}`,{
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
                 if (response.status === 200) {
                     alert(response.data.message);
                     setStudents(students.filter(student => student.fin_kod !== finKod));

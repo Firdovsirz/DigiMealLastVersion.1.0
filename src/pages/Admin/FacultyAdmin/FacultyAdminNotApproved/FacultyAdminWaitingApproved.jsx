@@ -1,4 +1,3 @@
-import axios from 'axios';
 import Stack from '@mui/material/Stack';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -41,7 +40,6 @@ export default function FacultyadminNotApproved() {
           };
           checkTokenExpiration();
         if (!isAdminAuthenticated) {
-            console.log('Admin is not authenticated!');
             return;
         }
 
@@ -75,7 +73,11 @@ export default function FacultyadminNotApproved() {
 
     const fetchNotApprovedStudents = async () => {
         try {
-            const response = await axios.get(`http://127.0.0.1:5000/notapproved/${faculty}`);
+            const response = await apiClient.get(`/notapproved/${faculty}`,{
+                headers: {
+                    Authorization: `Bearer ${adminToken}`,
+                },
+            });
             setStudents(response.data.results || []);
             setError('');
         } catch (err) {

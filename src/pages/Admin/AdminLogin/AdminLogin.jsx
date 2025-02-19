@@ -29,28 +29,20 @@ export default function AdminLogin() {
         try {
             const response = await apiClient.post('/admin/login', { username, password });
             const result = response.data;
-            console.log(username, password);
             
 
             if (result.success) {
                 dispatch(setToken(result.token));
                 dispatch(setAdminAuth({ username, token: result.token }));
-                navigate('/fac-adm-reg');
-            console.log(username, password);
-
+                navigate('/fac-adm-reg');   
             } else {
                 setError(result.message);
-            console.log(username, password);
-
             }
         } catch (err) {
             console.error('Login error:', err);
-            console.log(username, password);
-
-            setError('An error occurred while trying to log in. Please try again.');
+            setError('Giriş zamanı xəta baş verdi.');
         }
     };
-    console.log(username);
 
     return (
         <main className={styles['admin-login-main']}>
@@ -102,7 +94,7 @@ export default function AdminLogin() {
                                 }}
                                 onClick={handleVisibility} />}
                     </div>
-                    {error && <div className={styles['error-message']}>{error}</div>}
+                    {error && <div className={styles['error-message']} style={{color: "#fff", fontSize: 20}}>{error}</div>}
                     <button type="submit" className={styles['admin-login-submit-btn']}>Daxil Ol</button>
                 </form>
             </div>

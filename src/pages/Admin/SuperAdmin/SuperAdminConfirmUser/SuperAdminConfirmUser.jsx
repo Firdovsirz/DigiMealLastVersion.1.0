@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import CloseIcon from '@mui/icons-material/Close';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import apiClient from '../../../../redux/apiClient';
 import styles from "./SuperAdminConfirmUser.module.scss";
 
 export default function SuperAdminConfirmUser({ confirmUser, setConfirmUser, email, object }) {
@@ -9,6 +10,7 @@ export default function SuperAdminConfirmUser({ confirmUser, setConfirmUser, ema
   const [successMessage, setSuccessMessage] = useState('');
   const [isOtpRequested, setIsOtpRequested] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // Add loading state
+  const token = useSelector((state) => state.superAdminAuth.token);
 
   // Close modal and reset states
   const handleClose = () => {
@@ -30,7 +32,13 @@ export default function SuperAdminConfirmUser({ confirmUser, setConfirmUser, ema
   const requestOtp = async (email) => {
     try {
       setIsLoading(true);
-      const response = await axios.post(`http://127.0.0.1:5000/request-otp/${email}`);
+      const response = await apiClient.post(`/request-otp/${email}`,{
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+    console.log(response);
+    
       if (response.status === 200) {
         setSuccessMessage('OTP has been sent successfully!');
         setErrorMessage('');
@@ -70,8 +78,8 @@ export default function SuperAdminConfirmUser({ confirmUser, setConfirmUser, ema
 
     try {
       setIsLoading(true);
-      const response = await axios.post(
-        `http://127.0.0.1:5000/verify-otp/${email}`, // Send email in URL path
+      const response = await apiClient.post(
+        `/verify-otp/${email}`, // Send email in URL path
         { otp: otpInt }, // Send OTP as an integer
         { headers: { 'Content-Type': 'application/json' } }
       );
@@ -92,8 +100,6 @@ export default function SuperAdminConfirmUser({ confirmUser, setConfirmUser, ema
       setIsLoading(false);
     }
   };
-
-  console.log(email, otp);
 
   return (
     <>

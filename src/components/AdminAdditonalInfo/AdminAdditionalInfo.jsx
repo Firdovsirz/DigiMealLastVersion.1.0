@@ -10,7 +10,6 @@ export default function AdminAdditionalInfo({
     const handleClose = () => {
         setAdditionalInfo(false)
     }
-    console.log(object);
     
     return (
         <>

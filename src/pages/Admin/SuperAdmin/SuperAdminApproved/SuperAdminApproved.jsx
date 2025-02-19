@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Pagination from '@mui/material/Pagination';
 import React, { useEffect, useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
+import apiClient from '../../../../redux/apiClient';
 import styles from "./SuperAdminApproved.module.scss";
 import { useSelector, useDispatch } from 'react-redux';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -56,7 +57,11 @@ export default function SuperAdminNotApproved() {
         checkTokenExpiration();
         const fetchStudents = async () => {
             try {
-                const response = await axios.get('http://127.0.0.1:5000/superadmin_approved/');
+                const response = await apiClient.get('/superadmin_approved/',{
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
                 const data = response.data.results;
                 setStudents(data);
                 setPaginationCount(Math.ceil(data.length / itemsPerPage));
@@ -85,7 +90,7 @@ export default function SuperAdminNotApproved() {
         const isConfirmed = confirm("Sessiyanı bitirmək istədiyinizə əminsiniz?");
         if (isConfirmed) {
             try {
-                const response = await axios.get(`http://127.0.0.1:5000/sesion_end/${digimealusername}`, {
+                const response = await apiClient.get(`/sesion_end/${digimealusername}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

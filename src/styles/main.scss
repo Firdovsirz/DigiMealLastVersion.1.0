@@ -5,9 +5,25 @@
     padding: 0;
     box-sizing: border-box;
 }
-body{
-    font-family: $font-stack;
-}
+// body{
+//     font-family: $font-stack;
+// }
 :root{
     --primary-color: $primary-color;
+}
+@font-face {
+    font-family: 'CustomFont';
+    src: url(../assets/Fonts/Roboto-Italic-VariableFont_wdth\,wght.ttf) format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'CustomFont';
+    src: url(../assets/Fonts/Roboto-VariableFont_wdth\,wght.ttf) format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+body{
+    font-family: 'Roboto', sans-serif;
 }

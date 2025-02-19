@@ -1,5 +1,5 @@
-import axios from 'axios';
 import styles from "./Scanner.module.scss";
+import apiClient from '../../redux/apiClient';
 import React, { useEffect, useRef, useState } from 'react';
 import ScannerHeader from "../../components/Header/ScannerHeader/ScannerHeader";
 import ScannerBottomNavigation from "../../components/BottomNavigation/ScannerBottomNavigation/ScannerBottomNavigation";
@@ -18,7 +18,7 @@ export default function Scanner() {
       setIsReady(false);
   
       try {
-        const response = await axios.post('http://127.0.0.1:5000/update-status', { qr_id: qrData });
+        const response = await apiClient.post('http://127.0.0.1:5000/update-status', { qr_id: qrData });
         if (response.data.success) {
           alert(`QR Code processed: ${qrData}`);
         } else {
@@ -57,7 +57,7 @@ export default function Scanner() {
 
       const imageData = canvas.toDataURL('image/jpeg');
       
-      axios.post('http://127.0.0.1:5000/scan-qr', { image: imageData })
+      apiClient.post('http://127.0.0.1:5000/scan-qr', { image: imageData })
         .then(response => {
           if (response.data.qr_code) {
             handleScan(response.data.qr_code);

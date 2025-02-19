@@ -26,7 +26,11 @@ const SuperAdminAccount = () => {
     // Fetch QR codes from the backend
     const fetchQrCodes = async () => {
         try {
-            const response = await apiClient.get('/get_qr_codes');
+            const response = await apiClient.get('/get_bufet_account',{
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             if (response.data.success) {
                 setQrCodes(response.data.data);
             } else {
@@ -170,7 +174,6 @@ const SuperAdminAccount = () => {
     const handleFilter = () => {
         setFilter(!filter);
     };
-    console.log(qrCodes);
     const [firstKorpusPrice, setFirstKorpusPrice] = useState(0);
     const [secondKorpusPrice, setSecondKorpusPrice] = useState(0);
     const [thirdKorpusPrice, setThirdKorpusPrice] = useState(0);
@@ -183,7 +186,6 @@ const SuperAdminAccount = () => {
         const totalPrice1 = price1.reduce((acc, item) => acc + item.qiymet, 0);
         setFirstKorpusPrice(totalPrice1);
     }, [qrCodes]);
-    console.log(firstKorpusPrice);
 
     useEffect(() => {
         // Calculate the price of Korpus1 whenever qrCodes change
@@ -191,21 +193,18 @@ const SuperAdminAccount = () => {
         const totalPrice2 = price2.reduce((acc, item) => acc + item.qiymet, 0);
         setSecondKorpusPrice(totalPrice2);
     }, [qrCodes]);
-    console.log(secondKorpusPrice);
     useEffect(() => {
         // Calculate the price of Korpus1 whenever qrCodes change
         const price3 = qrCodes.filter(item => item.bufet === 'Korpus 3');
         const totalPrice3 = price3.reduce((acc, item) => acc + item.qiymet, 0);
         setThirdKorpusPrice(totalPrice3);
     }, [qrCodes]);
-    console.log(thirdKorpusPrice);
     useEffect(() => {
         // Calculate the price of Korpus1 whenever qrCodes change
         const price4 = qrCodes.filter(item => item.bufet === 'Korpus 4');
         const totalPrice4 = price4.reduce((acc, item) => acc + item.qiymet, 0);
         setFourthKorpusPrice(totalPrice4);
     }, [qrCodes]);
-    console.log(fourthKorpusPrice);
     useEffect(() => {
         const totalPrice = firstKorpusPrice + secondKorpusPrice + thirdKorpusPrice + fourthKorpusPrice;
         setTotalPrice(totalPrice);

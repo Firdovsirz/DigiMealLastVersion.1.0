@@ -1,9 +1,9 @@
-import React, {useEffect} from 'react';
 import Header from '../Header/Header';
+import React, {useEffect} from 'react';
 import styles from "./About.module.scss";
 import { useSelector } from 'react-redux';
-import { useTranslation } from 'react-i18next';
 import { useNavigate} from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Aztu from "../../assets/AboutPage/aztu.jpg";
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import TelegramIcon from '@mui/icons-material/Telegram';

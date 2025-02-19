@@ -1,4 +1,3 @@
-import axios from 'axios';
 import Stack from '@mui/material/Stack';
 import { useSelector } from 'react-redux';
 import Pagination from '@mui/material/Pagination';
@@ -58,7 +57,7 @@ export default function FacultyApproved({ faculty }) {
 
     const fetchNotApprovedStudents = async () => {
         try {
-            const response = await axios.get(`http://127.0.0.1:5000/fac_approved/${faculty}`);
+            const response = await apiClient.get(`/fac_approved/${faculty}`);
             setStudents(response.data.results || []);
             setError('');
         } catch (err) {

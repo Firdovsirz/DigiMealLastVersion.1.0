@@ -1,9 +1,9 @@
-import axios from 'axios';
 import * as XLSX from 'xlsx';
 import Stack from '@mui/material/Stack';
 import { useNavigate } from 'react-router-dom';
 import Pagination from '@mui/material/Pagination';
 import React, { useEffect, useState } from 'react';
+import apiClient from '../../../../redux/apiClient';
 import { useSelector, useDispatch } from 'react-redux';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import styles from "./SuperAdminAllUsersAccount.module.scss";
@@ -29,7 +29,7 @@ export default function SuperAdminAllUsersAccount() {
     const [month, setMonth] = useState(('0' + (new Date().getMonth() + 1)).slice(-2));
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    
+
     const token = useSelector((state) => state.superAdminAuth.token);
 
     useEffect(() => {
@@ -62,8 +62,13 @@ export default function SuperAdminAllUsersAccount() {
 
     const fetchQRCodeData = async (username, month) => {
         try {
-            const response = await axios.get('http://127.0.0.1:5000/get_qr_code_by_username', {
+            const response = await apiClient.get('/get_qr_code_by_username', {
                 params: { username, month },
+
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+
             });
             if (response.data.success) {
                 return response.data.total_qiymet; // Return the total QR Code data
@@ -78,7 +83,11 @@ export default function SuperAdminAllUsersAccount() {
 
     const fetchStudents = async () => {
         try {
-            const response = await axios.get('http://127.0.0.1:5000/get_all_user_account');
+            const response = await apiClient.get('/get_all_user_account', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             if (response.data.success) {
                 const studentsData = response.data.data;
 
@@ -101,7 +110,7 @@ export default function SuperAdminAllUsersAccount() {
         }
     };
     console.log(students);
-    
+
 
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
@@ -143,7 +152,7 @@ export default function SuperAdminAllUsersAccount() {
     }
     useEffect(() => {
         fetchStudents();
-    }, [month]); 
+    }, [month]);
     console.log(students);
     const exportedData = students.map((item) => ({
         Ad: item.ad,
@@ -157,7 +166,7 @@ export default function SuperAdminAllUsersAccount() {
         XLSX.utils.book_append_sheet(wb, ws, 'Students');
         XLSX.writeFile(wb, 'students_data.xlsx');
     };
-    
+
 
     return (
         <>
@@ -237,7 +246,7 @@ export default function SuperAdminAllUsersAccount() {
                     additionalInfo={additonalInfo}
                     setAdditionalInfo={setAdditionalInfo}
                 />
-                <SuperAdminAllUsersFilterAccount 
+                <SuperAdminAllUsersFilterAccount
                     accountFilter={filter}
                     setMonth={setMonth}
                     setYear={setYear}

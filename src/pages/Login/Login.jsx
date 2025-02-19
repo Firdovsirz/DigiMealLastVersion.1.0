@@ -115,7 +115,7 @@ export default function Login() {
                                         {t("login-fin-input-placeholder", { ns: "login" })}
                                     </div>
                                     <HelpOutlineIcon style={{ cursor: "pointer" }} onClick={handleFinHelpToggle} />
-                                    {finHelp && <img src={FinCodeHelp} alt="fin-code-help" />}
+                                    {/* {finHelp && <img src={FinCodeHelp} alt="fin-code-help" />} */}
                                 </div>
                                 <div className={styles['login-form-pass-label']}>
                                     <input

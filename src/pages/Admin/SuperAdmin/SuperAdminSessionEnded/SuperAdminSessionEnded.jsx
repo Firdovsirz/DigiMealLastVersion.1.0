@@ -12,6 +12,7 @@ import SuperAdminAside from '../SuperAdminAside/SuperAdminAside';
 import { clearSuperAdminAuth } from '../../../../redux/superAdminAuthSlice';
 import SuperAdminSessionFilter from '../SuperAdminSessionFilter/SuperAdminSessionFilter';
 import AdminAdditionalInfo from '../../../../components/AdminAdditonalInfo/AdminAdditionalInfo';
+import apiClient from '../../../../redux/apiClient';
 
 export default function SuperAdminNotApproved() {
     const [students, setStudents] = useState([]);
@@ -61,7 +62,11 @@ export default function SuperAdminNotApproved() {
                 checkTokenExpiration();
         const fetchStudents = async () => {
             try {
-                const response = await axios.get('http://127.0.0.1:5000/superadmin_session_ended/');
+                const response = await apiClient.get('/superadmin_session_ended/',{
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
                 const data = response.data.results;
                 setStudents(data);
                 setPaginationCount(Math.ceil(data.length / itemsPerPage));
@@ -106,7 +111,11 @@ export default function SuperAdminNotApproved() {
         const isConfirmed = confirm("Sessiyanı redaktə etməyə əminsiniz?");
         if (isConfirmed) {
             try {
-                const response = await axios.get(`http://127.0.0.1:5000/sesion_recover/${digimealusername}`);
+                const response = await apiClient.get(`/sesion_recover/${digimealusername}`,{
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
                 if (response.status === 200) {
                     setStudents(students.filter(student => student.digimealusername !== digimealusername));
                     alert('Sessiya uğurla redaktə olundu.');
