@@ -10,8 +10,6 @@ export default function SuperAdminAdditionalInfo({
     const handleClose = () => {
         setAdditionalInfo(false)
     }
-    console.log(object);
-    
     return (
         <>
             {additionalInfo ? (

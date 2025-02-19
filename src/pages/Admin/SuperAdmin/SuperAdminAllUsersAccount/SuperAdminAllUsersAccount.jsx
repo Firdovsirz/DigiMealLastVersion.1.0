@@ -4,12 +4,14 @@ import Stack from '@mui/material/Stack';
 import { useNavigate } from 'react-router-dom';
 import Pagination from '@mui/material/Pagination';
 import React, { useEffect, useState } from 'react';
-import apiClient from "../../../../redux/apiClient";
 import { useSelector, useDispatch } from 'react-redux';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import styles from "./SuperAdminAllUsersAccount.module.scss";
 import SuperAdminAside from '../SuperAdminAside/SuperAdminAside';
+import { clearSuperAdminAuth } from '../../../../redux/superAdminAuthSlice';
+import SuperAdminAllUsersAccountDisplay from './SuperAdminAllUsersAccountDisplay';
 import SuperAdminAdditionalInfo from '../SuperAdminAdditionalInfo/SuperAdminAdditionalInfo';
+import SuperAdminAllUsersFilterAccount from '../SuperAdminAllUsersFilterAccount/SuperAdminAllUsersFilterAccount';
 
 export default function SuperAdminAllUsersAccount() {
     const [students, setStudents] = useState([]);
@@ -19,18 +21,18 @@ export default function SuperAdminAllUsersAccount() {
     const [additonalInfo, setAdditionalInfo] = useState(false);
     const [additonalIndex, setAdditionalIndex] = useState(0);
     const [searchTerm, setSearchTerm] = useState('');
-    const [qrCodeData, setQrCodeData] = useState({});  // Store QR Code data per user
-    const itemsPerPage = 4; // You can adjust this based on your preference
-    const [faculty, setFaculty] = useState('');
     const [filter, setFilter] = useState(false);
 
+    const itemsPerPage = 4; // You can adjust this based on your preference
+    const [faculty, setFaculty] = useState('');
+    const [year, setYear] = useState(new Date().getFullYear());
+    const [month, setMonth] = useState(('0' + (new Date().getMonth() + 1)).slice(-2));
     const dispatch = useDispatch();
     const navigate = useNavigate();
     
     const token = useSelector((state) => state.superAdminAuth.token);
 
     useEffect(() => {
-        // Check for token expiration on mount
         const checkTokenExpiration = () => {
             if (!token) {
                 navigate("/super-admin-login", { replace: true });
@@ -58,13 +60,38 @@ export default function SuperAdminAllUsersAccount() {
         fetchStudents();
     }, [token, navigate, dispatch]);
 
+    const fetchQRCodeData = async (username, month) => {
+        try {
+            const response = await axios.get('http://127.0.0.1:5000/get_qr_code_by_username', {
+                params: { username, month },
+            });
+            if (response.data.success) {
+                return response.data.total_qiymet; // Return the total QR Code data
+            } else {
+                return 0; // Return 0 if no data
+            }
+        } catch (err) {
+            console.error('Failed to fetch QR code data:', err);
+            return 0;
+        }
+    };
+
     const fetchStudents = async () => {
         try {
             const response = await axios.get('http://127.0.0.1:5000/get_all_user_account');
             if (response.data.success) {
-                const data = response.data.data; // Adjusting for the structure sent from backend
-                setStudents(data);
-                setPaginationCount(Math.ceil(data.length / itemsPerPage)); // Set pagination count
+                const studentsData = response.data.data;
+
+                // Fetch QR code data for each student
+                const studentsWithQRCode = await Promise.all(
+                    studentsData.map(async (student) => {
+                        const qrCodeData = await fetchQRCodeData(student.digimealusername, month);
+                        return { ...student, qrCodeData }; // Add qrCodeData to each student
+                    })
+                );
+
+                setStudents(studentsWithQRCode); // Set students with QR code data
+                setPaginationCount(Math.ceil(studentsWithQRCode.length / itemsPerPage)); // Set pagination count
             } else {
                 setError(response.data.message || 'Failed to fetch data.');
             }
@@ -73,34 +100,8 @@ export default function SuperAdminAllUsersAccount() {
             console.error(err);
         }
     };
-
-    const fetchQRCodeData = async (username, month) => {
-        try {
-            const response = await apiClient.get('/get_qr_code_by_username', {
-                params: {
-                    username,
-                    month, // Pass month parameter
-                },
-            });
-            if (response.data.success) {
-                setQrCodeData((prevData) => ({
-                    ...prevData,
-                    [username]: response.data.total_qiymet, // Store data by username
-                }));
-            } else {
-                setQrCodeData((prevData) => ({
-                    ...prevData,
-                    [username]: null, // Store null if no data found
-                }));
-            }
-        } catch (err) {
-            console.error(err);
-            setQrCodeData((prevData) => ({
-                ...prevData,
-                [username]: 'Error', // Store 'Error' if something went wrong
-            }));
-        }
-    };
+    console.log(students);
+    
 
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
@@ -137,28 +138,26 @@ export default function SuperAdminAllUsersAccount() {
         currentPage * itemsPerPage
     );
 
+    const toggleFilter = () => {
+        setFilter(!filter);
+    }
+    useEffect(() => {
+        fetchStudents();
+    }, [month]); 
+    console.log(students);
+    const exportedData = students.map((item) => ({
+        Ad: item.ad,
+        Soyad: item.soyad,
+        Ata_adı: item.ata_adi,
+        Yemək_xərci: item.qrCodeData
+    }))
     const exportToExcel = () => {
-        // Create a new workbook
         const wb = XLSX.utils.book_new();
-    
-        // Convert the data to a worksheet
-        const ws = XLSX.utils.json_to_sheet(students);
-    
-        // Append the worksheet to the workbook
-        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-    
-        // Write the workbook to an Excel file
-        XLSX.writeFile(wb, 'table_export.xlsx');
+        const ws = XLSX.utils.json_to_sheet(exportedData);
+        XLSX.utils.book_append_sheet(wb, ws, 'Students');
+        XLSX.writeFile(wb, 'students_data.xlsx');
     };
-
-    // Fetch QR code data for each user when the component mounts or when students are fetched
-    // useEffect(() => {
-    //     students.forEach((student) => {
-    //         const username = student.digimealusername; // Use 'fin_kod' as the username (adjust if needed)
-    //         const month = '02'; // Assuming you want to fetch data for February. Modify as needed.
-    //         fetchQRCodeData(username, month);
-    //     });
-    // }, [students]); // Trigger when students are fetched
+    
 
     return (
         <>
@@ -200,14 +199,14 @@ export default function SuperAdminAllUsersAccount() {
                                         <div>{student.qeydiyyat_tarixi}</div>
                                         <div>{student.fakulte}</div>
                                         <div>{JSON.stringify(student.sessiya).replace(/[{}\"\\]/g, '').trim().split(",")[0].split(" ")[1]}</div>
+                                        <div>
+                                            {/* <SuperAdminAllUsersAccountDisplay username={student.digimealusername} month={month} qrCodeData={student.qrCodeData} /> */}
+                                            {student.qrCodeData}
+                                        </div>
                                         <div className={styles['sp-adm-wait-app-additional-info-container']}>
                                             <div onClick={() => handleAdditonalInfo(index)}>
                                                 <MoreHorizIcon />
                                             </div>
-                                        </div>
-                                        {/* Display QR code data */}
-                                        <div>
-                                            {fetchQRCodeData('20250000', '02')}
                                         </div>
                                     </div>
                                 </div>
@@ -227,13 +226,24 @@ export default function SuperAdminAllUsersAccount() {
                         </Stack>
                     </div>
                 </section>
+                <div style={{
+                    position: "fixed",
+                    top: 65,
+                    right: 200,
+                    color: "#fff"
+                }} onClick={exportToExcel}>Excell endirin</div>
                 <SuperAdminAdditionalInfo
                     object={students[additonalIndex]}
                     additionalInfo={additonalInfo}
                     setAdditionalInfo={setAdditionalInfo}
                 />
+                <SuperAdminAllUsersFilterAccount 
+                    accountFilter={filter}
+                    setMonth={setMonth}
+                    setYear={setYear}
+                    toggleFilter={toggleFilter}
+                />
             </main>
-            <div className={styles['excel-export-btn']} style={{position: "fixed", top: 50, right: 200}} onClick={exportToExcel}>Export Excel</div>
         </>
     );
 }

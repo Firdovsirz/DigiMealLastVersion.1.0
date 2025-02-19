@@ -43,34 +43,21 @@ export default function SuperAdminNotApproved() {
                     }
         
                     try {
-                        // Decode the token
                         const decodedToken = JSON.parse(atob(token.split('.')[1]));
-        
-                        // Get expiration time
-                        const expirationTime = decodedToken.exp * 1000; // Convert expiration time to milliseconds
-        
-                        // Get the current time
+                        const expirationTime = decodedToken.exp * 1000;
                         const currentTime = Date.now();
-        
-                        // Check if the token is expired
                         if (currentTime >= expirationTime) {
-                            // Token has expired, clear the authentication data in Redux
                             dispatch(clearSuperAdminAuth());
-        
-                            // Optionally, clear the token from localStorage (if still storing it there)
                             localStorage.removeItem('authToken');
-        
-                            // Redirect to login page
                             navigate("/super-admin-login", { replace: true });
                         }
                     } catch (error) {
                         console.error("Error decoding token:", error);
-                        dispatch(clearSuperAdminAuth()); // Clear auth state if token is invalid or any error occurs
+                        dispatch(clearSuperAdminAuth());
                         navigate("/super-admin-login", { replace: true });
                     }
                 };
-        
-                // Call the expiration check
+
                 checkTokenExpiration();
         const fetchStudents = async () => {
             try {
@@ -103,7 +90,6 @@ export default function SuperAdminNotApproved() {
             return true;
         })
         .filter((student) => {
-            // Filter by search term
             return (
                 student.ad.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 student.soyad.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -117,15 +103,18 @@ export default function SuperAdminNotApproved() {
         currentPage * itemsPerPage
     );
     const handleRecover = async (digimealusername) => {
-        try {
-            const response = await axios.get(`http://127.0.0.1:5000/sesion_recover/${digimealusername}`);
-            if (response.status === 200) {
-                setStudents(students.filter(student => student.digimealusername !== digimealusername));
-                alert('Sessiya uğurla redaktə olundu');
+        const isConfirmed = confirm("Sessiyanı redaktə etməyə əminsiniz?");
+        if (isConfirmed) {
+            try {
+                const response = await axios.get(`http://127.0.0.1:5000/sesion_recover/${digimealusername}`);
+                if (response.status === 200) {
+                    setStudents(students.filter(student => student.digimealusername !== digimealusername));
+                    alert('Sessiya uğurla redaktə olundu.');
+                }
+            } catch (err) {
+                console.error('Failed to end session:', err);
+                alert('Redaktə zamanı xəta baş verdi');
             }
-        } catch (err) {
-            console.error('Failed to end session:', err);
-            alert('Redaktə zamanı xəta baş verdi');
         }
     };
     const handleSearchChange = (event) => {
@@ -156,8 +145,6 @@ export default function SuperAdminNotApproved() {
                                         <div>Soyad</div>
                                         <div>Ata adı</div>
                                         <div>Fakültə</div>
-                                        {/* <div>Status</div> */}
-                                        {/* <div>Bilet</div> */}
                                         <div>Istifaçi adı</div>
                                         <div className={styles['sp-adm-wait-app-additional-info-txt']}>
                                             Əlavə məlumat
@@ -169,8 +156,6 @@ export default function SuperAdminNotApproved() {
                                         <div>{student.soyad}</div>
                                         <div>{student.ata_adi}</div>
                                         <div>{student.fakulte}</div>
-                                        {/* <div>{student.status}</div> */}
-                                        {/* <div>{student.bilet}</div> */}
                                         <div>{student.digimealusername}</div>
                                         <div className={styles['sp-adm-wait-app-additional-info-container']}>
                                             <div onClick={() => handleAdditonalInfo(index)}>

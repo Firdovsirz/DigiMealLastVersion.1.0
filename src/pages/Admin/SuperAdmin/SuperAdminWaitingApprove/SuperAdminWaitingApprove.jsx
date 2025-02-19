@@ -32,7 +32,7 @@ export default function SuperAdminNotApproved() {
     }
     const [filter, setFilter] = useState(false);
     const handleFilterToggle = () => {
-        setFilter(prev => !prev); // Toggle the filter visibility
+        setFilter(prev => !prev);
     };
     const requestOtp = async (email) => {
         try {
@@ -60,49 +60,39 @@ export default function SuperAdminNotApproved() {
     useEffect(() => {
         const checkTokenExpiration = () => {
                     if (!token) {
-                        // If there's no token, navigate to the login page
                         navigate("/super-admin-login", { replace: true });
                         return;
                     }
         
                     try {
-                        // Decode the token
                         const decodedToken = JSON.parse(atob(token.split('.')[1]));
-        
-                        // Get expiration time
-                        const expirationTime = decodedToken.exp * 1000; // Convert expiration time to milliseconds
-        
-                        // Get the current time
+                        const expirationTime = decodedToken.exp * 1000;
                         const currentTime = Date.now();
-        
-                        // Check if the token is expired
                         if (currentTime >= expirationTime) {
-                            // Token has expired, clear the authentication data in Redux
                             dispatch(clearSuperAdminAuth());
-        
-                            // Optionally, clear the token from localStorage (if still storing it there)
                             localStorage.removeItem('authToken');
-        
-                            // Redirect to login page
                             navigate("/super-admin-login", { replace: true });
                         }
                     } catch (error) {
                         console.error("Error decoding token:", error);
-                        dispatch(clearSuperAdminAuth()); // Clear auth state if token is invalid or any error occurs
+                        dispatch(clearSuperAdminAuth());
                         navigate("/super-admin-login", { replace: true });
                     }
                 };
-        
-                // Call the expiration check
+
                 checkTokenExpiration();
         const fetchStudents = async () => {
             try {
-                const response = await axios.get('http://127.0.0.1:5000/superadmin_notapproved/');
+                const response = await axios.get('http://127.0.0.1:5000/superadmin_notapproved/', {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
                 const data = response.data.results;
                 setStudents(data);
                 setPaginationCount(Math.ceil(data.length / itemsPerPage));
             } catch (err) {
-                setError('Failed to fetch students.');
+                setError('Xəta baş verdi.');
                 console.error(err);
             }
         };
@@ -117,14 +107,12 @@ export default function SuperAdminNotApproved() {
 
     const filteredStudents = students
         .filter((student) => {
-            // If faculty is selected, filter by faculty
             if (faculty) {
                 return student.fakulte === faculty;
             }
-            return true; // If no faculty is selected, include all students
+            return true;
         })
         .filter((student) => {
-            // Filter by search term
             return (
                 student.ad.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 student.soyad.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -153,12 +141,11 @@ export default function SuperAdminNotApproved() {
                 const response = await axios.delete(`http://127.0.0.1:5000/delete_user/${finKod}`);
                 if (response.status === 200) {
                     alert(response.data.message);
-                    // Refresh the student list after deletion
                     setStudents(students.filter(student => student.fin_kod !== finKod));
                 }
             } catch (err) {
                 console.error(err);
-                alert('Failed to delete user. Please try again.');
+                alert('Xəta baş verdi.');
             }
         }
     };
@@ -221,7 +208,7 @@ export default function SuperAdminNotApproved() {
                                 </div>
                             ))
                         ) : (
-                            !error && <p>No students found for the specified faculty.</p>
+                            !error && <p style={{color: "#fff", fontSize: 20}}>Tələbə tapılmadı.</p>
                         )}
                         {error && <p className={styles['error-message']}>{error}</p>}
                     </div>

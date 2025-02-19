@@ -33,40 +33,26 @@ export default function SuperAdminNotApproved() {
     useEffect(() => {
         const checkTokenExpiration = () => {
             if (!token) {
-                // If there's no token, navigate to the login page
                 navigate("/super-admin-login", { replace: true });
                 return;
             }
 
             try {
-                // Decode the token
                 const decodedToken = JSON.parse(atob(token.split('.')[1]));
-
-                // Get expiration time
-                const expirationTime = decodedToken.exp * 1000; // Convert expiration time to milliseconds
-
-                // Get the current time
+                const expirationTime = decodedToken.exp * 1000;
                 const currentTime = Date.now();
-
-                // Check if the token is expired
                 if (currentTime >= expirationTime) {
-                    // Token has expired, clear the authentication data in Redux
                     dispatch(clearSuperAdminAuth());
-
-                    // Optionally, clear the token from localStorage (if still storing it there)
                     localStorage.removeItem('authToken');
-
-                    // Redirect to login page
                     navigate("/super-admin-login", { replace: true });
                 }
             } catch (error) {
                 console.error("Error decoding token:", error);
-                dispatch(clearSuperAdminAuth()); // Clear auth state if token is invalid or any error occurs
+                dispatch(clearSuperAdminAuth());
                 navigate("/super-admin-login", { replace: true });
             }
         };
 
-        // Call the expiration check
         checkTokenExpiration();
         const fetchStudents = async () => {
             try {
@@ -92,31 +78,37 @@ export default function SuperAdminNotApproved() {
         setAdditionalIndex(e);
     };
     const handleSearchChange = (event) => {
-        setSearchTerm(event.target.value); // Update the search term state
+        setSearchTerm(event.target.value);
     };
 
     const handleDelete = async (digimealusername) => {
-        try {
-            const response = await axios.get(`http://127.0.0.1:5000/sesion_end/${digimealusername}`);
-            if (response.status === 200) {
-                setStudents(students.filter(student => student.digimealusername !== digimealusername));
-                alert('Session ended successfully.');
+        const isConfirmed = confirm("Sessiyanı bitirmək istədiyinizə əminsiniz?");
+        if (isConfirmed) {
+            try {
+                const response = await axios.get(`http://127.0.0.1:5000/sesion_end/${digimealusername}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                if (response.status === 200) {
+                    setStudents(students.filter(student => student.digimealusername !== digimealusername));
+                    alert('Sessiya uğurlu bitirildi.');
+                }
+            } catch (err) {
+                console.error('Failed to end session:', err);
+                alert('Xəta baş verdi.');
             }
-        } catch (err) {
-            console.error('Failed to end session:', err);
-            alert('Error ending session.');
         }
     };
+    
     const filteredStudents = students
         .filter((student) => {
-            // If faculty is selected, filter by faculty
             if (approvedFaculty) {
                 return student.fakulte === approvedFaculty;
             }
-            return true; // If no faculty is selected, include all students
+            return true;
         })
         .filter((student) => {
-            // Filter by search term
             return (
                 student.ad.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 student.soyad.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -140,7 +132,7 @@ export default function SuperAdminNotApproved() {
                         <input
                             type="text"
                             required
-                            placeholder="Search..."
+                            placeholder="Axtarın..."
                             value={searchTerm}
                             onChange={handleSearchChange}
                         />
@@ -184,7 +176,7 @@ export default function SuperAdminNotApproved() {
                                 </div>
                             ))
                         ) : (
-                            !error && <p>No students found for the specified faculty.</p>
+                            !error && <p style={{color: "#fff", fontSize: 20}}>Heç bir tələbə  tapılmadı.</p>
                         )}
                         {error && <p className={styles['error-message']}>{error}</p>}
                     </div>
