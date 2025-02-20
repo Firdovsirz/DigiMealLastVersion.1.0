@@ -158,6 +158,7 @@ export default function SuperAdminAllUsersAccount() {
         Ata_adı: item.ata_adi,
         Fin_kod: item.fin_kod,
         Vəzifəsi: item.status,
+        Sessiya: item.sessiya,
         Yemək_xərci: item.qrCodeData,
         Qeyd: item.qyed
     }))
@@ -168,8 +169,7 @@ export default function SuperAdminAllUsersAccount() {
         XLSX.utils.book_append_sheet(wb, ws, 'Students');
         XLSX.writeFile(wb, `${year}-${month}.xlsx`);
     };
-
-
+    
     return (
         <>
             <main className={styles['sp-adm-not-approved-main']}>
