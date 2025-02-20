@@ -1,18 +1,47 @@
-.scanner-home{
+.scanner-home {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100vw;
     height: calc(100vh - 200px);
-    .scanner-container{
+
+    .scanner-container {
         display: flex;
         align-items: center;
         justify-content: center;
         width: 90%;
         height: 90%;
-        .qr-reader{
+
+        .qr-reader {
             width: 400px;
             height: 400px;
+
+            div:last-child {
+                div {
+                    div {
+                        div {
+                            div {
+                                button {
+                                    width: 70%;
+                                    height: fit-content;
+                                    border-radius: 1px solid rgb(243, 243, 243);
+                                    border-radius: 10px;
+                                    background: transparent;
+                                    color: black;
+                                    font-size: 20px;
+                                    padding: 20px;
+                                }
+                            }
+                        }
+                    }
+
+                    div:last-child {
+                        span {
+                            display: none;
+                        }
+                    }
+                }
+            }
         }
     }
 }

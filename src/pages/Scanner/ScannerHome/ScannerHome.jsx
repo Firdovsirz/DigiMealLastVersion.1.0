@@ -1,3 +1,4 @@
+import swal from 'sweetalert';
 import { useSelector } from "react-redux";
 import styles from "./ScannerHome.module.scss";
 import { useNavigate } from 'react-router-dom';
@@ -15,6 +16,7 @@ export default function ScannerHome() {
     const [bufet, setBufet] = useState('');
     const navigate = useNavigate();
     const [usernamesc, setUsername] = useState('');
+    const [error, setError] = useState('');
 
     // Function to check token expiration
 
@@ -138,29 +140,36 @@ export default function ScannerHome() {
 
     const sendToBackend = async (data) => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/scannerscan', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ 
-                    qr_id: data,
-                    bufet: bufet 
-                }),
-            });
-            console.log(data);
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-
-            const result = await response.json();
-            setMessage(result.message);
+          const response = await fetch('http://127.0.0.1:5000/scannerscan', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+              qr_id: data,
+              bufet: bufet 
+            }),
+          });
+          const result = await response.json();
+      
+          if (response.ok) {
+            swal("Success", "Qr uğurla skan olundu yemək əldə edə bilərsiz!", "success");
+          } else if (response.status === 404) {
+            swal("Error", "Qr artiq skan edilib!", "error");
+          } else if (response.status === 400) {
+            swal("Error", "Qr kodu yenidən təqdim edin!", "error");
+          } else {
+            swal("Error", result.message || "An unexpected error occurred", "error");
+          }
+      
+          setMessage(result.message);
         } catch (error) {
-            console.error('Error sending QR code data to backend:', error);
-            setMessage('Failed to update QR code status.');
+          console.error('Error sending QR code data to backend:', error);
+          setMessage('Failed to update QR code status.');
+          swal("Error", error.message, "error");
         }
-    };
+      };
+      
 
     return (
         <>
