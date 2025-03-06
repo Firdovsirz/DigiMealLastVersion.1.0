@@ -1,7 +1,9 @@
+// import swal from 'sweetalert';
 import Stack from '@mui/material/Stack';
 import { useNavigate } from 'react-router-dom';
 import Pagination from '@mui/material/Pagination';
 import React, { useEffect, useState } from 'react';
+import apiClient from '../../../../redux/apiClient';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useSelector, useDispatch } from 'react-redux';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -12,7 +14,6 @@ import { clearSuperAdminAuth } from '../../../../redux/superAdminAuthSlice';
 import SuperAdminConfirmUser from '../SuperAdminConfirmUser/SuperAdminConfirmUser';
 import AdminAdditionalInfo from '../../../../components/AdminAdditonalInfo/AdminAdditionalInfo';
 import SuperAdminWaitingApproveFilter from '../SuperAdminWaitingApproveFilter/SuperAdminWaitingApproveFilter';
-import apiClient from '../../../../redux/apiClient';
 
 export default function SuperAdminNotApproved() {
     const [students, setStudents] = useState([]);
@@ -35,33 +36,28 @@ export default function SuperAdminNotApproved() {
     const handleFilterToggle = () => {
         setFilter(prev => !prev);
     };
-    // const requestOtp = async (email) => {
-    //     try {
-    //         const response = await axios.post(`/request-otp/${email}`,{
-    //             headers: {
-    //                 Authorization: `Bearer ${token}`,
-    //             },
-    //         });
-    //         if (response.status === 200) {
-    //             setSuccessMessage('OTP başarıyla gönderildi!');
-    //             setErrorMessage('');
-    //             setIsOtpRequested(true);
-    //         } else {
-    //             setErrorMessage('OTP gönderilemedi. Lütfen tekrar deneyin.');
-    //             setSuccessMessage('');
-    //         }
-    //     } catch (error) {
-    //         setErrorMessage(
-    //             error.response?.data?.message || 'Bir hata oluştu. Lütfen tekrar deneyin.'
-    //         );
-    //         setSuccessMessage('');
-    //     }
-    // };
+    const requestOtp = async (email) => {
+        console.log("Requesting OTP for:", email); // Debugging
+    
+        try {
+            const response = await apiClient.post('/request-and-send-otp', {
+                email: email,
+            });
+    
+            console.log("Response received:", response); // Debugging
+    
+            if (response.status === 200) {
+                swal("OTP Göndərildi!", "OTP kodu uğurla göndərildi!", "success");
+            } else {
+                swal("Xəta!", "OTP göndərilə bilmədi. Lütfən yenidən cəhd edin.", "error");
+            }
+        } catch (error) {
+            console.error("Error requesting OTP:", error);
+            swal("Xəta!", error.response?.data?.message || "Bir xəta baş verdi. Lütfən yenidən cəhd edin.", "error");
+        }
+    };
     const dispatch = useDispatch();
         const navigate = useNavigate();
-    
-        
-        
     useEffect(() => {
         const checkTokenExpiration = () => {
                     if (!token) {
@@ -209,7 +205,7 @@ export default function SuperAdminNotApproved() {
                                             </div>
                                         </div>
                                         <div className={styles['sp-adm-wait-app-approve-btn-container']}>
-                                            <div onClick={() => handleConfirmUserContainer(student.email)}>
+                                            <div onClick={() => requestOtp(student.email)}>
                                                 <CheckCircleOutlineIcon />
                                             </div>
                                         </div>

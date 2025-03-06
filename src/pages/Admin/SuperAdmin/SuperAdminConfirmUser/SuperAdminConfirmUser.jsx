@@ -9,10 +9,9 @@ export default function SuperAdminConfirmUser({ confirmUser, setConfirmUser, ema
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [isOtpRequested, setIsOtpRequested] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // Add loading state
+  const [isLoading, setIsLoading] = useState(false);
   const token = useSelector((state) => state.superAdminAuth.token);
 
-  // Close modal and reset states
   const handleClose = () => {
     setConfirmUser(false);
     setOtp('');
@@ -21,18 +20,16 @@ export default function SuperAdminConfirmUser({ confirmUser, setConfirmUser, ema
     setIsOtpRequested(false);
   };
 
-  // Request OTP when modal opens
   useEffect(() => {
     if (confirmUser && !isOtpRequested) {
       requestOtp(email);
     }
   }, [confirmUser, isOtpRequested]);
 
-  // Function to request OTP from the backend
   const requestOtp = async (email) => {
     try {
       setIsLoading(true);
-      const response = await apiClient.post(`/request-otp/${email}`,{
+      const response = await apiClient.post(`/request-and-send-otp/${email}`,{
         headers: {
             Authorization: `Bearer ${token}`,
         },

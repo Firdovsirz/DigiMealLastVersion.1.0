@@ -9,6 +9,7 @@ import UserSettings from './pages/User/UserSettings/UserSettings';
 import ScannerHome from './pages/Scanner/ScannerHome/ScannerHome';
 import ScannerLogin from './pages/Scanner/ScannerLogin/ScannerLogin';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import UserPasswordCreater from './pages/UserPasswordCreater/UserPasswordCreater';
 import SuperAdminHome from './pages/Admin/SuperAdmin/SuperAdminHome/SuperAdminHome';
 import AdminAdditionalInfo from './components/AdminAdditonalInfo/AdminAdditionalInfo';
 import SuperAdminLogin from "./pages/Admin/SuperAdmin/SuperAdminLogin/SuperAdminLogin";
@@ -44,6 +45,7 @@ function App() {
         <Route path="/super-admin-session-ended" element={<SuperAdminSessionEnded />} />
         <Route path='/super-admin-all-users-account' element={<SuperAdminAllUsersAccount />} />
         <Route path='/super-admin-account' element={<SuperAdminAccount />} />
+        <Route path='/user-pass-creater' element={<UserPasswordCreater />} />
         <Route
           path="/"
           element={<PrivateRoute element={<Login />} />}

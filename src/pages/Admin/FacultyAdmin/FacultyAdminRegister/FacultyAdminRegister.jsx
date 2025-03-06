@@ -204,7 +204,7 @@ export default function FacultyAdminRegister() {
         try {
             // Make POST request to the backendå
             const response = await apiClient.post(
-                "http://127.0.0.1:5000/add", 
+                "/add", 
                 payload, {
                 headers: {
                     Authorization: `Bearer ${adminToken}`,
