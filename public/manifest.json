@@ -2,7 +2,7 @@
     "name": "DigiMeal",
     "short_name": "DigiMeal App",
     "description": "Free food application",
-    "start_url": ".",
+    "start_url": "/",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#ffffff",
