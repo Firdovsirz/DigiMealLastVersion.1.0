@@ -1,22 +1,26 @@
 {
-  "name": "DigiMeal",
-  "short_name": "DigiMeal",
-  "description": "Free food application",
-  "start_url": "/",
-  "scope": "/",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#ffffff",
+  "theme_color": "#94e3fe",
+  "background_color": "#d6d6d6",
   "icons": [
     {
-      "src": "/icons/icon.png",
-      "sizes": "192x192",
+      "purpose": "maskable",
+      "sizes": "512x512",
+      "src": "./icons/icon.png",
       "type": "image/png"
     },
     {
-      "src": "/icons/icons-2.png",
+      "purpose": "any",
       "sizes": "512x512",
+      "src": "./icons/icons-2.png",
       "type": "image/png"
     }
-  ]
+  ],
+  "orientation": "any",
+  "display": "standalone",
+  "dir": "auto",
+  "lang": "en-GB",
+  "name": "DigiMeal",
+  "short_name": "DigiMeal",
+  "start_url": "/",
+  "scope": "/"
 }
