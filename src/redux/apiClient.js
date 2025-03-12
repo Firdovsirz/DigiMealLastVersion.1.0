@@ -2,7 +2,7 @@ import axios from "axios";
 import store from "../redux/store";
 
 const apiClient = axios.create({
-  baseURL: "http://127.0.0.1:5001",
+  baseURL: "http://192.168.171.192:5001",
 });
 
 apiClient.interceptors.request.use(

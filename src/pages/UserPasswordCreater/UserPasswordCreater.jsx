@@ -1,3 +1,4 @@
+import swal from 'sweetalert';
 import React, { useState } from 'react';
 import apiClient from '../../redux/apiClient';
 import styles from "./UserPasswordCreater.module.scss";
@@ -7,7 +8,6 @@ export default function UserPasswordCreater() {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [otp, setOtp] = useState("");
-    const [message, setMessage] = useState("");
 
     const handleOtpChange = (e) => {
         const value = e.target.value;
@@ -19,15 +19,23 @@ export default function UserPasswordCreater() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (password !== confirmPassword) {
-            setMessage("Passwords do not match");
+            swal.fire({
+                icon: 'error',
+                title: 'Xəta',
+                text: 'Şifrələr uyğun gəlmir',
+            });
             return;
         }
 
         try {
             const response = await apiClient.post("/verify-otp", { username, password, otp });
-            setMessage(response.data.message);
+            if (response.status === 200) {
+                swal("Şifrə uğurla təyin edildi!", "Artıq istifadəçi olaraq daxil ola bilərsiniz!", "success");
+            } else {
+                swal("Xəta!", "Şifrə təyin edilə bilmədi. Lütfən yenidən cəhd edin.", "error");
+            }
         } catch (error) {
-            setMessage(error.response?.data?.message || "An error occurred");
+            swal("Xəta!", error.response?.data?.message || "Bir xəta baş verdi. Lütfən yenidən cəhd edin.", "error");
         }
     };
 
@@ -67,7 +75,6 @@ export default function UserPasswordCreater() {
                     />
                     <button type="submit">Təsdiq et</button>
                 </form>
-                {message && <p>{message}</p>}
             </div>
         </main>
     );
