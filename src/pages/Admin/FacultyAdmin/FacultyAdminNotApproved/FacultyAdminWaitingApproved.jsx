@@ -6,7 +6,7 @@ import React, { useState, useEffect } from 'react';
 import apiClient from '../../../../redux/apiClient';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import DoneOutlineIcon from '@mui/icons-material/DoneOutline';
-import styles from './FacultyadminWaitingApproved.module.scss';
+import styles from './FacultyAdminWaitingApproved.module.scss';
 import FacultyAdminAside from "../FacultyAdminAside/FacultyAdminAside";
 import AdminAdditionalInfo from '../../../../components/AdminAdditonalInfo/AdminAdditionalInfo';
 
