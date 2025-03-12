@@ -1,26 +1,21 @@
 {
-  "theme_color": "#8936FF",
-  "background_color": "#2EC6FE",
-  "icons": [
-      {
-          "purpose": "maskable",
-          "sizes": "512x512",
-          "src": "icon512_maskable.png",
-          "type": "image/png"
-      },
-      {
-          "purpose": "any",
-          "sizes": "512x512",
-          "src": "icon512_rounded.png",
-          "type": "image/png"
-      }
-  ],
-  "orientation": "any",
-  "display": "standalone",
-  "dir": "auto",
-  "lang": "en-GB",
-  "name": "FR",
-  "short_name": "FR",
+  "name": "DigiMeal",
+  "short_name": "DigiMeal",
   "start_url": "/",
-  "scope": "/"
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }
